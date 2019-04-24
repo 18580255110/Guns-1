@@ -174,7 +174,8 @@ public class ExamineServiceImpl implements IExamineService {
 //                continue;
 //
             result.put("className", classNameBuffer.toString());
-            result.put("ability", ConstantFactory.me().getAbilityName(paper.getAbility()));
+            // TODO 0424 班型从paperApply里取
+            result.put("ability", "");
             examineAnswerPaperList.add(result);
         }
         return examineAnswerPaperList;

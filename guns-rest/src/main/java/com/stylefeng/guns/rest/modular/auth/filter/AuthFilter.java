@@ -42,23 +42,6 @@ public class AuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         AntPathMatcher pathMatcher = new AntPathMatcher("/");
         String requestPath = request.getServletPath();
-        String contextPath = request.getContextPath();
-        Object headers = request.getHeaderNames();
-        log.debug("!@@@ ==" + JSON.toJSONString(request.getHeader("content-type")));
-/*
-        Map<String, String[]> parameters = request.getParameterMap();
-        if (null != parameters)
-            log.debug("Request parameters = " + JSON.toJSONString(parameters));
-
-        InputStream is = request.getInputStream();
-        byte[] buff = new byte[1024];
-        int count = is.read(buff);
-        log.debug("Request Body = ( ");
-        while(count > 0){
-            log.debug(new String(buff));
-            count = is.read(buff);
-        }
-        log.debug(" ) ");*/
 
         for(String pattern : authProperties.getExcludePattern()){
             if (pathMatcher.match(pattern, requestPath)){

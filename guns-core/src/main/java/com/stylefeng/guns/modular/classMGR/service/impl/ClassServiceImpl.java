@@ -129,6 +129,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
             throw new ServiceException(MessageConstant.MessageCode.SYS_DATA_OVERTOP, new String[]{"班级人数超过教室座位数"});
         }
         classInstance.setClassRoom(classroomEntity.getAddress());
+        classInstance.setCreateDate(new Date());
         // 创建班级信息
         insert(classInstance);
         // 排班
@@ -150,12 +151,12 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
         if (null == currClass)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"班级信息"});
 
-        Date now = new Date();
-        if (currClass.getSignStartDate().before(now)){
-            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"班级已开始报名"});
-        }
+//        Date now = new Date();
+//        if (currClass.getSignStartDate().before(now)){
+//            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"班级已开始报名"});
+//        }
 
-        String[] ignoreProperties = new String[]{"id", "code", "grade", "courseCode", "period", "courseName"};
+        String[] ignoreProperties = new String[]{"id", "code", "grade", "courseCode", "period", "courseName", "createDate"};
         BeanUtils.copyProperties(classInstance, currClass, ignoreProperties);
         ClassPlan firstPlan = classPlanList.get(0);
         ClassPlan lastPlan = classPlanList.get(classPlanList.size() - 1);

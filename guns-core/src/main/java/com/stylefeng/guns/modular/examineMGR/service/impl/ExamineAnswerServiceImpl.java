@@ -42,7 +42,8 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
         answerPaper.setStudentCode(student.getCode());
         answerPaper.setQuota(examinePaper.getCount());
         answerPaper.setTotalScore(examinePaper.getTotalScore());
-        answerPaper.setExamTime(examinePaper.getExamTime());
+        // TODO 0424 测试时间从paperApply取
+        answerPaper.setExamTime(0);
         answerPaper.setStatus(ExamineAnswerStateEnum.Create.code);
         answerPaper.setBeginDate(now);
         answerPaper.setCreateDate(now);

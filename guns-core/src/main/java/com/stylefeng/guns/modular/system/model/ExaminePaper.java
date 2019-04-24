@@ -46,22 +46,13 @@ public class ExaminePaper extends Model<ExaminePaper> {
      */
     @ApiModelProperty(name = "subject", value = "适应学科", position = 2, example = "1")
     private String subject;
-    /**
-     * 班次
-     */
-    @ApiModelProperty(name = "ability", value = "适应班次", position = 3, example = "3")
-    private Integer ability;
+
     /**
      * 题目数量
      */
     @ApiModelProperty(name = "code", value = "题目数量", position = 4, example = "20")
     private Integer count;
-    /**
-     * 测试时间， 单位： 分钟
-     */
-    @ApiModelProperty(name = "examTime", value = "测试时间， 单位： 分钟", position = 5, example = "30")
-    @TableField("exam_time")
-    private Integer examTime;
+
     /**
      * 总分数
      */
@@ -69,12 +60,6 @@ public class ExaminePaper extends Model<ExaminePaper> {
     @TableField("total_score")
     private Integer totalScore;
 
-    /**
-     * 及格分数
-     */
-    @ApiModelProperty(name = "passScore", value = "及格分数", position = 7, example = "60")
-    @TableField("pass_score")
-    private Integer passScore;
     /**
      * 出题人
      */
@@ -125,14 +110,6 @@ public class ExaminePaper extends Model<ExaminePaper> {
         this.subject = subject;
     }
 
-    public Integer getAbility() {
-        return ability;
-    }
-
-    public void setAbility(Integer ability) {
-        this.ability = ability;
-    }
-
     public Integer getCount() {
         return count;
     }
@@ -141,28 +118,12 @@ public class ExaminePaper extends Model<ExaminePaper> {
         this.count = count;
     }
 
-    public Integer getExamTime() {
-        return examTime;
-    }
-
-    public void setExamTime(Integer examTime) {
-        this.examTime = examTime;
-    }
-
     public Integer getTotalScore() {
         return totalScore;
     }
 
     public void setTotalScore(Integer totalScore) {
         this.totalScore = totalScore;
-    }
-
-    public Integer getPassScore() {
-        return passScore;
-    }
-
-    public void setPassScore(Integer passScore) {
-        this.passScore = passScore;
     }
 
     public String getTeacher() {
@@ -201,11 +162,8 @@ public class ExaminePaper extends Model<ExaminePaper> {
         ", code=" + code +
         ", grades=" + grades +
         ", subject=" + subject +
-        ", ability=" + ability +
         ", count=" + count +
-        ", examTime=" + examTime +
         ", totalScore=" + totalScore +
-        ", passScore=" + passScore +
         ", teacher=" + teacher +
         ", createDate=" + createDate +
         ", status=" + status +

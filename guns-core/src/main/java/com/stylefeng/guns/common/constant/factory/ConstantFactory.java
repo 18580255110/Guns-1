@@ -483,7 +483,7 @@ public class ConstantFactory implements IConstantFactory {
     @Override
     @Cacheable(value = Cache.DICT_CONSTANT, key = "'" + CacheKey.CLASS_ABILITY + "'+#ability")
     public String getAbilityName(Integer ability) {
-        return getDictsByName("班次", ability);
+        return getDictsByCode("ability", String.valueOf(ability));
     }
 
     @Override

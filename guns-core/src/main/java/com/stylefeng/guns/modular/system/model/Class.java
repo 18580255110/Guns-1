@@ -207,6 +207,9 @@ public class Class extends Model<Class> {
     @TableField("presign_status")
     private Integer presignStatus = 0;
 
+    @TableField("create_date")
+    private Date createDate;
+
     public Long getId() {
         return id;
     }
@@ -504,6 +507,14 @@ public class Class extends Model<Class> {
         this.presignStatus = presignStatus;
     }
 
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
     @Override
     protected Serializable pkVal() {
         return this.id;
@@ -547,6 +558,7 @@ public class Class extends Model<Class> {
         ", presignStartDate=" + presignStartDate +
         ", presignEndDate=" + presignEndDate +
         ", presignStatus=" + presignStatus +
+        ", createDate=" + createDate +
         "}";
     }
 
