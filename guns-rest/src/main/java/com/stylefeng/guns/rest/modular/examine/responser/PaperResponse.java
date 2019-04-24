@@ -108,7 +108,8 @@ public class PaperResponse {
 
         response.setClassName(name);
         response.setClassAbility(abilitiesDesp.substring(0, abilitiesDesp.length() - 1));
-        response.setExamTime(examinePaper.getExamTime());
+        // TODO 0424 应该从PaperApply取得
+        response.setExamTime(0);
         response.setPaperCode(examinePaper.getCode());
         return response;
     }
