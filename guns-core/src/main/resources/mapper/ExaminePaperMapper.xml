@@ -8,11 +8,8 @@
         <result column="code" property="code" />
         <result column="grades" property="grades" />
         <result column="subject" property="subject" />
-        <result column="ability" property="ability" />
         <result column="count" property="count" />
-        <result column="exam_time" property="examTime" />
         <result column="total_score" property="totalScore" />
-        <result column="pass_score" property="passScore" />
         <result column="teacher" property="teacher" />
         <result column="create_date" property="createDate" />
         <result column="status" property="status" />
@@ -20,7 +17,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, code, grades, subject, ability, count, exam_time, total_score, pass_score, teacher, create_date, status
+        id, code, grades, subject, count, total_score, teacher, create_date, status
     </sql>
 
 </mapper>

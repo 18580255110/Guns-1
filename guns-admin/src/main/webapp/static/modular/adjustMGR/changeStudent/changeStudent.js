@@ -20,12 +20,13 @@ AdjustStudent.initColumn = function () {
                     return row.sname + '(' + row.student_code + ')';
                 }
             },
-            {title: '当前班级', field: 'scname', visible: true, align: 'center', valign: 'middle'},
+            {title: '原班级', field: 'scname', visible: true, align: 'center', valign: 'middle'},
+            {title: '原班级老师', field: 'steacher', visible: true, align: 'center', valign: 'middle'},
             {title: '审批状态', field: 'workStatusName', visible: true, align: 'center', valign: 'middle', width: 80},
             {title: '状态', field: 'statusName', visible: false, align: 'center', valign: 'middle' },
             {title: '调整明细', field: 'remark', visible: true, align: 'center', valign: 'middle',
                 formatter:function (value,row,index) {
-                    return row.dcname ;
+                    return '(' + row.dteacher + ')' + row.dcname ;
                 }
             },
             {title: '申请时间', field: 'create_time', visible: true, align: 'center', valign: 'middle'},

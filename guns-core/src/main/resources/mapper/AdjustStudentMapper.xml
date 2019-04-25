@@ -26,7 +26,9 @@
     <select id="selectApplyMapsPage" resultType="java.util.HashMap" parameterType="java.util.HashMap">
       SELECT m.name as uname, m.mobile_number as number, s.name as sname,
         (select c.name from tb_class c where code = a.source_class) as scname,
+        (select c.teacher from tb_class c where code = a.source_class) as steacher,
         (select c.name from tb_class c where code = a.target_class) as dcname,
+        (select c.teacher from tb_class c where code = a.target_class) as dteacher,
         (select co.outline from tb_course_outline co where code = a.outline_code) as oname,
         a.*
       FROM tb_adjust_student a , tb_member m, tb_student s

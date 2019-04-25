@@ -50,7 +50,7 @@ public class ExaminePaper extends Model<ExaminePaper> {
     /**
      * 题目数量
      */
-    @ApiModelProperty(name = "code", value = "题目数量", position = 4, example = "20")
+    @ApiModelProperty(name = "count", value = "题目数量", position = 4, example = "20")
     private Integer count;
 
     /**
