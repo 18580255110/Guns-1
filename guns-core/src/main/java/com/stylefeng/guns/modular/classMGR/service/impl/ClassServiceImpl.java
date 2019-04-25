@@ -96,11 +96,11 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
         Date signEndDate = classInfo.getSignEndDate();
         Date now = new Date();
 
-//        if (now.compareTo(classInfo.getSignStartDate()) < 0)
-//            throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
-//
-//        if (signEndDate.before(now))
-//            throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_OUTTIME);
+        if (now.compareTo(classInfo.getSignStartDate()) < 0)
+            throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+
+        if (signEndDate.before(now))
+            throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_OUTTIME);
     }
 
     @Override
