@@ -18,6 +18,7 @@ import com.stylefeng.guns.modular.system.dao.ClassMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.util.CodeKit;
+import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.shiro.util.Assert;
@@ -270,7 +271,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     public List<Class> queryListForCross(Map<String, Object> queryParams) {
         Map<String, Object> arguments = buildQueryArguments(queryParams);
         // 跨报只能发生在跨报期间内的
-        arguments.put("crossDate", new Date());
+        arguments.put("crossDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
 
         List<Class> resultList = classMapper.queryForList(arguments);
 
@@ -281,7 +282,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     public List<Class> queryListForCrossChange(Map<String, Object> queryParams) {
         Map<String, Object> arguments = buildQueryArguments(queryParams);
         // 跨报只能发生在跨报期间内的
-        arguments.put("crossDate", new Date());
+        arguments.put("crossDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
 
         List<Class> resultList = classMapper.queryForList(arguments);
 
