@@ -87,10 +87,10 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
         int studentGrade = student.getGrade();
         int classGrade = classInfo.getGrade();
-//
-//        if (studentGrade != classGrade){
-//            throw new ServiceException(MessageConstant.MessageCode.GRADE_NOT_MATCH);
-//        }
+
+        if (studentGrade != classGrade){
+            throw new ServiceException(MessageConstant.MessageCode.GRADE_NOT_MATCH);
+        }
 
         List<CourseCart> existSelected = selectList(new EntityWrapper<CourseCart>()
                 .eq("user_name", member.getUserName())
@@ -126,7 +126,8 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECTED);
 
         // 检查班级报名状态
-        classService.checkJoinState(classInfo, member, student);
+        if (!skipTest)
+            classService.checkJoinState(classInfo, member, student);
 
         // 入学测试校验
         if (!skipTest && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){

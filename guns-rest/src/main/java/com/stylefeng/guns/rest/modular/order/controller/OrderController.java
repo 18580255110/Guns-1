@@ -70,6 +70,7 @@ public class OrderController extends ApiController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "student", value = "学员编码", required = false, dataType = "String", example = "XY000001"),
             @ApiImplicitParam(name = "classCode", value = "班级编码", required = true, dataType = "String", example = "BJ000001"),
+            @ApiImplicitParam(name = "from", value = "来源", required = true, dataType = "Integer", example = "1")
     }
     )
     public Responser joinCart(
@@ -77,13 +78,18 @@ public class OrderController extends ApiController {
             @RequestParam(required = true, name = "classCode")
             String classCode,
             @RequestParam(required = false, name = "student")
-            String student
+            String student,
+            @RequestParam(required = false, name = "from")
+            Integer from
     ){
 
         Member member = currMember();
 
         if (null == member)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
+
+        if (null == from)
+            from = 1; // 正常下单
 
         Student existStudent = findStudent(member.getUserName(), student);
 
@@ -95,7 +101,7 @@ public class OrderController extends ApiController {
         if (null == classInfo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"班级 <" + classCode + ">"});
 
-        courseCartService.doJoin(member, existStudent, classInfo, false);
+        courseCartService.doJoin(member, existStudent, classInfo, 2 == from ? true : false);
 
         return SimpleResponser.success();
     }

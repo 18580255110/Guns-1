@@ -426,7 +426,7 @@ public class ClassController extends BaseController {
             }
         }
 
-        classPlanInfo.put("allClassPlanList", planList);
+        //classPlanInfo.put("allClassPlanList", planList);
         classPlanInfo.put("classPlanList", classPlanList);
         return classPlanInfo;
     }
