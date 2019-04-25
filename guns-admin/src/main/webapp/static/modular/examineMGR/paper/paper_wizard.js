@@ -288,8 +288,10 @@ PaperWizard.collectData = function() {
     this
         .set('code')
         .set('id')
-        .set('grade')
+        .set('grade1')
+        .set('grades')
         .set('subject')
+        .set('subject1')
         .set('question')
 
     var questions = PaperWizard.SelectedQuestion.seCodes.slice(0);
@@ -322,8 +324,8 @@ PaperWizard.close = function() {
 PaperWizard.unselectedQuestionSearch = function(){
     var queryData = {};
     queryData['condition'] = $("#condition").val();
-    queryData['subject'] = $("#subject").val();
-    queryData['grade'] = $("#grade").val();
+    queryData['subject'] = $("#subject1").val();
+    queryData['grade'] = $("#grade1").val();
     queryData['status'] = 1;
     queryData['workingCodes'] = PaperWizard.SelectedQuestion.seCodes.join(',');
     PaperWizard.UnSelectQuestion.table.refresh({query: queryData});
@@ -398,9 +400,9 @@ $(function () {
                 // 正向进入到"选择题目"步骤时
                 $('#questionItemCount').val(PaperWizard.SelectedQuestion.seCodes.length);
                 // 学科
-                $('#subject').val($('#subject1').val());
+                $('#subject1').val($('#subject').val());
                 // 年级
-                $('#grade').val($('#grade1').val());
+                $('#grade1').val($('#grades').val());
             }
 
             if (step == 1 && step < prev){
@@ -518,6 +520,5 @@ $(function () {
 
     //初始select选项
     $("#grades").val($("#gradesValue").val());
-    $("#ability").val($("#abilityValue").val());
     $("#subject").val($("#subjectValue").val());
 });
