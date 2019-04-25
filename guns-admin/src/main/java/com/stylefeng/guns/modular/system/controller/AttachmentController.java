@@ -182,7 +182,7 @@ public class AttachmentController {
         if ("android".equalsIgnoreCase(platform)) {
             response.sendRedirect("http://www.kecui.com.cn/kecui.apk");
         } else if ("ios".equalsIgnoreCase(platform)) {
-            response.sendRedirect("https://www.pgyer.com/hioS");
+            response.sendRedirect("https://itunes.apple.com/cn/app/%E7%A7%91%E8%90%83%E5%9F%B9%E4%BC%98/id1459216538?mt=8");
         }
     }
 
