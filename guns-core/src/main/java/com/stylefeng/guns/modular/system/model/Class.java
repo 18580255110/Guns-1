@@ -210,6 +210,8 @@ public class Class extends Model<Class> {
     @TableField("create_date")
     private Date createDate;
 
+    private Integer signQuato;
+
     public Long getId() {
         return id;
     }
@@ -513,6 +515,14 @@ public class Class extends Model<Class> {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public Integer getSignQuato() {
+        return signQuato;
+    }
+
+    public void setSignQuato(Integer signQuato) {
+        this.signQuato = signQuato;
     }
 
     @Override

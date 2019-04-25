@@ -39,6 +39,7 @@
         <result column="presign_end_date" property="presignEndDate" />
         <result column="presign_status" property="presignStatus" />
         <result column="create_date" property="createDate" />
+        <result column="signQuato" property="signQuato" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -229,6 +230,7 @@
         on a.code = b.class_code order by a.createDate desc
     </select>
     <select id="queryForList" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select a.*, IFNULL(b.sign_quato, 0) AS signQuato from (
         select tcr.subject,
         <include refid="Base_Column_List" />
         from tb_class tc, tb_course tcr
@@ -238,6 +240,8 @@
             </when>
         </choose>
         <include refid="Where_Sql" />
+        ) a left join (select a.code as class_code, count(a.code) as sign_quato from tb_class a left join tb_student_class b on a.code = b.class_code where b.status = 1 group by a.code) b
+        on a.code = b.class_code order by a.create_date desc
     </select>
 
 </mapper>
