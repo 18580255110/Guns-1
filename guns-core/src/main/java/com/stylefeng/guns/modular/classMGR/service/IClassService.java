@@ -132,4 +132,18 @@ public interface IClassService extends IService<Class> {
      * @return
      */
     List<Class> queryListForChange( Map<String, Object> changeClassQuery );
+
+    /**
+     *
+     * @param changeClassQuery
+     * @return
+     */
+    List<Class> queryListForCross(Map<String, Object> changeClassQuery);
+
+    /**
+     *
+     * @param changeClassQuery
+     * @return
+     */
+    List<Class> queryListForCrossChange(Map<String, Object> changeClassQuery);
 }

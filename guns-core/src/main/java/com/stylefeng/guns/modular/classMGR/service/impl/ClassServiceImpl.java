@@ -258,6 +258,30 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     @Override
     public List<Class> queryListForChange(Map<String, Object> queryParams) {
         Map<String, Object> arguments = buildQueryArguments(queryParams);
+        // 转班只能发生在跨报之后，结课之前
+        arguments.put("changeDate", new Date());
+
+        List<Class> resultList = classMapper.queryForList(arguments);
+
+        return resultList;
+    }
+
+    @Override
+    public List<Class> queryListForCross(Map<String, Object> queryParams) {
+        Map<String, Object> arguments = buildQueryArguments(queryParams);
+        // 跨报只能发生在跨报期间内的
+        arguments.put("crossDate", new Date());
+
+        List<Class> resultList = classMapper.queryForList(arguments);
+
+        return resultList;
+    }
+
+    @Override
+    public List<Class> queryListForCrossChange(Map<String, Object> queryParams) {
+        Map<String, Object> arguments = buildQueryArguments(queryParams);
+        // 跨报只能发生在跨报期间内的
+        arguments.put("crossDate", new Date());
 
         List<Class> resultList = classMapper.queryForList(arguments);
 

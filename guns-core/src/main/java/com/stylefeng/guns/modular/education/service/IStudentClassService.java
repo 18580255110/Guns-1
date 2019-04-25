@@ -34,9 +34,17 @@ public interface IStudentClassService extends IService<StudentClass> {
     /**
      * 用户历史报班列表
      *
-     * @param member
+     * @param student
      * @param historyQueryMap
      * @return
      */
-    List<Class> selectMemberHistorySignedClass(Member member, Map<String, Object> historyQueryMap);
+    List<Class> selectMemberHistorySignedClass(Student student, Map<String, Object> historyQueryMap);
+
+    /**
+     * 学员当前报班
+     *
+     * @param student
+     * @return
+     */
+    List<StudentClass> selectCurrentClassInfo(Student student);
 }

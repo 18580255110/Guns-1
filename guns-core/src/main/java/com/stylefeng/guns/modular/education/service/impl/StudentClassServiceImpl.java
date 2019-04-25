@@ -71,10 +71,21 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
     }
 
     @Override
-    public List<Class> selectMemberHistorySignedClass(Member member, Map<String, Object> historyQueryMap) {
+    public List<Class> selectMemberHistorySignedClass(Student student, Map<String, Object> historyQueryMap) {
 
-        historyQueryMap.put("member", member.getUserName());
+//        historyQueryMap.put("member", member.getUserName());
+        historyQueryMap.put("student", student.getCode());
 
         return studentClassMapper.selectMemberSignedClass(historyQueryMap);
+    }
+
+    @Override
+    public List<StudentClass> selectCurrentClassInfo(Student student) {
+        Wrapper<StudentClass> queryWrapper = new EntityWrapper<StudentClass>();
+
+        queryWrapper.eq("studentCode", student.getCode());
+        queryWrapper.eq("stuats", GenericState.Valid.code);
+
+        return selectList(queryWrapper);
     }
 }

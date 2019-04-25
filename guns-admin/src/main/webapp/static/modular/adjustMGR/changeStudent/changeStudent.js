@@ -22,6 +22,7 @@ AdjustStudent.initColumn = function () {
             },
             {title: '原班级', field: 'scname', visible: true, align: 'center', valign: 'middle'},
             {title: '原班级老师', field: 'steacher', visible: true, align: 'center', valign: 'middle'},
+            {title: '原排课计划', field: 'sdesp', visible: true, align: 'center', valign: 'middle'},
             {title: '审批状态', field: 'workStatusName', visible: true, align: 'center', valign: 'middle', width: 80},
             {title: '状态', field: 'statusName', visible: false, align: 'center', valign: 'middle' },
             {title: '调整明细', field: 'remark', visible: true, align: 'center', valign: 'middle',
@@ -29,6 +30,7 @@ AdjustStudent.initColumn = function () {
                     return '(' + row.dteacher + ')' + row.dcname ;
                 }
             },
+            {title: '现排课计划', field: 'ddesp', visible: true, align: 'center', valign: 'middle'},
             {title: '申请时间', field: 'create_time', visible: true, align: 'center', valign: 'middle'},
             {title: '审核时间', field: 'update_time', visible: true, align: 'center', valign: 'middle'}
     ];

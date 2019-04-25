@@ -394,7 +394,7 @@ public class EducationController extends ApiController {
                 continue;
             }
             if (0 != classInfo.getAbility().compareTo(currClassInfo.getAbility())){
-                // 不是同班次，过滤掉
+                // 不是同班型，过滤掉
                 continue;
             }
             int cmpResult = DateUtil.compareDate(now, classInfo.getSignStartDate(), Calendar.DAY_OF_MONTH);
@@ -438,7 +438,7 @@ public class EducationController extends ApiController {
             queryWrapper.eq("status", GenericState.Valid.code);
             int existCount = studentClassService.selectCount(queryWrapper);
 
-            if (existCount >= classInfo.getQuato() - 2){
+            if (existCount >= classInfo.getQuato() ){
                 continue;
             }
 
@@ -460,22 +460,132 @@ public class EducationController extends ApiController {
         return ClassListResponse.me(classSet);
     }
 
+    /**
+     * @deprecated
+     * @return
+     */
+//    public Responser listClass4Cross(){
+//
+//        Member member = currMember();
+//
+//        // 用户历史报班列表
+//        Map<String, Object> historyQueryMap = new HashMap<>();
+//        historyQueryMap.put("studyFinished", true);
+//        List<com.stylefeng.guns.modular.system.model.Class> hisClassList = studentClassService.selectMemberHistorySignedClass(member, historyQueryMap);
+//
+//        // 只春、秋学期才能支持续保、跨报
+//        Iterator<Class> hisClassIterator = hisClassList.iterator();
+//        Set<Integer> cycles = new HashSet<>();
+//        Set<Integer> grades = new HashSet<>();
+//        Set<Integer> subjects = new HashSet<>();
+//        while(hisClassIterator.hasNext()){
+//            Class hisClassInfo = hisClassIterator.next();
+//            Course hisCourseInfo = courseService.get(hisClassInfo.getCourseCode());
+//            int cycle = hisClassInfo.getCycle();
+//
+//            switch(cycle){
+//                case 1:
+//                case 2:
+//                    cycles.add(cycle);
+//                    grades.add(hisClassInfo.getGrade());
+//                    subjects.add(Integer.parseInt(hisCourseInfo.getSubject()));
+//                    break;
+//                default:
+//                    hisClassIterator.remove();
+//                    break;
+//            }
+//        }
+//
+//        Set<Class> classSet = new HashSet<>();
+//        if (hisClassList.isEmpty()){
+//            // 没有订购过课程的用户，直接返回
+//            return ClassListResponse.me(classSet);
+//        }
+//
+//        // 老用户可以享受优先报名资格
+//        Map<String, Object> changeClassQuery = new HashMap<String, Object>();
+//        changeClassQuery.put("signFutureBeginDate", DateUtil.format(DateUtils.addDays(new Date(), 1), "yyyy-MM-dd"));
+//        changeClassQuery.put("signFutureEndDate", DateUtil.format(DateUtils.addDays(new Date(), 365), "yyyy-MM-dd"));
+//        changeClassQuery.put("signable", ClassSignableEnum.YES.code);
+//
+//        StringBuilder cycleBuilder = new StringBuilder();
+//        for(int cycle : cycles){
+//            cycleBuilder.append(cycle).append(",");
+//        }
+//        if (cycleBuilder.length() > 0)
+//            changeClassQuery.put("cycles", cycleBuilder.substring(0, cycleBuilder.length() - 1));
+//        StringBuilder subjectBuilder = new StringBuilder();
+//        for(int subject : subjects){
+//            subjectBuilder.append(subject).append(",");
+//        }
+//        if (subjectBuilder.length() > 0)
+//            changeClassQuery.put("subjects", subjectBuilder.substring(0, subjectBuilder.length() - 1));
+//        StringBuilder gradeBuilder = new StringBuilder();
+//        for(int grade : grades){
+//            gradeBuilder.append(grade).append(",");
+//        }
+//        if (gradeBuilder.length() > 0)
+//            changeClassQuery.put("grades", gradeBuilder.substring(0, gradeBuilder.length() - 1));
+//
+//        List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForCross(changeClassQuery);
+//
+//
+//        for (com.stylefeng.guns.modular.system.model.Class classInfo : classList){
+//            if (null == classInfo){
+//                continue;
+//            }
+//            if (!(classInfo.isValid())){
+//                continue;
+//            }
+//
+//            classSet.add(classInfo);
+//        }
+//
+//        // TODO 暂屏蔽，25日测试完成后放开
+//        classSet = new HashSet<>();
+//        return ClassListResponse.me(classSet);
+//    }
+
 
     @RequestMapping(value = "/class/list4cross", method = RequestMethod.POST)
-    @ApiOperation(value="可跨报班级列表", httpMethod = "POST", response = ClassListResponse.class)
-    public Responser listClass4Cross(){
+    @ApiOperation(value="可跨报班级列表", httpMethod = "POST", response = ClassCrossListResponse.class)
+    public Responser listClass4CrossNew(@RequestBody
+                                            @Valid
+                                                    AdjustQueryRequester requester){
 
         Member member = currMember();
 
+        List<Student> studentList = studentService.listStudents(member.getUserName());
+        Set<Class> classSignSet = new HashSet<>();
+        Set<Class> classChangeSet = new HashSet<>();
+        for(Student student : studentList) {
+            List<StudentClass> studentClassInfoList = studentClassService.selectCurrentClassInfo(student);
+            if (null == studentClassInfoList || studentClassInfoList.isEmpty()){
+                // 老学员新报
+                classSignSet.addAll(listClass4CrossWithSign(student));
+            }else{
+                for(StudentClass studentClass : studentClassInfoList) {
+                    classChangeSet.addAll(listClass4CrossWithChange(studentClass.getClassCode()));
+                }
+            }
+        }
+
+        if (classSignSet.isEmpty() && classChangeSet.isEmpty()){
+
+        }
+
+        return ClassCrossListResponse.me(classSignSet, classChangeSet);
+
+    }
+
+    private Collection<? extends Class> listClass4CrossWithSign(Student student) {
         // 用户历史报班列表
         Map<String, Object> historyQueryMap = new HashMap<>();
         historyQueryMap.put("studyFinished", true);
-        List<com.stylefeng.guns.modular.system.model.Class> hisClassList = studentClassService.selectMemberHistorySignedClass(member, historyQueryMap);
+        List<com.stylefeng.guns.modular.system.model.Class> hisClassList = studentClassService.selectMemberHistorySignedClass(student, historyQueryMap);
 
         // 只春、秋学期才能支持续保、跨报
         Iterator<Class> hisClassIterator = hisClassList.iterator();
-        Set<Integer> cycles = new HashSet<>();
-        Set<Integer> grades = new HashSet<>();
         Set<Integer> subjects = new HashSet<>();
         while(hisClassIterator.hasNext()){
             Class hisClassInfo = hisClassIterator.next();
@@ -485,8 +595,6 @@ public class EducationController extends ApiController {
             switch(cycle){
                 case 1:
                 case 2:
-                    cycles.add(cycle);
-                    grades.add(hisClassInfo.getGrade());
                     subjects.add(Integer.parseInt(hisCourseInfo.getSubject()));
                     break;
                 default:
@@ -498,36 +606,21 @@ public class EducationController extends ApiController {
         Set<Class> classSet = new HashSet<>();
         if (hisClassList.isEmpty()){
             // 没有订购过课程的用户，直接返回
-            return ClassListResponse.me(classSet);
+            return classSet;
         }
 
         // 老用户可以享受优先报名资格
         Map<String, Object> changeClassQuery = new HashMap<String, Object>();
-        changeClassQuery.put("signFutureBeginDate", DateUtil.format(DateUtils.addDays(new Date(), 1), "yyyy-MM-dd"));
-        changeClassQuery.put("signFutureEndDate", DateUtil.format(DateUtils.addDays(new Date(), 365), "yyyy-MM-dd"));
         changeClassQuery.put("signable", ClassSignableEnum.YES.code);
 
-        StringBuilder cycleBuilder = new StringBuilder();
-        for(int cycle : cycles){
-            cycleBuilder.append(cycle).append(",");
-        }
-        if (cycleBuilder.length() > 0)
-            changeClassQuery.put("cycles", cycleBuilder.substring(0, cycleBuilder.length() - 1));
         StringBuilder subjectBuilder = new StringBuilder();
         for(int subject : subjects){
             subjectBuilder.append(subject).append(",");
         }
         if (subjectBuilder.length() > 0)
             changeClassQuery.put("subjects", subjectBuilder.substring(0, subjectBuilder.length() - 1));
-        StringBuilder gradeBuilder = new StringBuilder();
-        for(int grade : grades){
-            gradeBuilder.append(grade).append(",");
-        }
-        if (gradeBuilder.length() > 0)
-            changeClassQuery.put("grades", gradeBuilder.substring(0, gradeBuilder.length() - 1));
 
-        List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForChange(changeClassQuery);
-
+        List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForCross(changeClassQuery);
 
         for (com.stylefeng.guns.modular.system.model.Class classInfo : classList){
             if (null == classInfo){
@@ -540,9 +633,51 @@ public class EducationController extends ApiController {
             classSet.add(classInfo);
         }
 
-        // TODO 暂屏蔽，25日测试完成后放开
-        classSet = new HashSet<>();
-        return ClassListResponse.me(classSet);
+        return classSet;
+    }
+
+    private Collection<? extends Class> listClass4CrossWithChange(String classCode) {
+
+        Class currClass = classService.get(classCode);
+        Course course = courseService.get(currClass.getCourseCode());
+
+        Map<String, Object> changeClassQuery = new HashMap<String, Object>();
+        changeClassQuery.put("classCycles", String.valueOf(currClass.getCycle()));
+        changeClassQuery.put("grades", String.valueOf(currClass.getGrade()));
+        changeClassQuery.put("abilities", String.valueOf(currClass.getAbility()));
+        changeClassQuery.put("subjects", course.getSubject());
+        changeClassQuery.put("signable", ClassSignableEnum.YES.code);
+
+        List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForCrossChange(changeClassQuery);
+
+        Set<Class> classSet = new HashSet<>();
+        for (com.stylefeng.guns.modular.system.model.Class classInfo : classList){
+            // 查询班级剩余报名额度
+            Wrapper<StudentClass> queryWrapper = new EntityWrapper<>();
+            queryWrapper.eq("class_code", classInfo.getCode());
+            queryWrapper.eq("status", GenericState.Valid.code);
+            int existCount = studentClassService.selectCount(queryWrapper);
+
+            if (existCount >= classInfo.getQuato() ){
+                continue;
+            }
+
+            if (null == classInfo){
+                continue;
+            }
+            if (!(classInfo.isValid())){
+                continue;
+            }
+            if (classInfo.getCode().equals(currClass.getCode())){
+                // 过滤掉自己
+                continue;
+            }
+            if (currClass.getPrice().equals(classInfo.getPrice())){
+                classSet.add(classInfo);
+            }
+        }
+
+        return classSet;
     }
 
     @RequestMapping(value = "/adjust/course", method = RequestMethod.POST)

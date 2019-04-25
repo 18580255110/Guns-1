@@ -90,7 +90,7 @@
         (
         (
         (
-        tb_student_class sc join tb_student s on sc.student_code = s.code and sc.status = 1
+        tb_student_class sc join tb_student s on sc.student_code = s.code and (sc.status = 1 or sc.status = 2)
         )
         join tb_member m on m.user_name = s.user_name
         )
@@ -98,8 +98,13 @@
         )
         <where>
             <!-- 班级 -->
-            and m.user_name = #{member}
-
+            <if test="null != member">
+              and m.user_name = #{member}
+            </if>
+            <!-- 学员 -->
+            <if test="null != student">
+                and s.code = #{student}
+            </if>
             <if test="null != studyFinished">
                 and c.end_date &lt; date_format(now(), '%Y-%m-%d')
             </if>
