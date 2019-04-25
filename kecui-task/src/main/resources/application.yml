@@ -15,7 +15,7 @@ application:
       order-url: https://api.mch.weixin.qq.com/pay/unifiedorder
       notify-url: http://api.kecui.com.cn/pay/weixin/notify
   message:
-    captch.template: SMS_150742325
+    captch.template: SMS_163431486
   education:
     adust.maxTimes: 4
 

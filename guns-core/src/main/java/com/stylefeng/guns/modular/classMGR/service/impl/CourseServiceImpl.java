@@ -74,9 +74,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
         int classCount = classService.selectCount(classQueryWrapper);
 
-        if (classCount > 0)
-            // 对象正在使用
-            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"课程已有排班计划"});
+//        if (classCount > 0)
+//            // 对象正在使用
+//            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"课程已有排班计划"});
 
         existCourse.setStatus(GenericState.Invalid.code);
         updateById(existCourse);
@@ -133,9 +133,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         queryWrapper.eq("status", GenericState.Valid.code);
         int classRelationCount = classService.selectCount(queryWrapper);
 
-        if (classRelationCount > 0){
-            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"课程已排班"});
-        }
+//        if (classRelationCount > 0){
+//            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"课程已排班"});
+//        }
 
         int newPeriod = course.getPeriod();
         int oldPeriod = existCourse.getPeriod();

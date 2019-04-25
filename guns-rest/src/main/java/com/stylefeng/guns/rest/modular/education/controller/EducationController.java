@@ -540,6 +540,8 @@ public class EducationController extends ApiController {
             classSet.add(classInfo);
         }
 
+        // TODO 暂屏蔽，25日测试完成后放开
+        classSet = new HashSet<>();
         return ClassListResponse.me(classSet);
     }
 

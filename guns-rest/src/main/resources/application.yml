@@ -22,7 +22,7 @@ application:
       order-url: https://gateway.test.95516.com/gateway/api/appTransReq.do
       notify-url: http://api.kecui.com.cn/pay/weixin/notify
   message:
-    captch.template: SMS_150742325
+    captch.template: SMS_163431486
   education:
     adust.maxTimes: 4
   auth:
