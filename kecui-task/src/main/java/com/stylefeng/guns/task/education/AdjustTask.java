@@ -27,7 +27,7 @@ public class AdjustTask {
     @Autowired
     private IAdjustStudentService adjustStudentService;
 
-    @Scheduled(fixedDelay = 60000)
+//    @Scheduled(fixedDelay = 60000)
     public void handleAdjustApply(){
         Administrator administrator = new Administrator();
         administrator.setAccount("1");
@@ -55,7 +55,7 @@ public class AdjustTask {
     }
 
 
-    @Scheduled(fixedDelay = 60000)
+//    @Scheduled(fixedDelay = 60000)
     public void handleChangeApply(){
         Administrator administrator = new Administrator();
         administrator.setAccount("1");
@@ -69,7 +69,7 @@ public class AdjustTask {
                 ;
         List<AdjustStudent> adjustList = adjustStudentService.selectList(queryWrapper);
 
-        log.info("Got <{}> sms sequence need to send!", adjustList.size());
+        log.info("Got <{}> adjust apply need to handle!", adjustList.size());
         for(AdjustStudent adjustApply : adjustList){
             AdjustStudentApproveStateEnum action = AdjustStudentApproveStateEnum.Refuse;
             String remark = "";
