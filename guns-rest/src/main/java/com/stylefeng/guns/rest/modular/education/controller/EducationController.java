@@ -549,9 +549,7 @@ public class EducationController extends ApiController {
 
     @RequestMapping(value = "/class/list4cross", method = RequestMethod.POST)
     @ApiOperation(value="可跨报班级列表", httpMethod = "POST", response = ClassCrossListResponse.class)
-    public Responser listClass4CrossNew(@RequestBody
-                                            @Valid
-                                                    AdjustQueryRequester requester){
+    public Responser listClass4CrossNew(){
 
         Member member = currMember();
 

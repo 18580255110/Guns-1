@@ -83,8 +83,8 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
     public List<StudentClass> selectCurrentClassInfo(Student student) {
         Wrapper<StudentClass> queryWrapper = new EntityWrapper<StudentClass>();
 
-        queryWrapper.eq("studentCode", student.getCode());
-        queryWrapper.eq("stuats", GenericState.Valid.code);
+        queryWrapper.eq("student_code", student.getCode());
+        queryWrapper.eq("status", GenericState.Valid.code);
 
         return selectList(queryWrapper);
     }
