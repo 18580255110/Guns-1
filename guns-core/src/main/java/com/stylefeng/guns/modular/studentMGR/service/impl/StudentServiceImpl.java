@@ -11,10 +11,8 @@ import com.stylefeng.guns.modular.education.service.IStudentClassService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.dao.ScheduleStudentMapper;
 import com.stylefeng.guns.modular.system.dao.StudentMapper;
+import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
-import com.stylefeng.guns.modular.system.model.ScheduleStudent;
-import com.stylefeng.guns.modular.system.model.Student;
-import com.stylefeng.guns.modular.system.model.StudentClass;
 import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.PathUtil;
@@ -55,6 +53,13 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
 
     public Student getOne(Student student){
         return studentMapper.selectOne(student);
+    }
+
+    public Map<String, Object> getMap(Integer id) {
+        if (null == id)
+            return new HashMap<String, Object>();
+
+        return selectMap(new EntityWrapper<Student>().eq("id", id));
     }
 
     @Override

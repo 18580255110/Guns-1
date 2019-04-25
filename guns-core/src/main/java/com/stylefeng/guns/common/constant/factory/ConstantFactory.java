@@ -313,7 +313,7 @@ public class ConstantFactory implements IConstantFactory {
      * @return
      */
     @Override
-    @Cacheable(value = Cache.DICT_CONSTANT, key = "'" + CacheKey.DICT_CODE + "'+#dictCode")
+    @Cacheable(value = Cache.DICT_CONSTANT, key = "'" + CacheKey.DICT_CODE + "'+#grade")
     public String getGradeName(Integer grade) {
         return getDictsByName("授课年级", grade);
     }

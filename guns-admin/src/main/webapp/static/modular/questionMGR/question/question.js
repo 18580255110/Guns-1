@@ -18,6 +18,7 @@ Question.initColumn = function () {
         {title: '试题编码', field: 'code', visible: false, align: 'center', valign: 'middle'},
         {title: '试题类型', field: 'typeName', visible: true, align: 'center', valign: 'middle'},
         {title: '试题学科', field: 'subjectName', visible: true, align: 'center', valign: 'middle'},
+        {title: '试题年级', field: 'gradeName', visible: true, align: 'center', valign: 'middle'},
         {title: '答案', field: 'expactAnswer', visible: false, align: 'center', valign: 'middle'},
         {title: '出题人', field: 'teacherName', visible: true, align: 'center', valign: 'middle'},
         {title: '状态', field: 'status', visible: true, align: 'center', valign: 'middle',
@@ -94,7 +95,22 @@ Question.openQuestionDetail = function () {
         this.layerIndex = index;
     }
 };
+/**
+ * 删除
+ */
+Question.delQuestionDetail = function () {
 
+    if (this.check()) {
+        var ajax = new $ax(Feng.ctxPath + "/question/delete", function (data) {
+            Feng.success("删除成功!");
+            Expense.table.refresh();
+        }, function (data) {
+            Feng.error("删除失败!" + data.responseJSON.message + "!");
+        });
+        ajax.set("questionId",  Question.seItem.id);
+        ajax.start();
+    }
+}
 /**
  * 查询入学诊断列表
  */
@@ -103,6 +119,7 @@ Question.search = function () {
     queryData['condition'] = $("#condition").val();
     queryData['subject'] = $("#subject").val();
     queryData['status'] = $("#status").val();
+    queryData['grade'] = $("#grade").val();
     Question.table.refresh({query: queryData});
 };
 

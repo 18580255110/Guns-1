@@ -7,11 +7,10 @@ import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.base.controller.BaseController;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.log.LogObjectHolder;
+import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.studentMGR.warpper.StudentWrapper;
-import com.stylefeng.guns.modular.system.model.Attachment;
-import com.stylefeng.guns.modular.system.model.Student;
-import com.stylefeng.guns.modular.system.model.Teacher;
+import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.service.IAttachmentService;
 import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.PathUtil;
@@ -44,6 +43,8 @@ public class StudentController extends BaseController {
 
     @Autowired
     private IStudentService studentService;
+    @Autowired
+    private IMemberService memberService;
 
     @Autowired
     private IAttachmentService attachmentService;
@@ -69,17 +70,22 @@ public class StudentController extends BaseController {
      */
     @RequestMapping("/student_update/{studentId}")
     public String studentUpdate(@PathVariable Integer studentId, Model model) {
-        Student student = studentService.selectById(studentId);
+        Map<String, Object> map = studentService.getMap(studentId);
 
-        if (null == student)
+        if (map.isEmpty())
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"学员信息"});
 
-        List<Attachment> avatarList = attachmentService.listAttachment(Student.class.getSimpleName(), student.getCode());
-        if (null != avatarList && avatarList.size() > 0)
-            student.setAvatar(String.valueOf(avatarList.get(0).getId()));
+        List<Attachment> avatarList = attachmentService.listAttachment(Student.class.getSimpleName(), (String) map.get("code"));
+        if (null != avatarList && avatarList.size() > 0){
+            map.put("avatar",String.valueOf(avatarList.get(0).getId()));
+        }
 
-        model.addAttribute("item", student);
-        LogObjectHolder.me().set(student);
+        Member member = memberService.selectOne(new EntityWrapper<Member>().eq("user_name", map.get("userName")));
+        if( member != null){
+            map.put("parentPhone",member.getMobileNumber());
+        }
+        model.addAttribute("item", map);
+        LogObjectHolder.me().set(map);
         return PREFIX + "student_edit.html";
     }
 
@@ -110,7 +116,16 @@ public class StudentController extends BaseController {
             }
         });
         //包装数据
-        new StudentWrapper(pageMap.getRecords()).warp();
+        List<Map<String, Object>> stuRecords = pageMap.getRecords();
+        if(!stuRecords.isEmpty()){
+            for (Map<String, Object> stuRecord : stuRecords) {
+                Member member = memberService.selectOne(new EntityWrapper<Member>().eq("user_name", stuRecord.get("userName")));
+                if(member != null){
+                    stuRecord.put("parentPhone",member.getMobileNumber());
+                }
+            }
+        }
+        new StudentWrapper(stuRecords).warp();
         return super.packForBT(pageMap);
     }
 
@@ -119,9 +134,17 @@ public class StudentController extends BaseController {
      */
     @RequestMapping(value = "/add")
     @ResponseBody
-    public Object add(Student student) {
+    public Object add(Student student,String parentPhone) {
         student.setCode(CodeKit.generateStudent());
         studentService.insert(student);
+        if(StringUtils.isNotEmpty(parentPhone)){
+            Member member = memberService.selectOne(new EntityWrapper<Member>() {{
+                setAttr("user_name", parentPhone);
+            }});
+            member.setMobileNumber(parentPhone);
+            memberService.updateById(member);
+        }
+
         return SUCCESS_TIP;
     }
 
@@ -150,7 +173,7 @@ public class StudentController extends BaseController {
      */
     @RequestMapping(value = "/update")
     @ResponseBody
-    public Object update(Student student, String masterName, String masterCode) {
+    public Object update(Student student, String masterName, String masterCode,String parentPhone) {
 
         Attachment icon = null;
         List<Attachment> attachmentList = attachmentService.listAttachment(masterName, masterCode);
@@ -160,7 +183,15 @@ public class StudentController extends BaseController {
         }
 
         studentService.updateById(student);
-
+        if(StringUtils.isNotEmpty(parentPhone)){
+            Member member = memberService.selectOne(new EntityWrapper<Member>() {{
+                eq("user_name", student.getUserName());
+            }});
+            if( member != null ){
+                member.setMobileNumber(parentPhone);
+                memberService.updateById(member);
+            }
+        }
         // 更新ICON资源
         if (null != icon && null != icon.getId())
             try {

@@ -9,6 +9,7 @@
         <result column="question" property="question" />
         <result column="type" property="type" />
         <result column="subject" property="subject" />
+        <result column="grade" property="grade" />
         <result column="status" property="status" />
         <result column="expact_answer" property="expactAnswer" />
         <result column="auto_marking" property="autoMarking" />
@@ -18,7 +19,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        a.id, a.code, a.question, a.type, a.subject, a.status, a.expact_answer, a.auto_marking, a.teacher, a.teacher_name
+        a.id, a.code, a.question, a.type, a.subject, a.grade, a.status, a.expact_answer, a.auto_marking, a.teacher, a.teacher_name
     </sql>
 
 
@@ -52,6 +53,10 @@
             <if test="null != status">
                 and a.status = #{status}
             </if>
+            <if test="null != grade">
+                and a.grade = #{grade}
+            </if>
         </where>
+        order by a.id
     </select>
 </mapper>

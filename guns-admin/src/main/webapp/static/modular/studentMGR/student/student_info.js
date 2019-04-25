@@ -31,7 +31,14 @@ var StudentInfoDlg = {
                     message: '在读年级不能为空'
                 }
             }
-        }
+        },
+        parentPhone: {
+            validators: {
+                notEmpty: {
+                    message: '家长手机号不能为空'
+                }
+            }
+        },
     }
 };
 
@@ -86,6 +93,8 @@ StudentInfoDlg.collectData = function() {
     .set('status')
     .set('masterName')
     .set('masterCode')
+    .set('userName')
+    .set('parentPhone')
     ;
 }
 
@@ -117,8 +126,9 @@ StudentInfoDlg.addSubmit = function() {
         StudentInfoDlg.close();
     },function(data){
         Feng.error("添加失败!" + data.responseJSON.message + "!");
-    });
+    }); 
     ajax.set(this.studentInfoData);
+    ajax.set("parentPhone",studentInfoData["parentPhone"]);
     ajax.start();
 }
 

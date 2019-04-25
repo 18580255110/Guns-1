@@ -25,6 +25,8 @@ Student.initColumn = function () {
             {title: '在读年级', field: 'gradeName', visible: true, align: 'center', valign: 'middle'},
             {title: '在读学校', field: 'school', visible: true, align: 'center', valign: 'middle'},
             {title: '目标学校', field: 'targetSchool', visible: true, align: 'center', valign: 'middle'},
+            {title: '家长账号', field: 'userName', visible: true, align: 'center', valign: 'middle'},
+            {title: '家长手机号', field: 'parentPhone', visible: true, align: 'center', valign: 'middle'},
             {title: '状态', field: 'status', visible: true, align: 'center', valign: 'middle',
                 formatter: function(value, row){
                     if (1 == value)

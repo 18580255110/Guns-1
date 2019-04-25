@@ -30,6 +30,7 @@
             <input type="hidden" id="typeValue" value="${item.type}">
             <input type="hidden" id="statusValue" value="${item.status}">
             <input type="hidden" id="questionValue" value="${item.question}">
+            <input type="hidden" id="gradeValue" value="${item.grade}">
 
             <div class="row">
                 <div class="col-sm-11">
@@ -40,6 +41,11 @@
             <div class="row">
                 <div class="col-sm-11">
                     <#dictSelector id="subject" name ="试题学科" code="subject_type" label="试题学科"  underline="true"  width="75%"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-11">
+                    <#dictSelector id="grade" name ="试题年级" code="school_grade" label="试题年级"  underline="true"  width="75%"/>
                 </div>
             </div>
 

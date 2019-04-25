@@ -172,6 +172,8 @@ public class PaperController extends BaseController {
         Page<Map<String, Object>> pageMap = examinePaperService.selectMapsPage(page, new EntityWrapper<ExaminePaper>() {{
             if (queryParams.containsKey("condition") && StringUtils.isNotEmpty(queryParams.get("condition"))) {
                 eq("code", queryParams.get("condition"));
+                or();
+                like("question",queryParams.get("condition"));
             }
             if (StringUtils.isNotEmpty(queryParams.get("status"))) {
                 try {
@@ -184,6 +186,13 @@ public class PaperController extends BaseController {
                 try {
                     int subject = Integer.parseInt(queryParams.get("subject"));
                     eq("subject", subject);
+                } catch (Exception e) {
+                }
+            }
+            if (StringUtils.isNotEmpty(queryParams.get("grade"))) {
+                try {
+                    String grade = queryParams.get("grade");
+                    eq("grade", grade);
                 } catch (Exception e) {
                 }
             }

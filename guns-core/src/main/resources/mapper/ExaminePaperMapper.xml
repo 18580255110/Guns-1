@@ -17,7 +17,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
+<<<<<<< HEAD
         id, code, grades, subject, count, total_score, teacher, create_date, status
+=======
+        id, code, grades, subject, ability, count, total_score, teacher, create_date, status
+>>>>>>> 5f0e5ee0adde60c167d41742fc24f1c0a89a3f22
     </sql>
 
 </mapper>

@@ -133,6 +133,7 @@ PaperWizard.SelectedQuestion.initColumn = function () {
         {title: '试题编码', field: 'code', visible: false, align: 'center', valign: 'middle'},
         {title: '试题题目', field: 'question', visible: true, align: 'center', valign: 'middle'},
         {title: '试题类型', field: 'typeName', visible: true, align: 'center', valign: 'middle'},
+        {title: '试题年级', field: 'gradeName', visible: true, align: 'center', valign: 'middle'},
         {title: '出题人', field: 'teacherName', visible: true, align: 'center', valign: 'middle'},
         {title: '分值', field: 'score', visible: true, align: 'center', valign: 'middle',
             formatter: function(val, row){
@@ -154,6 +155,7 @@ PaperWizard.UnSelectQuestion.initColumn = function () {
         {title: '试题编码', field: 'code', visible: false, align: 'center', valign: 'middle'},
         {title: '试题题目', field: 'question', visible: true, align: 'center', valign: 'middle'},
         {title: '试题类型', field: 'typeName', visible: true, align: 'center', valign: 'middle'},
+        {title: '试题年级', field: 'gradeName', visible: true, align: 'center', valign: 'middle'},
         {title: '出题人', field: 'teacherName', visible: true, align: 'center', valign: 'middle'},
         {title: '分值', field: 'score', visible: false, align: 'center', valign: 'middle'}
     ];
@@ -286,11 +288,9 @@ PaperWizard.collectData = function() {
     this
         .set('code')
         .set('id')
-        .set('grades')
+        .set('grade')
         .set('subject')
-        .set('ability')
-        .set('examTime')
-        .set('passScore');
+        .set('question')
 
     var questions = PaperWizard.SelectedQuestion.seCodes.slice(0);
     console.log(questions);
@@ -323,6 +323,7 @@ PaperWizard.unselectedQuestionSearch = function(){
     var queryData = {};
     queryData['condition'] = $("#condition").val();
     queryData['subject'] = $("#subject").val();
+    queryData['grade'] = $("#grade").val();
     queryData['status'] = 1;
     queryData['workingCodes'] = PaperWizard.SelectedQuestion.seCodes.join(',');
     PaperWizard.UnSelectQuestion.table.refresh({query: queryData});
@@ -396,6 +397,10 @@ $(function () {
             if (step == 1 && step > prev){
                 // 正向进入到"选择题目"步骤时
                 $('#questionItemCount').val(PaperWizard.SelectedQuestion.seCodes.length);
+                // 学科
+                $('#subject').val($('#subject1').val());
+                // 年级
+                $('#grade').val($('#grade1').val());
             }
 
             if (step == 1 && step < prev){

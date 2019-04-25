@@ -91,6 +91,7 @@ QuestionInfoDlg.collectData = function() {
     .set('id')
     .set('code')
     .set('type')
+    .set('grade')
     .set('subject');
 
     this.clearNullDom();
@@ -279,6 +280,7 @@ $(function() {
     $("#type").val($("#typeValue").val());
     $("#subject").val($("#subjectValue").val());
     $("#status").val($("#statusValue").val());
+    $("#grade").val($("#gradeValue").val());
 
     //初始化编辑器
     var E = window.wangEditor;

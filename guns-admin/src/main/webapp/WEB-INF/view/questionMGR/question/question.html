@@ -13,6 +13,9 @@
                                 <#dictSelectorCondition id="subject" name="学科" code="subject_type" placeholder="-- 选择学科 --" />
                             </div>
                             <div class="col-sm-3">
+                                <#dictSelectorCondition id="grade" name="年级" code="school_grade" placeholder="-- 选择年级 --" />
+                            </div>
+                            <div class="col-sm-3">
                                 <#SelectCon id="status" name="状态" >
                                     <option value="">全部</option>
                                     <option value="1">启用</option>
@@ -32,6 +35,9 @@
                             @}
                             @if(shiro.hasPermission("/question/update")){
                                 <#button name="修 改" icon="fa-edit" clickFun="Question.openQuestionDetail()" space="true"/>
+                            @}
+                            @if(shiro.hasPermission("/question/delete")){
+                                <#button name="删 除" icon="fa-remove" clickFun="Question.delQuestionDetail()" space="true"/>
                             @}
                         </div>
                         <#table id="QuestionTable"/>

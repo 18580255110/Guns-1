@@ -8,6 +8,7 @@
             <input type="hidden" id="genderValue" value="${item.gender}">
             <input type="hidden" id="gradeValue" value="${item.grade}">
             <input type="hidden" id="status" value="${item.status}">
+            <input type="hidden" id="userName" value="${item.userName}">
 
             <div class="row">
                 <div class="col-sm-6 b-r">
@@ -20,6 +21,7 @@
                     <#dictSelector id="grade" name ="在读年级" code="school_grade" label="在读年级"  underline="true"  width="75%"/>
                     <#input id="school" name="在读学校" value="${item.school}" underline="true"/>
                     <#input id="targetSchool" name="目标学校" value="${item.targetSchool}" underline="true"/>
+                    <#input id="parentPhone" name="家长手机号" value="${item.parentPhone}" underline="true"/>
                 </div>
             </div>
 

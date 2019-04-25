@@ -48,6 +48,11 @@ public class Question extends Model<Question> {
     @ApiModelProperty(value = "subject", name = "学科", example = "5")
     private Integer subject;
     /**
+     * 试题学科：10数学 11语文 13化学
+     */
+    @ApiModelProperty(value = "grade", name = "年级", example = "5")
+    private String grade;
+    /**
      * 状态
      */
     @ApiModelProperty(hidden = true)
@@ -152,6 +157,14 @@ public class Question extends Model<Question> {
         this.teacherName = teacherName;
     }
 
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
     @Override
     protected Serializable pkVal() {
         return this.id;
@@ -165,6 +178,7 @@ public class Question extends Model<Question> {
         ", question=" + question +
         ", type=" + type +
         ", subject=" + subject +
+        ", grade=" + grade +
         ", status=" + status +
         ", expactAnswer=" + expactAnswer +
         ", autoMarking=" + autoMarking +

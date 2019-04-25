@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.stylefeng.guns.common.constant.factory.PageFactory;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.constant.state.YesOrNoState;
+import com.stylefeng.guns.common.enums.StatusEnum;
 import com.stylefeng.guns.common.exception.BizExceptionEnum;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.admin.Administrator;
@@ -153,6 +154,15 @@ public class QuestionController extends BaseController {
                 } catch (Exception e) {
                 }
             }
+            if (StringUtils.isNotEmpty(queryParams.get("grade"))) {
+                try {
+                    String grade = queryParams.get("grade");
+                    eq("grade", grade);
+                } catch (Exception e) {
+                }
+            }
+            ne("status",3);
+            orderBy("id",false);
         }});
         //包装数据
         new QuestionWrapper(pageMap.getRecords()).warp();
@@ -183,6 +193,21 @@ public class QuestionController extends BaseController {
         question.setTeacher(currAdmin.getAccount());
         question.setTeacherName(currAdmin.getName());
         questionService.create(question, questionItemList);
+
+        return SUCCESS_TIP;
+    }
+    /**
+     * 删除入学诊断题目
+     */
+    @RequestMapping(value = "/delete")
+    @ResponseBody
+    public Object delete(String questionId) {
+        if(StringUtils.isNotEmpty(questionId)){
+            Question question = new Question();
+            question.setId(Long.parseLong(questionId));
+            question.setStatus(StatusEnum.STATUS_DEL.getCode());
+            questionService.updateById(question);
+        }
 
         return SUCCESS_TIP;
     }

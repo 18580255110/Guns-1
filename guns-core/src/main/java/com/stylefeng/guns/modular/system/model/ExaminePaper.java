@@ -46,20 +46,17 @@ public class ExaminePaper extends Model<ExaminePaper> {
      */
     @ApiModelProperty(name = "subject", value = "适应学科", position = 2, example = "1")
     private String subject;
-
     /**
      * 题目数量
      */
     @ApiModelProperty(name = "count", value = "题目数量", position = 4, example = "20")
     private Integer count;
-
     /**
      * 总分数
      */
     @ApiModelProperty(name = "totalScore", value = "总分数", position = 6, example = "100")
     @TableField("total_score")
     private Integer totalScore;
-
     /**
      * 出题人
      */

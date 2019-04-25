@@ -20,6 +20,10 @@ import java.util.Map;
  */
 public interface IStudentService extends IService<Student> {
 
+
+    /** 获取map*/
+    Map<String,Object> getMap(Integer id);
+
     /**
      *  获取Student类
      * @return
