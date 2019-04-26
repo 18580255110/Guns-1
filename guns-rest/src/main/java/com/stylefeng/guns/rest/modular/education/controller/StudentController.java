@@ -2,6 +2,7 @@ package com.stylefeng.guns.rest.modular.education.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.model.Member;
 import com.stylefeng.guns.modular.system.model.Student;
@@ -62,6 +63,7 @@ public class StudentController extends ApiController {
         Wrapper<Student> queryWrapper = new EntityWrapper<Student>();
 
         queryWrapper.eq("user_name", currMember.getUserName());
+        queryWrapper.eq("status", GenericState.Valid.code);
 
         List<Student> studentList = studentService.selectList(queryWrapper);
 
