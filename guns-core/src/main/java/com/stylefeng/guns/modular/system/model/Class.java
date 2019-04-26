@@ -210,7 +210,7 @@ public class Class extends Model<Class> {
     @TableField("create_date")
     private Date createDate;
 
-    private Integer signQuato;
+    private transient Integer signQuato;
 
     public Long getId() {
         return id;
