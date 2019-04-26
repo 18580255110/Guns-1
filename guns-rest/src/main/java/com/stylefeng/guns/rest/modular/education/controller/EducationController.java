@@ -595,6 +595,8 @@ public class EducationController extends ApiController {
         // 只春、秋学期才能支持续保、跨报
         Iterator<Class> hisClassIterator = hisClassList.iterator();
         Set<Integer> subjects = new HashSet<>();
+        Set<Integer> abilities = new HashSet<>();
+        Set<Long> moneies = new HashSet<>();
         while(hisClassIterator.hasNext()){
             Class hisClassInfo = hisClassIterator.next();
             Course hisCourseInfo = courseService.get(hisClassInfo.getCourseCode());
@@ -604,6 +606,8 @@ public class EducationController extends ApiController {
                 case 1:
                 case 2:
                     subjects.add(Integer.parseInt(hisCourseInfo.getSubject()));
+                    abilities.add(hisClassInfo.getAbility());
+                    moneies.add(hisClassInfo.getPrice());
                     break;
                 default:
                     hisClassIterator.remove();
@@ -627,6 +631,13 @@ public class EducationController extends ApiController {
         }
         if (subjectBuilder.length() > 0)
             changeClassQuery.put("subjects", subjectBuilder.substring(0, subjectBuilder.length() - 1));
+
+        StringBuilder abilityBuilder = new StringBuilder();
+        for(int ability : abilities){
+            abilityBuilder.append(ability).append(",");
+        }
+        if (abilityBuilder.length() > 0)
+            changeClassQuery.put("abilities", abilityBuilder.substring(0, subjectBuilder.length() - 1));
 
         List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForCross(changeClassQuery);
 
