@@ -31,6 +31,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -576,6 +577,11 @@ public class EducationController extends ApiController {
 
         }
 
+        Date beginDate = DateUtil.parse("2019-04-26 09:00:00" , "yyyy-MM-dd HH:mm:ss");
+        if (beginDate.compareTo(new Date()) < 0){
+            classSignSet = new HashSet<>();
+            classChangeSet = new HashSet<>();
+        }
         return ClassCrossListResponse.me(classSignSet, classChangeSet, mapping);
 
     }
