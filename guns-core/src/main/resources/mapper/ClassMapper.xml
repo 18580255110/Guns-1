@@ -170,7 +170,7 @@
 
             <!-- 转班时间 -->
             <if test="null != changeDate">
-                and tc.cross_end_date &lt; #{changeDate} and tc.endDate &gt; #{changeDate}
+                and tc.cross_end_date &lt; #{changeDate} and tc.end_date &gt; #{changeDate}
             </if>
 
             <!-- 跨报时间 -->
