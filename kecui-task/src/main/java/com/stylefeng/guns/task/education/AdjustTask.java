@@ -55,7 +55,7 @@ public class AdjustTask {
     }
 
 
-//    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000)
     public void handleChangeApply(){
         Administrator administrator = new Administrator();
         administrator.setAccount("1");

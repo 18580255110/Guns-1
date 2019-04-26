@@ -3,6 +3,7 @@ package com.stylefeng.guns.modular.examineMGR.service;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
 import com.stylefeng.guns.modular.system.model.ExamineAnswer;
+import com.stylefeng.guns.modular.system.model.ExamineApply;
 import com.stylefeng.guns.modular.system.model.ExaminePaper;
 import com.stylefeng.guns.modular.system.model.Student;
 
@@ -22,7 +23,7 @@ public interface IExamineAnswerService extends IService<ExamineAnswer> {
      * @param examinePaper
      * @return
      */
-    ExamineAnswer generatePaper(Student student, ExaminePaper examinePaper);
+    ExamineAnswer generatePaper(Student student, ExaminePaper examinePaper, ExamineApply apply);
 
     /**
      * 获取答卷

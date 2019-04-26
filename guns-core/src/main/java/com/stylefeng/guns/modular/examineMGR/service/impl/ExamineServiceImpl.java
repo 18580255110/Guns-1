@@ -51,7 +51,7 @@ public class ExamineServiceImpl implements IExamineService {
     private IExamineApplyService examineApplyService;
 
     @Override
-    public ExaminePaper findExaminePaper(Map<String, Object> queryParams) {
+    public ExamineApply findExaminePaper(Map<String, Object> queryParams) {
 
         Class classInfo = classService.get((String)queryParams.get("classCode"));
 
@@ -64,9 +64,10 @@ public class ExamineServiceImpl implements IExamineService {
 
         List<ExamineApply> examineApplyList = examineApplyService.selectList(examinePaperQueryWrapper);
 
-        ExaminePaper paper = null;
+        ExamineApply apply = null;
         for(ExamineApply examineApply : examineApplyList){
-            paper = examinePaperService.get(examineApply.getPaperCode());
+            apply = examineApply;
+            ExaminePaper paper = examinePaperService.get(examineApply.getPaperCode());
 
             if (null == paper)
                 continue;
@@ -90,7 +91,7 @@ public class ExamineServiceImpl implements IExamineService {
             break;
         }
 
-        return paper;
+        return apply;
 /*
         Wrapper<ExaminePaper> examinePaperQueryWrapper = new EntityWrapper<>();
         examinePaperQueryWrapper.eq("ability", classInfo.getAbility());
@@ -110,10 +111,10 @@ public class ExamineServiceImpl implements IExamineService {
     }
 
     @Override
-    public Map<String, Collection<Question>> doBeginExamine(Student student, ExaminePaper examinePaper) {
+    public Map<String, Collection<Question>> doBeginExamine(Student student, ExaminePaper examinePaper, ExamineApply apply) {
 
         // 生成答卷
-        ExamineAnswer answerPaper = examineAnswerService.generatePaper(student, examinePaper);
+        ExamineAnswer answerPaper = examineAnswerService.generatePaper(student, examinePaper, apply);
 
         Wrapper<ExaminePaperItem> questionListQuery = new EntityWrapper<>();
         questionListQuery.eq("paper_code", examinePaper.getCode());
@@ -146,6 +147,7 @@ public class ExamineServiceImpl implements IExamineService {
         Date now = new Date();
         answerPaper.setStatus(ExamineAnswerStateEnum.Submit.code);
         answerPaper.setEndDate(now);
+        answerPaper.setDuration((int) (now.getTime() - answerPaper.getBeginDate().getTime() / 1000 / 60));
 
         examineAnswerService.updateById(answerPaper);
     }
@@ -154,7 +156,6 @@ public class ExamineServiceImpl implements IExamineService {
     public Collection<Map<String, Object>> findExamineAnswerPaperList(String student) {
         if (null == student)
             return new ArrayList<>();
-
 
         Wrapper<ExamineAnswer> examineAnswerWrapper = new EntityWrapper<>();
         examineAnswerWrapper.eq("student_code", student);

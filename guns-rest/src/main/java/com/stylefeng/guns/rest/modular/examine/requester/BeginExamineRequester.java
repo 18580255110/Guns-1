@@ -1,15 +1,10 @@
 package com.stylefeng.guns.rest.modular.examine.requester;
 
-import com.stylefeng.guns.modular.system.model.Member;
-import com.stylefeng.guns.modular.system.model.Student;
 import com.stylefeng.guns.rest.core.SimpleRequester;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 /**
  * @Description //TODO
@@ -26,6 +21,9 @@ public class BeginExamineRequester extends SimpleRequester {
     @ApiModelProperty(name = "paperCode", value = "试卷编码", required = true, example = "SJ000001")
     @NotBlank(message = "试卷编码不能为空")
     private String paperCode;
+    @ApiModelProperty(name = "applyId", value = "应用ID", required = true, example = "1")
+    @NotBlank(message = "applyId not empty")
+    private Long applyId;
 
     public String getStudent() {
         return student;
@@ -41,6 +39,14 @@ public class BeginExamineRequester extends SimpleRequester {
 
     public void setPaperCode(String paperCode) {
         this.paperCode = paperCode;
+    }
+
+    public Long getApplyId() {
+        return applyId;
+    }
+
+    public void setApplyId(Long applyId) {
+        this.applyId = applyId;
     }
 
     @Override

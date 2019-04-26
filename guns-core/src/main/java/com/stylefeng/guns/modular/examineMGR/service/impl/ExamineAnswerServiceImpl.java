@@ -32,7 +32,7 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
     private IExamineAnswerDetailService examineAnswerDetailService;
 
     @Override
-    public ExamineAnswer generatePaper(Student student, ExaminePaper examinePaper) {
+    public ExamineAnswer generatePaper(Student student, ExaminePaper examinePaper, ExamineApply apply) {
 
         ExamineAnswer answerPaper = new ExamineAnswer();
         Date now = new Date();
@@ -42,8 +42,7 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
         answerPaper.setStudentCode(student.getCode());
         answerPaper.setQuota(examinePaper.getCount());
         answerPaper.setTotalScore(examinePaper.getTotalScore());
-        // TODO 0424 测试时间从paperApply取
-        answerPaper.setExamTime(0);
+        answerPaper.setExamTime(apply.getExamTime());
         answerPaper.setStatus(ExamineAnswerStateEnum.Create.code);
         answerPaper.setBeginDate(now);
         answerPaper.setCreateDate(now);

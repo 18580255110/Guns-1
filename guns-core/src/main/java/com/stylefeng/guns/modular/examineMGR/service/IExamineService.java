@@ -19,7 +19,7 @@ public interface IExamineService {
      * @param queryParams
      * @return
      */
-    ExaminePaper findExaminePaper(Map<String, Object> queryParams);
+    ExamineApply findExaminePaper(Map<String, Object> queryParams);
 
     /**
      * 获取试卷
@@ -36,7 +36,7 @@ public interface IExamineService {
      * @param paper
      * @return
      */
-    Map<String, Collection<Question>> doBeginExamine(Student student, ExaminePaper paper);
+    Map<String, Collection<Question>> doBeginExamine(Student student, ExaminePaper paper, ExamineApply apply);
 
     /**
      *  @param code

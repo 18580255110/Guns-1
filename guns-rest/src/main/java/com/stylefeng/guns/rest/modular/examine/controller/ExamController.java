@@ -6,10 +6,7 @@ import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
-import com.stylefeng.guns.modular.examineMGR.service.IExaminePaperItemService;
-import com.stylefeng.guns.modular.examineMGR.service.IExamineService;
-import com.stylefeng.guns.modular.examineMGR.service.IQuestionItemService;
-import com.stylefeng.guns.modular.examineMGR.service.IQuestionService;
+import com.stylefeng.guns.modular.examineMGR.service.*;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
@@ -61,6 +58,12 @@ public class ExamController extends ApiController {
     @Autowired
     private IAttachmentService attachmentService;
 
+    @Autowired
+    private IExaminePaperService examinePaperService;
+
+    @Autowired
+    private IExamineApplyService examineApplyService;
+
     @ApiOperation(value="班级所需试卷", httpMethod = "POST", response = ExaminePaperDetailResponse.class)
     @RequestMapping(value = "/paper/findone", method = RequestMethod.POST)
     public Responser getPaper(
@@ -93,13 +96,17 @@ public class ExamController extends ApiController {
 
         // 查找符合当前学员和班级的试卷
         Map<String, Object> queryParams = requester.toMap();
-        ExaminePaper examinePaper = examineService.findExaminePaper(queryParams);
+        ExamineApply apply = examineService.findExaminePaper(queryParams);
 
-        if (null == examinePaper)
+        if (null == apply)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"试卷"});
 
-        return ExaminePaperDetailResponse.me(ExaminePaperDetail.me(examinePaper));
+        ExaminePaper paper = examinePaperService.get(apply.getPaperCode());
 
+        if (null == paper)
+            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"试卷"});
+
+        return ExaminePaperDetailResponse.me(ExaminePaperDetail.me(paper, apply));
     }
 
     @ApiOperation(value="试卷列表", httpMethod = "POST", response = PaperListResponse.class)
@@ -156,7 +163,9 @@ public class ExamController extends ApiController {
 
         ExaminePaper paper = examineService.getExaminePaper(requester.getPaperCode());
 
-        Map<String, Collection<Question>> beginResult = examineService.doBeginExamine(student, paper);
+        ExamineApply apply = examineApplyService.selectById(requester.getApplyId());
+
+        Map<String, Collection<Question>> beginResult = examineService.doBeginExamine(student, paper, apply);
 
         return ExamineOutlineResponse.me(beginResult);
     }
