@@ -137,4 +137,15 @@ public class JwtTokenUtil {
     public String getRandomKey() {
         return ToolUtil.getRandomString(6);
     }
+
+    public static void main(String[] args){
+        String token = "eyJhbGciOiJIUzUxMiJ9.eyJyYW5kb21LZXkiOiJoZzc2YWgiLCJzdWIiOiJMUzAwMDAyMCIsImV4cCI6MTU1Njg3MzY0NCwiaWF0IjoxNTU2MjY4ODQ0fQ.TaE0uePM6S8r4wfOHyMu9wcULkXx5nSG75N0hKKbhpXvxrmln982jvQprYgOh1eJTdsC1LVoGgQYv0MDVCwLiw";
+
+        Claims claims = Jwts.parser()
+                .setSigningKey("kc-secret-!q2W")
+                .parseClaimsJws(token)
+                .getBody();
+
+        System.out.println("ok");
+    }
 }

@@ -579,11 +579,6 @@ public class EducationController extends ApiController {
 
         }
 
-//        Date beginDate = DateUtil.parse("2019-04-26 09:00:00" , "yyyy-MM-dd HH:mm:ss");
-//        if (beginDate.compareTo(new Date()) < 0){
-//            classSignSet = new HashSet<>();
-//            classChangeSet = new HashSet<>();
-//        }
         return ClassCrossListResponse.me(classSignSet, classChangeSet, mapping, studentMapping);
 
     }

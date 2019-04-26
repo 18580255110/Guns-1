@@ -33,6 +33,9 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
 
     private String amount;
 
+    @ApiModelProperty(name = "signQuato", value = "报名人数", example = "10")
+    private Integer signQuato;
+
     @ApiModelProperty(name = "student", value = "学员名称", example = "小明")
     private String student;
 
@@ -110,12 +113,22 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
         this.planList = planList;
     }
 
+    @Override
+    public Integer getSignQuato() {
+        return signQuato;
+    }
+
+    @Override
+    public void setSignQuato(Integer signQuato) {
+        this.signQuato = signQuato;
+    }
+
     public static ClassResponser me(Class classInfo) {
         ClassResponser dto = new ClassResponser();
         BeanUtils.copyProperties(classInfo, dto);
         dto.setFormatPrice(dto.getPrice());
         dto.setAmount(dto.getPrice());
-
+        dto.setSignQuato(null == classInfo.getSignQuato() ? 0 : classInfo.getSignQuato());
         // 格式化开课时间描述
         formatClassTime(dto);
         // 判断是否能调课
