@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @Description //TODO
@@ -22,7 +23,7 @@ public class BeginExamineRequester extends SimpleRequester {
     @NotBlank(message = "试卷编码不能为空")
     private String paperCode;
     @ApiModelProperty(name = "applyId", value = "应用ID", required = true, example = "1")
-    @NotBlank(message = "applyId not empty")
+    @NotNull(message = "applyId not empty")
     private Long applyId;
 
     public String getStudent() {
