@@ -125,10 +125,6 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         if (existSelectedCount > 0)
             throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECTED);
 
-        // 检查班级报名状态
-        if (!skipTest)
-            classService.checkJoinState(classInfo, member, student);
-
         // 入学测试校验
         if (!skipTest && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
             Map<String, Object> queryParams = new HashMap<String, Object>();
@@ -146,6 +142,10 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
                     throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
             }
         }
+
+        // 检查班级报名状态
+        if (!skipTest)
+            classService.checkJoinState(classInfo, member, student);
 
         // 加入选课单
         Map<String, Object> extraParams = new HashMap<String, Object>();
@@ -247,7 +247,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         queryWrapper.eq("status", GenericState.Valid.code);
         int existCount = studentClassService.selectCount(queryWrapper);
 
-        if (existCount >= classInfo.getQuato() - 2){
+        if (existCount >= classInfo.getQuato()){
             throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_CAPACITY);
         }
 
