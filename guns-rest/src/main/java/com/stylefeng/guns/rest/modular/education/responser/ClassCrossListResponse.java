@@ -28,9 +28,11 @@ public class ClassCrossListResponse extends SimpleResponser {
         return currentList;
     }
 
-    public void setCurrentList(Collection<Class> currentList) {
+    public void setCurrentList(Map<String, String> studentMap, Collection<Class> currentList) {
         for(Class currClassInfo : currentList){
-            this.currentList.add(ClassResponser.me(currClassInfo));
+            ClassResponser classResponser = ClassResponser.me(currClassInfo);
+            classResponser.setStudent(studentMap.get(currClassInfo.getCode()));
+            this.currentList.add(classResponser);
         }
     }
 
@@ -63,13 +65,13 @@ public class ClassCrossListResponse extends SimpleResponser {
         return changeMapping;
     }
 
-    public static Responser me(Set<Class> classSignSet, Set<Class> classChangeSet, Map<String, Collection<Class>> changeMapping) {
+    public static Responser me(Set<Class> classSignSet, Set<Class> classChangeSet, Map<String, Collection<Class>> changeMapping, Map<String, String> studentMap) {
         ClassCrossListResponse response = new ClassCrossListResponse();
         response.setCode(SUCCEED);
         response.setMessage("查询成功");
 
         response.setSignList(classSignSet);
-        response.setCurrentList(classChangeSet);
+        response.setCurrentList(studentMap, classChangeSet);
         response.setChangeMapping(changeMapping);
         return response;
     }

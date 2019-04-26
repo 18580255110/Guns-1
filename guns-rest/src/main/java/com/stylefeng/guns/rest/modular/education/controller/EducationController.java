@@ -558,6 +558,7 @@ public class EducationController extends ApiController {
         Set<Class> classSignSet = new HashSet<>();
         Set<Class> classChangeSet = new HashSet<>();
         Map<String, Collection<Class>> mapping = new HashMap<String, Collection<Class>>();
+        Map<String, String> studentMapping = new HashMap<String, String>();
         for(Student student : studentList) {
             List<StudentClass> studentClassInfoList = studentClassService.selectCurrentClassInfo(student);
             if (null == studentClassInfoList || studentClassInfoList.isEmpty()){
@@ -569,6 +570,7 @@ public class EducationController extends ApiController {
                     Class classInfo = classService.get(currClassCode);
                     classChangeSet.add(classInfo);
                     mapping.put(currClassCode, listClass4CrossWithChange(studentClass.getClassCode()));
+                    studentMapping.put(currClassCode, studentClass.getStudentCode());
                 }
             }
         }
@@ -582,7 +584,7 @@ public class EducationController extends ApiController {
 //            classSignSet = new HashSet<>();
 //            classChangeSet = new HashSet<>();
 //        }
-        return ClassCrossListResponse.me(classSignSet, classChangeSet, mapping);
+        return ClassCrossListResponse.me(classSignSet, classChangeSet, mapping, studentMapping);
 
     }
 
