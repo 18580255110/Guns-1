@@ -16,6 +16,7 @@ import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.jcajce.provider.symmetric.AES;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,10 +149,18 @@ public class SignImportTask extends ImportTaskSupport {
         Student student = request.getStudent();
         Student currStudent = null;
         currStudent = studentService.get(student.getCode());
-        if (null == currStudent)
-            currStudent = studentService.addStudent(currMember.getUserName(), student);
+        if (null == currStudent) {
+            Wrapper<Student> queryWrapper = new EntityWrapper<Student>();
+            queryWrapper.eq("name", request.getStudent().getName());
+            queryWrapper.eq("user_name", currMember.getUserName());
+            queryWrapper.eq("status", GenericState.Valid.code);
+            currStudent = studentService.selectOne(queryWrapper);
 
-        if (null == currMember)
+            if (null == currStudent)
+                currStudent = studentService.addStudent(currMember.getUserName(), student);
+        }
+
+        if (null == currStudent)
             throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"学员信息"});
 
         // 下订单
