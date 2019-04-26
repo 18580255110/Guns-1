@@ -85,6 +85,9 @@ public class QuestionController extends BaseController {
             throw new GunsException(BizExceptionEnum.REQUEST_NULL);
 
         List<QuestionItem> questionItemList = questionItemService.selectList(new EntityWrapper<QuestionItem>().eq("question_code", question.getCode()).eq("status", GenericState.Valid.code));
+        if( question != null && question.getQuestion().contains("src=\"http://www.kecui.com.cn/download")){
+            question.setQuestion(question.getQuestion().replace("\"","'"));
+        }
         model.addAttribute("item", question);
         model.addAttribute("answerItemList", questionItemList);
 

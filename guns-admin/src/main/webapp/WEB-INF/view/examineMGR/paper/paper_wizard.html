@@ -11,7 +11,6 @@
 <input type="hidden" id="questionCodes" value='${questionCodes!}' />
 <input type="hidden" id="questionScores" value='${questionScores!}' />
 <input type="hidden" id="gradesValue" value="${item.grades!}" />
-<input type="hidden" id="abilityValue" value="${item.ability!}" />
 <input type="hidden" id="subjectValue" value="${item.subject!}" />
 <div class="ibox float-e-margins" style="heigth: 100%;">
     <div class="ibox-content">
@@ -21,15 +20,8 @@
                 <form id="basePaperForm" class="form-horizontal">
                 <div class="row">
                     <div class="col-sm-8">
-                        <!--
-                        <#dictSelector id="ability" name ="ability" code="ability" label="适应班次"  underline="true"  width="75%"/>
-                        -->
                         <#dictSelector id="subject" name ="subject" code="subject_type" label="适应学科"  underline="true"  width="75%"/>
                         <#dictSelector id="grades" name ="grades" code="school_grade" label="适应年级"  underline="true"  width="75%"/>
-                        <!--
-                        <#input id="examTime" name="测试时间" value="${item.examTime!0}"/>
-                        <#input id="passScore" name="及格分数" value="${item.passScore!0}"/>
-                        -->
                     </div>
                     <div class="col-sm-4">
                         <div class="text-center">

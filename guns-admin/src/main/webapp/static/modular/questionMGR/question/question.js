@@ -103,7 +103,7 @@ Question.delQuestionDetail = function () {
     if (this.check()) {
         var ajax = new $ax(Feng.ctxPath + "/question/delete", function (data) {
             Feng.success("删除成功!");
-            Expense.table.refresh();
+            Question.table.refresh();
         }, function (data) {
             Feng.error("删除失败!" + data.responseJSON.message + "!");
         });

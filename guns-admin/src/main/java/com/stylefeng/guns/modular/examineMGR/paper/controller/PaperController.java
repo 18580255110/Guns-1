@@ -171,9 +171,7 @@ public class PaperController extends BaseController {
         Page<ExaminePaper> page = new PageFactory<ExaminePaper>().defaultPage();
         Page<Map<String, Object>> pageMap = examinePaperService.selectMapsPage(page, new EntityWrapper<ExaminePaper>() {{
             if (queryParams.containsKey("condition") && StringUtils.isNotEmpty(queryParams.get("condition"))) {
-                eq("code", queryParams.get("condition"));
-                or();
-                like("question",queryParams.get("condition"));
+                like("code", queryParams.get("condition"));
             }
             if (StringUtils.isNotEmpty(queryParams.get("status"))) {
                 try {

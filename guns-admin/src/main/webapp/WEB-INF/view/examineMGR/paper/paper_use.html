@@ -8,28 +8,32 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">试卷编码</label>
                         <div class="col-sm-2">
-                            <input class="form-control" id="paperCode" type="text" value="${paper.code}">
+                            <input class="form-control" id="paperCode" type="text" value="${paper.code}" readonly="readonly">
                         </div>
 
                         <label class="col-sm-2 control-label">针对学科</label>
                         <div class="col-sm-2">
-                            <input class="form-control" id="subject" type="text" value="${paper.subjectName}">
+                            <input class="form-control" id="subject" type="text" value="${paper.subjectName}" readonly="readonly">
                         </div>
 
                         <label class="col-sm-2 control-label">出题人</label>
                         <div class="col-sm-2">
-                            <input class="form-control" id="teacher" type="text" value="${paper.teacher}">
+                            <input class="form-control" id="teacher" type="text" value="${paper.teacher}" readonly="readonly">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">题目数量</label>
                         <div class="col-sm-2">
-                            <input class="form-control" id="count" type="text" value="${paper.count}">
+                            <input class="form-control" id="count" type="text" value="${paper.count}" readonly="readonly">
                         </div>
 
                         <label class="col-sm-2 control-label">总分值</label>
                         <div class="col-sm-2">
-                            <input class="form-control" id="totalScore" type="text" value="${paper.totalScore}">
+                            <input class="form-control" id="totalScore" type="text" value="${paper.totalScore}" readonly="readonly">
+                        </div>
+                        <label class="col-sm-2 control-label">年级</label>
+                        <div class="col-sm-2 b-r">
+                            <input class="form-control" id="grades" type="text" value="${paper.gradeName}" readonly="readonly">
                         </div>
 
                         <div class="col-sm-2">
