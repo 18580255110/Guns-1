@@ -41,7 +41,10 @@ public class ClassWrapper extends BaseControllerWarpper{
         }
         int quato = Integer.parseInt(map.get("quato").toString());
         if (map.containsKey("signQuato")) {
-            int signQuato = Integer.parseInt(map.get("signQuato").toString());
+            int signQuato = 0;
+            try {
+                signQuato = Integer.parseInt(map.get("signQuato").toString());
+            }catch(Exception e){}
             map.put("remainderQuato", quato - signQuato);
         }
         Optional.ofNullable(map.get("price")).ifPresent(Price->map.put("price", new BigDecimal(Price.toString()).divide(YUAN_FEN).setScale(2, BigDecimal.ROUND_DOWN).toString()));

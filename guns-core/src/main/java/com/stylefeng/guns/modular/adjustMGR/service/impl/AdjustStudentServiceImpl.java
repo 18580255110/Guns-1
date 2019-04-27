@@ -14,6 +14,7 @@ import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
+import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
 import com.stylefeng.guns.modular.system.dao.AdjustStudentMapper;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
@@ -39,6 +40,9 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
 
     @Autowired
     private IClassService classService;
+
+    @Autowired
+    private IOrderService orderService;
 
     @Autowired
     private AdjustStudentMapper adjustStudentMapper;
@@ -207,6 +211,7 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
 
         // 转班
         if (AdjustStudentApproveStateEnum.Appove.code == approveState.code) {
+            //orderService.doCopyForChange(adjustStudent.getStudentCode(), adjustStudent.getSourceClass(), adjustStudent.getTargetClass());
             scheduleStudentService.doChange(adjustStudent.getStudentCode(), adjustStudent.getSourceClass(), adjustStudent.getTargetClass());
             studentClassService.doChange(adjustStudent.getStudentCode(), adjustStudent.getSourceClass(), adjustStudent.getTargetClass());
         }
