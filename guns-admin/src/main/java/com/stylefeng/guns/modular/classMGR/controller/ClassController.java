@@ -403,7 +403,7 @@ public class ClassController extends BaseController {
         Date now = new Date();
 
         Date beginDate = DateUtils.truncate(now, Calendar.MONTH);
-        Date endDate = DateUtils.addMonths(beginDate, 6);
+        Date endDate = DateUtils.addMonths(beginDate, 12);
 
         Map<String, Object> queryMap = new HashMap<String, Object>();
         queryMap.put("beginDate", beginDate);
