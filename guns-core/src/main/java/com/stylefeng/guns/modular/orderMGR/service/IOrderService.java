@@ -98,4 +98,12 @@ public interface IOrderService extends IService<Order> {
      * @return
      */
     Page<Map<String, Object>> selectMapsPage(Map<String, Object> queryParmas);
+
+    /**
+     * 订单拷贝-转班
+     * @param studentCode
+     * @param sourceClass
+     * @param targetClass
+     */
+    void doCopyForChange(String studentCode, String sourceClass, String targetClass);
 }

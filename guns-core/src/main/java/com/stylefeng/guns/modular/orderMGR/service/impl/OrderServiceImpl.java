@@ -24,8 +24,10 @@ import com.stylefeng.guns.util.CodeKit;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.plugin2.message.Message;
 
 import java.util.*;
 
@@ -267,6 +269,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         List<Map<String, Object>> resultMap = orderMapper.selectPageList(page, arguments);
         page.setRecords(resultMap);
         return page;
+    }
+
+    @Override
+    public void doCopyForChange(String studentCode, String sourceClass, String targetClass) {
+        String sourceOrderNo = studentClassService.getOrderNo(studentCode, sourceClass);
+
+        if (null == sourceOrderNo) {
+            log.error("===> Source order no not found");
+            throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"原班级编码"});
+        }
+
+        Order sourceOrder = get(sourceOrderNo);
+        if (null == sourceOrder) {
+            log.error("===> Source order not found");
+            throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"原班级"});
+        }
+
+        Order copyOrder = new Order();
+        String[] ignoreProperties = new String[]{"id"};
+        BeanUtils.copyProperties(sourceOrder, copyOrder, ignoreProperties);
+
+
     }
 
     private Map<String, Object> buildQueryArguments(Map<String, Object> queryParams) {

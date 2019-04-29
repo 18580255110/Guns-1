@@ -47,4 +47,13 @@ public interface IStudentClassService extends IService<StudentClass> {
      * @return
      */
     List<StudentClass> selectCurrentClassInfo(Student student);
+
+    /**
+     * 获取学员报班订单号
+     *
+     * @param studentCode
+     * @param sourceClass
+     * @return
+     */
+    String getOrderNo(String studentCode, String sourceClass);
 }

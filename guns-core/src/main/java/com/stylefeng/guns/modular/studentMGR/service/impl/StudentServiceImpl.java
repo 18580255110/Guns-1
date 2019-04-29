@@ -128,8 +128,8 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
             }
         }
 
-        if (!updatable)
-            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_STATE, new String[]{"学员已报班"});
+//        if (!updatable)
+//            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_STATE, new String[]{"学员已报班"});
 
         String[] ignoreProperties = new String[]{"id", "code", "userName"};
         BeanUtils.copyProperties(newStudent, existStudent, ignoreProperties);
