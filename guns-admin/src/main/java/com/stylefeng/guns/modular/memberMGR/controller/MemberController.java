@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.stylefeng.guns.common.constant.factory.PageFactory;
 import com.stylefeng.guns.core.base.controller.BaseController;
 import com.stylefeng.guns.log.LogObjectHolder;
+import com.stylefeng.guns.modular.member.MemberStarEnum;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.memberMGR.warpper.MemberWrapper;
 import com.stylefeng.guns.modular.system.model.Member;
+import com.stylefeng.guns.modular.system.model.Teacher;
+import com.stylefeng.guns.modular.teacherMGR.service.TeacherService;
 import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -37,6 +40,8 @@ public class MemberController extends BaseController {
 
     @Autowired
     private IMemberService memberService;
+    @Autowired
+    private TeacherService teacherService;
 
     /**
      * 跳转到会员管理首页
@@ -149,6 +154,18 @@ public class MemberController extends BaseController {
     @RequestMapping(value = "/update")
     @ResponseBody
     public Object update(Member member) {
+        /* 会员是老师-同步老师信息*/
+        Member oldMemBer = memberService.selectById(member.getId());
+        if(MemberStarEnum.Star_99.code == oldMemBer.getStar()){
+            Teacher teacher = teacherService.selectOne(new EntityWrapper<Teacher>() {{
+                eq("mobile", oldMemBer.getMobileNumber());
+            }});
+            if( teacher != null && !teacher.getMobile().equals(member.getMobileNumber())){
+                teacher.setMobile(member.getMobileNumber());
+                teacherService.updateById(teacher);
+            }
+        }
+        /*普通会员*/
         memberService.updateById(member);
         return SUCCESS_TIP;
     }

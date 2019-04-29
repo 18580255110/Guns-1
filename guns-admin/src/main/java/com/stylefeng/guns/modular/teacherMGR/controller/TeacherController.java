@@ -211,6 +211,18 @@ public class TeacherController extends BaseController {
 
         if (null == existTeacher)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"教师"});
+        /* 同步老师手机号到会员表 */
+        if(!existTeacher.getMobile().equals(teacher.getMobile())){
+            Teacher oldTeacher = existTeacher;
+            Member member = memberService.selectOne(new EntityWrapper<Member>() {{
+                eq("mobile_number", oldTeacher.getMobile());
+            }});
+            if( member != null){
+                member.setMobileNumber(teacher.getMobile());
+                memberService.updateById(member);
+            }
+        }
+
 
         teacherService.updateById(teacher);
 

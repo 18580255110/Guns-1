@@ -10,7 +10,8 @@ public enum MemberStarEnum {
     Star_0 (0, "游客"),
     Star_1 (1, "一星会员"),
     Star_2 (2, "二星会员"),
-    Star_3 (3, "三星会员")
+    Star_3 (3, "三星会员"),
+    Star_99 (99, "老师会员")
     ;
 
     public int code;
