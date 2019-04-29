@@ -11,6 +11,7 @@ import com.stylefeng.guns.modular.classMGR.service.ICourseOutlineService;
 import com.stylefeng.guns.modular.classMGR.service.ICourseService;
 import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.classRoomMGR.service.IClassroomService;
+import com.stylefeng.guns.modular.contentMGR.service.IContentService;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
@@ -83,8 +84,14 @@ public class EducationController extends ApiController {
     @Autowired
     private IStudentClassService studentClassService;
 
+    @Autowired
+    private IContentService contentService;
+
     @Value("${application.education.adjust.maxTimes:4}")
     private int maxAdjustTimes = 4;
+
+    @Value("${application.education.change.maxTimes:3}")
+    private int maxChangeTimes = 3;
 
     @RequestMapping(value = "/class/list", method = RequestMethod.POST)
     @ApiOperation(value="可报名班级列表", httpMethod = "POST", response = ClassListResponse.class)
@@ -234,6 +241,12 @@ public class EducationController extends ApiController {
 
         if (null == classInfo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
+
+        Wrapper<StudentClass> studentClassWrapper = new EntityWrapper<StudentClass>();
+        studentClassWrapper.eq("class_code", code);
+        studentClassWrapper.eq("status", GenericState.Valid.code);
+        int signCount = studentClassService.selectCount(studentClassWrapper);
+        classInfo.setSignQuato(signCount);
 
         Map<String, Object> queryMap = new HashMap<String, Object>();
         queryMap.put("classCode", classInfo.getCode());
@@ -579,8 +592,16 @@ public class EducationController extends ApiController {
 
         }
 
-        return ClassCrossListResponse.me(classSignSet, classChangeSet, mapping, studentMapping);
+        Date startTime = DateUtil.parse("2019-04-30 10:00:00", "yyyy-MM-dd HH:mm:ss");
+        if (startTime.compareTo(new Date()) >= 0){
+            classSignSet.clear();
+            classChangeSet.clear();
 
+            Content content = contentService.get("CT00000000000002");
+            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{content.getContent()});
+        }
+
+        return ClassCrossListResponse.me(classSignSet, classChangeSet, mapping, studentMapping);
     }
 
     private Collection<? extends Class> listClass4CrossWithSign(Student student) {

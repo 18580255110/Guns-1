@@ -1,9 +1,12 @@
 package com.stylefeng.guns.task.controller;
 
+import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
+import com.stylefeng.guns.modular.system.model.Order;
 import com.stylefeng.guns.task.batch.ClassImportTask;
 import com.stylefeng.guns.task.batch.SignImportTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -24,6 +27,9 @@ public class TaskController {
 
     @Autowired
     private SignImportTask signImportTask;
+
+    @Autowired
+    private IOrderService orderService;
 
     @RequestMapping("/start/class")
     @ResponseBody
@@ -56,6 +62,15 @@ public class TaskController {
         });
 
         executorService.shutdown();
+
+        return "ok";
+    }
+
+    @RequestMapping("/start/order/complete/{orderNo}")
+    @ResponseBody
+    public String payMock(@PathVariable("orderNo") String orderNo){
+        // 支付下单
+        orderService.completePay(orderNo);
 
         return "ok";
     }

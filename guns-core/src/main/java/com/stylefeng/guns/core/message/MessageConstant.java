@@ -54,6 +54,10 @@ public final class MessageConstant {
          */
         public static final String SYS_SUBJECT_ONAIR = "000009";
         /**
+         * 模板信息
+         */
+        public static final String SYS_TEMPLATE_MESSAGE = "000010";
+        /**
          * 没有获取到有效的用户登录信息
          */
         public static final String SYS_CREDENTIAL_UNKNOW = "000101";
