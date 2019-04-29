@@ -88,4 +88,9 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
 
         return selectList(queryWrapper);
     }
+
+    @Override
+    public String getOrderNo(String studentCode, String sourceClass) {
+        return null;
+    }
 }
