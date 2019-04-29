@@ -16,8 +16,8 @@ Paper.initColumn = function () {
         {field: 'selectItem', radio: true},
         {title: '试卷编码', field: 'code', visible: true, align: 'center', valign: 'middle'},
         {title: '针对学科', field: 'subjectName', visible: true, align: 'center', valign: 'middle'},
+        {title: '应用年级', field: 'gradesName', visible: true, align: 'center', valign: 'middle'},
         {title: '题目数量', field: 'count', visible: true, align: 'center', valign: 'middle'},
-        {title: '测试时间（分钟）', field: 'examTime', visible: true, align: 'center', valign: 'middle'},
         {title: '总分值', field: 'totalScore', visible: true, align: 'center', valign: 'middle'},
         {title: '出题人', field: 'teacher', visible: true, align: 'center', valign: 'middle'},
         {title: '出题时间', field: 'createDate', visible: true, align: 'center', valign: 'middle'},
@@ -135,6 +135,7 @@ Paper.search = function () {
     var queryData = {};
     queryData['condition'] = $("#condition").val();
     queryData['subject'] = $("#subject").val();
+    queryData['grade'] = $("#grade").val();
     queryData['status'] = $("#status").val();
     Paper.table.refresh({query: queryData});
 };

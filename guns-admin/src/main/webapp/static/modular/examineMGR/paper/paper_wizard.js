@@ -254,7 +254,7 @@ PaperWizard.openPaperViewer = function () {
     var index = layer.open({
         type: 2,
         title: '添加题目',
-        area: ['400px', '600px'], //宽高
+        area: ['200px', '300px'], //宽高
         fix: false, //不固定
         maxmin: true,
         content: Feng.ctxPath + '/examine/paper/wizard/review?questionItemExp=' + encodeURIComponent(JSON.stringify(PaperWizard.SelectedQuestion.seCodes))

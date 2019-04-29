@@ -190,10 +190,11 @@ public class PaperController extends BaseController {
             if (StringUtils.isNotEmpty(queryParams.get("grade"))) {
                 try {
                     String grade = queryParams.get("grade");
-                    eq("grade", grade);
+                    eq("grades", grade);
                 } catch (Exception e) {
                 }
             }
+            orderBy("id",false);
         }});
         //包装数据
         new PaperWrapper(pageMap.getRecords()).warp();
