@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -38,14 +39,12 @@ public class CourseOutlineServiceImpl extends ServiceImpl<CourseOutlineMapper, C
         if (null == course)
             throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS);
 
-        List<CourseOutline> courseOutlineList = selectList(new EntityWrapper<CourseOutline>().eq("course_code", course.getCode()));
-        List<Long> deleteIds = new ArrayList<>();
-        for(CourseOutline courseOutline : courseOutlineList){
-            deleteIds.add(courseOutline.getId());
-        }
-        if (!deleteIds.isEmpty())
-            deleteBatchIds(deleteIds);
-
+        /* 先删除 */
+        courseOutlineMapper.deleteByMap(new HashMap<String, Object>(8){{
+            put("course_code",course.getCode());
+        }});
+        /* 后批量插入 */
+        List<CourseOutline> courseOutlineList = new ArrayList<>();
         for(CourseOutline courseOutline : outlineList){
             CourseOutline newCourseOutline = new CourseOutline();
             newCourseOutline.setCode(CodeKit.generateOutline());
@@ -54,9 +53,9 @@ public class CourseOutlineServiceImpl extends ServiceImpl<CourseOutlineMapper, C
             newCourseOutline.setDescription(courseOutline.getDescription());
             newCourseOutline.setSort(courseOutline.getSort());
             newCourseOutline.setStatus(GenericState.Valid.code);
-
-            insert(newCourseOutline);
+            courseOutlineList.add(newCourseOutline);
         }
+        insertBatch(courseOutlineList);
     }
 
     @Override
@@ -71,7 +70,6 @@ public class CourseOutlineServiceImpl extends ServiceImpl<CourseOutlineMapper, C
             outline.setCourseCode(course.getCode());
             outline.setOutline(getDefaultOutline(idx));
             outline.setDescription(getDefaultOutline(idx));
-
             courseOutlineList.add(outline);
         }
 
@@ -110,6 +108,7 @@ public class CourseOutlineServiceImpl extends ServiceImpl<CourseOutlineMapper, C
         else{
             int existSize = courseOutlineList.size();
             int idx = 0;
+            List<CourseOutline> courseOutlineBatch = new ArrayList<>();
             for (; idx < newPeriod; idx++){
                 if (existSize > idx)
                     continue;
@@ -122,8 +121,9 @@ public class CourseOutlineServiceImpl extends ServiceImpl<CourseOutlineMapper, C
                 outline.setOutline(getDefaultOutline(idx));
                 outline.setDescription(getDefaultOutline(idx));
                 outline.setStatus(GenericState.Valid.code);
-                insert(outline);
+                courseOutlineBatch.add(outline);
             }
+            insertBatch(courseOutlineBatch);
 
             if (idx < existSize){
                 // 有多余的大纲，需要删除

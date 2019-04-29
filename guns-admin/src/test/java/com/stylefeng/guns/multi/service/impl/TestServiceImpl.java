@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author fengshuonan
  * @since 2018-07-10
  */
-@Service
+//@Service
 public class TestServiceImpl implements TestService {
 
     @Autowired
