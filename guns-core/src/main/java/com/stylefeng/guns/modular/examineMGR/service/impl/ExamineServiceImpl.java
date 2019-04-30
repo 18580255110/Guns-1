@@ -72,7 +72,7 @@ public class ExamineServiceImpl implements IExamineService {
             if (null == paper)
                 continue;
 
-            if (GenericState.Valid.code == paper.getStatus()) {
+            if (GenericState.Valid.code != paper.getStatus()) {
                 // 试卷失效
                 continue;
             }
@@ -82,7 +82,9 @@ public class ExamineServiceImpl implements IExamineService {
                 continue;
             }
 
-            if(!(courseInfo.getSubject().equals(Integer.parseInt(paper.getSubject())))) {
+            System.out.println(paper.getSubject());
+            System.out.println(courseInfo.getSubject());
+            if(!(courseInfo.getSubject().equals(paper.getSubject()))) {
                 // 科目不匹配
                 continue;
             }
