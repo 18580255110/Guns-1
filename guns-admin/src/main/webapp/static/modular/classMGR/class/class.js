@@ -29,7 +29,7 @@ Class.initColumn = function () {
             {title: '单节时长(分钟)', field: 'duration', visible: false, align: 'center', valign: 'middle'},
             {title: '总课时数', field: 'period', visible: false, align: 'center', valign: 'middle'},
             {title: '教室编码', field: 'classRoomCode', visible: false, align: 'center', valign: 'middle'},
-            {title: '教室', field: 'classRoom', visible: true, align: 'center', valign: 'middle'},
+            {title: '教室', field: 'classRoom', visible: false, align: 'center', valign: 'middle'},
             {title: '教授课程', field: 'courseCode', visible: false, align: 'center', valign: 'middle'},
             {title: '课程名称', field: 'courseName', visible: false, align: 'center', valign: 'middle'},
             {title: '关注度', field: 'star', visible: false, align: 'center', valign: 'middle'},
@@ -269,7 +269,7 @@ $(function () {
         });
 
     });
-    table.setQueryParams(Class.getQueryParams());
+    table.setQueryParamsGetter(Class.getQueryParams);
     Class.table = table.init();
 
     // 日期条件初始化

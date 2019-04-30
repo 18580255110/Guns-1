@@ -55,12 +55,30 @@ StudentSign.search = function () {
     queryData['ability'] = $("#ability").val();
     queryData['cycle'] = $("#cycle").val();
     queryData['grade'] = $("#grade").val();
+
     StudentSign.table.refresh({query: queryData});
 };
+
+/**
+ * 查询表单提交参数对象
+ * @returns {{}}
+ */
+StudentSign.formParams = function() {
+    var queryData = {};
+    queryData['teacher'] = $("#teacher").val();
+    queryData['student'] = $("#student").val();
+    queryData['subject'] = $("#subject").val();
+    queryData['ability'] = $("#ability").val();
+    queryData['cycle'] = $("#cycle").val();
+    queryData['grade'] = $("#grade").val();
+
+    return queryData;
+}
 
 $(function () {
     var defaultColunms = StudentSign.initColumn();
     var table = new BSTable(StudentSign.id, "/statistic/student/sign/list", defaultColunms);
     table.setPaginationType("server");
+    table.setQueryParamsGetter(StudentSign.formParams);
     StudentSign.table = table.init();
 });

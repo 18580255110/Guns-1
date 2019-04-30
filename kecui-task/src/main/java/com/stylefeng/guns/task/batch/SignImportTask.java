@@ -75,6 +75,7 @@ public class SignImportTask extends ImportTaskSupport {
             log.warn("没有需处理的任务");
             return;
         }
+
         Wrapper<BatchProcessDetail> detailQueryWrapper = new EntityWrapper<BatchProcessDetail>();
         detailQueryWrapper.eq("batch_code", preparedProcess.getCode());
         detailQueryWrapper.eq("status", GenericState.Valid.code);
@@ -135,7 +136,7 @@ public class SignImportTask extends ImportTaskSupport {
 
         Member currMember = null;
         try {
-            currMember = memberService.createMember(member.getMobileNumber(), memberRegistMap);
+            currMember = memberService.createMember(memberService.generateUserName(), memberRegistMap);
         }catch(ServiceException sere){
             if (!MessageConstant.MessageCode.SYS_SUBJECT_DUPLICATE.equals(sere.getMessageCode()))
                 throw sere;

@@ -29,14 +29,6 @@ var SignWizard = {
                         }
                     }
                 },
-                age: {
-                    feedbackIcons: false,
-                    validators: {
-                        notEmpty: { message: '年龄不能为空'},
-                        numeric: { message: '无效的年龄数据'},
-                        between: { min: 0, max: 100, message: '无效的年龄数据'}
-                    }
-                },
                 grade: {
                     feedbackIcons: false,
                     validators: {
@@ -301,8 +293,6 @@ $(function () {
             ajax.setContentType("application/json");
             ajax.setData(JSON.stringify(SignWizard.Wizard.postData));
             ajax.start();
-            Feng.success("保存成功!");
-            SignWizard.close();
         }
     });
 

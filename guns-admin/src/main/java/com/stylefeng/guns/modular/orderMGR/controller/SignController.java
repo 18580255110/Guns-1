@@ -1,6 +1,7 @@
 package com.stylefeng.guns.modular.orderMGR.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.stylefeng.guns.common.constant.factory.PageFactory;
 import com.stylefeng.guns.common.constant.state.GenericState;
@@ -200,7 +201,7 @@ public class SignController extends BaseController {
 
         Member currMember = null;
         try {
-            currMember = memberService.createMember(member.getMobileNumber(), memberRegistMap);
+            currMember = memberService.createMember(memberService.generateUserName(), memberRegistMap);
         }catch(ServiceException sere){
             if (!MessageConstant.MessageCode.SYS_SUBJECT_DUPLICATE.equals(sere.getMessageCode()))
                 throw sere;
@@ -214,11 +215,19 @@ public class SignController extends BaseController {
         Student student = request.getStudent();
         Student currStudent = null;
         currStudent = studentService.get(student.getCode());
-        if (null == currStudent)
-            currStudent = studentService.addStudent(currMember.getUserName(), student);
+        if (null == currStudent){
+            Wrapper<Student> queryWrapper = new EntityWrapper<Student>();
+            queryWrapper.eq("name", request.getStudent().getName().trim());
+            queryWrapper.eq("user_name", currMember.getUserName());
+            queryWrapper.eq("status", GenericState.Valid.code);
+            currStudent = studentService.selectOne(queryWrapper);
+
+            if (null == currStudent)
+                currStudent = studentService.addStudent(currMember.getUserName(), student);
+        }
 
         if (null == currMember)
-            throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"学员信息"});
+            throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"家长信息"});
 
         // 下订单
         String courseCartCode = courseCartService.doJoin(currMember, currStudent, classInfo, true);
