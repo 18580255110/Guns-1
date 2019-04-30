@@ -735,7 +735,10 @@ public class EducationController extends ApiController {
 
         adjustStudentService.adjustCourse(member, student, fromData, destData);
 
-        return SimpleResponser.success();
+        SimpleResponser response = SimpleResponser.success();
+        response.setMessage("您的调课申请已经接受");
+
+        return response;
     }
 
     @RequestMapping(value = "/adjust/class", method = RequestMethod.POST)
@@ -761,8 +764,9 @@ public class EducationController extends ApiController {
         destData.put("targetClass", targetClass);
 
         adjustStudentService.adjustClass(member, student, fromData, destData);
-
-        return SimpleResponser.success();
+        SimpleResponser response = SimpleResponser.success();
+        response.setMessage("您的申请提交成功，系统将处理您的请求");
+        return response;
     }
 
     @ApiOperation(value="课程表", httpMethod = "POST", response = PlanListResponser.class)
