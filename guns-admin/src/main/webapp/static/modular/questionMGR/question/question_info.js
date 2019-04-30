@@ -171,6 +171,7 @@ QuestionInfoDlg.addItem = function () {
             // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
             console.log(result);
             var url = 'http://www.kecui.com.cn/download?masterName=' + result.data.name + '&masterCode=' + result.data.code;
+            // var url = 'http://localhost:8080/admin/attachment/download?masterName=' + result.data.name + '&masterCode=' + result.data.code;
             insertImg(url);
 
             // result 必须是一个 JSON 格式字符串！！！否则报错
@@ -300,6 +301,7 @@ $(function() {
             // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
             console.log(result);
             var url = 'http://www.kecui.com.cn/download?masterName=' + result.data.name + '&masterCode=' + result.data.code;
+            // var url = 'http://localhost:8080/admin/attachment/download?masterName=' + result.data.name + '&masterCode=' + result.data.code;
             insertImg(url);
 
             // result 必须是一个 JSON 格式字符串！！！否则报错
