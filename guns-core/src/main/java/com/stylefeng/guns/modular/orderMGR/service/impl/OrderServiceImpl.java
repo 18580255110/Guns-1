@@ -8,6 +8,7 @@ import com.stylefeng.guns.common.constant.factory.PageFactory;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
+import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
@@ -20,6 +21,7 @@ import com.stylefeng.guns.modular.system.dao.OrderItemMapper;
 import com.stylefeng.guns.modular.system.dao.OrderMapper;
 import com.stylefeng.guns.modular.system.dao.OrderMemberMapper;
 import com.stylefeng.guns.modular.system.model.*;
+import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.util.CodeKit;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -67,6 +69,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Autowired
     private IMemberService memberService;
+
+    @Autowired
+    private IClassService classService;
 
     @Override
     public Order order(Member member, OrderAddList addList, PayMethodEnum payMethod, Map<String, Object> extraPostData) {
@@ -367,6 +372,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 if (orderItemMapper.selectCount(queryWrapper) > 0)
                     // 不能重复提交
                     throw new ServiceException(MessageConstant.MessageCode.ORDER_REQUEST_ORDERED);
+                // 班级信息
+                Class classInfo = classService.get(courseCart.getClassCode());
+                if (null == classInfo)
+                    throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"班级信息"});
+
+                // 查询班级剩余报名额度
+                if (classService.isNotSpared(classInfo)){
+                    throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_CAPACITY);
+                }
             }
             orderItem.setItemCode(CodeKit.generateOrderItem());
             orderItemList.add(orderItem);

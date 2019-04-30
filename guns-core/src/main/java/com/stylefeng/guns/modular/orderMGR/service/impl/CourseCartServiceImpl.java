@@ -17,6 +17,7 @@ import com.stylefeng.guns.modular.orderMGR.OrderAddList;
 import com.stylefeng.guns.modular.orderMGR.service.ICourseCartService;
 import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
+import com.stylefeng.guns.modular.studentMGR.service.IStudentZoneService;
 import com.stylefeng.guns.modular.system.dao.CourseCartMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.*;
@@ -61,6 +62,9 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
     @Autowired
     private IMemberService memberService;
+
+    @Autowired
+    private IStudentZoneService studentZoneService;
 
     private static final Map<Integer, String> DayOfWeekMap = new HashMap<Integer, String>();
     private static final Map<Integer, String> DayOfMonthMap = new HashMap<Integer, String>();
@@ -125,8 +129,11 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         if (existSelectedCount > 0)
             throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECTED);
 
+        // 是否老学员
+        boolean zoneStudent = studentZoneService.isZoneStudent(student, classInfo);
+
         // 入学测试校验
-        if (!skipTest && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
+        if (!skipTest && !zoneStudent && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
             Map<String, Object> queryParams = new HashMap<String, Object>();
             queryParams.put("classCode", classInfo.getCode());
             ExamineApply examineApply = examineService.findExamineApply(queryParams);
@@ -144,7 +151,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         }
 
         // 检查班级报名状态
-        if (!skipTest)
+        if (!skipTest && !zoneStudent)
             classService.checkJoinState(classInfo, member, student);
 
         // 加入选课单
@@ -242,12 +249,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
     private String select(Member member, Student student, Class classInfo, Map<String, Object> extraParams) {
 
         // 查询班级剩余报名额度
-        Wrapper<StudentClass> queryWrapper = new EntityWrapper<>();
-        queryWrapper.eq("class_code", classInfo.getCode());
-        queryWrapper.eq("status", GenericState.Valid.code);
-        int existCount = studentClassService.selectCount(queryWrapper);
-
-        if (existCount >= classInfo.getQuato()){
+        if (classService.isNotSpared(classInfo)){
             throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_CAPACITY);
         }
 

@@ -244,4 +244,7 @@
         on a.code = b.class_code order by a.create_date desc
     </select>
 
+    <select id="queryClassSignCount" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        select count(*) as signCount from tb_order_item a, tb_order b where a.order_no = b.accept_no and  a.item_object = 1 and a.item_object_code = #{classCode} and b.status = 1
+    </select>
 </mapper>

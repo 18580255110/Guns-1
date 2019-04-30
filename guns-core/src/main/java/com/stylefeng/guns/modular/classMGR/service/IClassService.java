@@ -146,4 +146,20 @@ public interface IClassService extends IService<Class> {
      * @return
      */
     List<Class> queryListForCrossChange(Map<String, Object> changeClassQuery);
+
+    /**
+     * 是否有空余
+     *
+     * @param classInfo
+     * @return
+     */
+    boolean isSpared(Class classInfo);
+
+    /**
+     * 是否无空余
+     *
+     * @param classInfo
+     * @return
+     */
+    boolean isNotSpared(Class classInfo);
 }

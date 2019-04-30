@@ -31,4 +31,11 @@ public interface ClassMapper extends BaseMapper<Class> {
      * @return
      */
     List<Map<String, Object>> selectPageList(Page<Map<String, Object>> page, Map<String, Object> queryParams);
+
+    /**
+     *
+     * @param code
+     * @return
+     */
+    Map<String, Object> queryClassSignCount(String code);
 }

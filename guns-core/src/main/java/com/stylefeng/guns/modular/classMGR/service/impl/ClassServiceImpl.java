@@ -289,6 +289,30 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
         return resultList;
     }
 
+    @Override
+    public boolean isNotSpared(Class classInfo) {
+        return isSpared(classInfo) ? false : true;
+    }
+
+    @Override
+    public boolean isSpared(Class classInfo) {
+        // 查询已报班缴费学员数
+        Wrapper<StudentClass> queryWrapper = new EntityWrapper<>();
+        queryWrapper.eq("class_code", classInfo.getCode());
+        queryWrapper.eq("status", GenericState.Valid.code);
+        int existCount = studentClassService.selectCount(queryWrapper);
+
+        if (existCount >= classInfo.getQuato() )
+            return false;
+        // 查询已下订单未缴费学员数
+        Map<String, Object> resultMap = classMapper.queryClassSignCount(classInfo.getCode());
+        existCount = ((Long) resultMap.get("signCount")).intValue();
+        if (existCount >= classInfo.getQuato())
+            return false;
+
+        return true;
+    }
+
     private Map<String, Object> buildQueryArguments(Map<String, Object> queryParams) {
         Iterator<String> queryKeyIter = queryParams.keySet().iterator();
         Map<String, Object> arguments = new HashMap<String, Object>();
