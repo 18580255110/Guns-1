@@ -592,8 +592,8 @@ public class EducationController extends ApiController {
 
         }
 
-        Date startTime = DateUtil.parse("2019-04-30 10:00:00", "yyyy-MM-dd HH:mm:ss");
-        if (startTime.compareTo(new Date()) >= 0){
+        Date startTime = DateUtil.parse("2019-04-30 23:59:59", "yyyy-MM-dd HH:mm:ss");
+        if (startTime.compareTo(new Date()) <= 0){
             classSignSet.clear();
             classChangeSet.clear();
 
