@@ -91,7 +91,6 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
         com.stylefeng.guns.modular.system.model.Class sourceClassInfo = (com.stylefeng.guns.modular.system.model.Class) fromData.get("sourceClass");
         com.stylefeng.guns.modular.system.model.Class targetClassInfo = (com.stylefeng.guns.modular.system.model.Class) destData.get("targetClass");
 
-
         if (hasApproving(student.getCode(), sourceClassInfo.getCode(), targetClassInfo.getCode(), null, AdjustStudentTypeEnum.Change)){
             throw new ServiceException(MessageConstant.MessageCode.CHANGE_CLASS_DUPLICATE);
         }
@@ -275,6 +274,14 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
     }
 
     private boolean hasApproving(String student, String sourceClass, String targetClass, String outlineCode, AdjustStudentTypeEnum type) {
+        Wrapper<AdjustStudent> queryLimitWrapper = new EntityWrapper<AdjustStudent>();
+        queryLimitWrapper.eq("student_code", student);
+        queryLimitWrapper.eq("status", GenericState.Valid.code);
+        queryLimitWrapper.eq("work_status", AdjustStudentApproveStateEnum.Appove.code);
+
+        if (3 <= selectCount(queryLimitWrapper))
+            return false;
+
         Wrapper<AdjustStudent> queryWrapper = new EntityWrapper<AdjustStudent>();
         queryWrapper.eq("student_code", student);
         queryWrapper.eq("type", type.code);
@@ -285,7 +292,7 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
         queryWrapper.eq("source_class", sourceClass);
         queryWrapper.eq("status", GenericState.Valid.code);
         // 只有被拒绝的重复申请才被允许
-        queryWrapper.ne("work_status", AdjustStudentApproveStateEnum.Refuse.code);
+        queryWrapper.eq("work_status", AdjustStudentApproveStateEnum.Create.code);
 
         return 0 < selectCount(queryWrapper);
     }
