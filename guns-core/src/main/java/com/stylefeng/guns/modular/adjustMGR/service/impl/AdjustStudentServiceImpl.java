@@ -273,6 +273,39 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
         return true;
     }
 
+    @Override
+    public StudentClass getCurrentValidClass(StudentClass studentClass) {
+
+        AdjustStudent currValidClass = null;
+        StudentClass studentClassInfo = null;
+        String classCode = studentClass.getClassCode();
+        while(null == studentClassInfo) {
+            Wrapper<AdjustStudent> queryWrapper = new EntityWrapper<AdjustStudent>();
+            queryWrapper.eq("source_class", classCode);
+            queryWrapper.eq("student_code", studentClass.getStudentCode());
+            queryWrapper.eq("status", GenericState.Valid.code);
+            queryWrapper.eq("work_status", 11);
+
+            AdjustStudent classChange = selectOne(queryWrapper);
+
+            Wrapper<StudentClass> relWrapper = new EntityWrapper<StudentClass>();
+            relWrapper.eq("student_code", classChange.getStudentCode());
+            relWrapper.eq("class_code", classChange.getTargetClass());
+
+            studentClassInfo = studentClassService.selectOne(relWrapper);
+
+            if (GenericState.Valid.code != studentClassInfo.getStatus()){
+                currValidClass = null;
+                studentClassInfo = null;
+                classCode = classChange.getTargetClass();
+            }else{
+
+            }
+        }
+
+        return studentClassInfo;
+    }
+
     private boolean hasApproving(String student, String sourceClass, String targetClass, String outlineCode, AdjustStudentTypeEnum type) {
         Wrapper<AdjustStudent> queryLimitWrapper = new EntityWrapper<AdjustStudent>();
         queryLimitWrapper.eq("student_code", student);

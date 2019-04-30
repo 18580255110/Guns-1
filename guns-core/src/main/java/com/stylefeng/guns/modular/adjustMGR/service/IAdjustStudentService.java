@@ -101,4 +101,6 @@ public interface IAdjustStudentService extends IService<AdjustStudent>, IAdminis
      * @return
      */
     boolean canChange(AdjustStudent adjustApply);
+
+    StudentClass getCurrentValidClass(StudentClass studentClass);
 }

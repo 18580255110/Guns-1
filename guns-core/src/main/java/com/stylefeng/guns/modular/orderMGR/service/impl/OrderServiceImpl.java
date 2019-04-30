@@ -294,6 +294,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         String[] ignoreProperties = new String[]{"id"};
         BeanUtils.copyProperties(sourceOrder, copyOrder, ignoreProperties);
 
+        copyOrder.setAcceptNo(CodeKit.generateOrder());
 
     }
 

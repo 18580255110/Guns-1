@@ -2,9 +2,12 @@ package com.stylefeng.guns.rest.modular.order.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
+import com.stylefeng.guns.modular.adjustMGR.service.IAdjustStudentService;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
+import com.stylefeng.guns.modular.education.service.IStudentClassService;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.orderMGR.OrderServiceTypeEnum;
 import com.stylefeng.guns.modular.orderMGR.service.ICourseCartService;
@@ -64,6 +67,12 @@ public class OrderController extends ApiController {
 
     @Autowired
     private IPayService payService;
+
+    @Autowired
+    private IStudentClassService studentClassService;
+
+    @Autowired
+    private IAdjustStudentService adjustStudentService;
 
     @RequestMapping(value = "/cart/join", method = RequestMethod.POST)
     @ApiOperation(value="加入选课单", httpMethod = "POST", response = SimpleResponser.class)
@@ -232,7 +241,25 @@ public class OrderController extends ApiController {
             List<OrderItem> orderItemList = orderService.listItems(order.getAcceptNo(), OrderItemTypeEnum.Course);
 
             for(OrderItem classItem : orderItemList){
-                Class classInfo = classService.get(classItem.getItemObjectCode());
+                CourseCart courseCart = courseCartService.get(classItem.getCourseCartCode());
+                Student currStudent = studentService.get(courseCart.getStudentCode());
+
+                String orgClassCode = classItem.getItemObjectCode();
+                //adjustStudentService.
+                Wrapper<StudentClass> studentClassWrapper = new EntityWrapper<StudentClass>();
+                studentClassWrapper.eq("student_code", currStudent.getCode());
+                List<StudentClass> studentClassList = studentClassService.selectList(studentClassWrapper);
+                for(StudentClass studentClass : studentClassList){
+                    if (!(orgClassCode.equals(studentClass.getClassCode())))
+                        continue;
+
+                    if (GenericState.Valid.code != studentClass.getStatus()){
+                        StudentClass currentValidClass = adjustStudentService.getCurrentValidClass(studentClass);
+                        orgClassCode = currentValidClass.getClassCode();
+                    }
+                }
+
+                Class classInfo = classService.get(orgClassCode);
                 classOrderList.add(ClassOrderResponser.me(order, ClassResponser.me(classInfo)));
             }
         }
