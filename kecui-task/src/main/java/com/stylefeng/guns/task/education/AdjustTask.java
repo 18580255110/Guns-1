@@ -27,7 +27,7 @@ public class AdjustTask {
     @Autowired
     private IAdjustStudentService adjustStudentService;
 
-//    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 60000)
     public void handleAdjustApply(){
         Administrator administrator = new Administrator();
         administrator.setAccount("1");
