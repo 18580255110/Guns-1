@@ -83,8 +83,8 @@ public class ExaminePaperServiceImpl extends ServiceImpl<ExaminePaperMapper, Exa
         if (null == paper)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"试卷"});
 
-        if (examineAnswerService.paperOnair(paper))
-            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"试卷"});
+//        if (examineAnswerService.paperOnair(paper))
+//            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"试卷"});
 
         paper.setStatus(GenericState.Invalid.code);
         updateById(paper);
