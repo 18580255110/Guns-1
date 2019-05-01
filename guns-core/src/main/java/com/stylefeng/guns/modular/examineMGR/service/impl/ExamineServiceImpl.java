@@ -69,23 +69,26 @@ public class ExamineServiceImpl implements IExamineService {
             apply = examineApply;
             ExaminePaper paper = examinePaperService.get(examineApply.getPaperCode());
 
-            if (null == paper)
+            if (null == paper) {
+                apply = null;
                 continue;
+            }
 
             if (GenericState.Valid.code != paper.getStatus()) {
                 // 试卷失效
+                apply = null;
                 continue;
             }
 
             if (!(courseInfo.getGrade().equals(Integer.parseInt(paper.getGrades())))) {
                 // 年级不匹配
+                apply = null;
                 continue;
             }
 
-            System.out.println(paper.getSubject());
-            System.out.println(courseInfo.getSubject());
             if(!(courseInfo.getSubject().equals(paper.getSubject()))) {
                 // 科目不匹配
+                apply = null;
                 continue;
             }
 
@@ -94,14 +97,7 @@ public class ExamineServiceImpl implements IExamineService {
         }
 
         return apply;
-/*
-        Wrapper<ExaminePaper> examinePaperQueryWrapper = new EntityWrapper<>();
-        examinePaperQueryWrapper.eq("ability", classInfo.getAbility());
-        examinePaperQueryWrapper.eq("grades", classInfo.getGrade());
-        examinePaperQueryWrapper.eq("subject", courseInfo.getSubject());
-        examinePaperQueryWrapper.eq("status", GenericState.Valid.code);
 
-        return examinePaperService.selectOne(examinePaperQueryWrapper);*/
     }
 
     @Override
@@ -178,7 +174,16 @@ public class ExamineServiceImpl implements IExamineService {
 //
             result.put("className", classNameBuffer.toString());
             // TODO 0424 班型从paperApply里取
-            result.put("ability", "");
+            List<Map<String, Object>> examineApplyList = examineApplyService.listPaperUse(paper.getCode());
+            StringBuffer abilityBuff = new StringBuffer();
+            int score = (Integer)result.get("score");
+            for(Map<String, Object> apply : examineApplyList){
+                int passScore = Integer.parseInt((String)apply.get("passScore"));
+                ClassAblilityEnum classAbility = ClassAblilityEnum.instanceOf((Integer) apply.get("ability"));
+                if (score >= passScore)
+                    abilityBuff.append(classAbility.text).append(",");
+            }
+            result.put("ability", abilityBuff.length() == 0 ? "很抱歉，没有合适的班型" : abilityBuff.toString());
             examineAnswerPaperList.add(result);
         }
         return examineAnswerPaperList;

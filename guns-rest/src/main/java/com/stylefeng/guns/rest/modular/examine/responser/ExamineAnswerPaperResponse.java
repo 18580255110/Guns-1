@@ -25,7 +25,7 @@ public class ExamineAnswerPaperResponse implements Serializable {
     @ApiModelProperty(name = "status", value = "状态： 0 从未测试； 1 正在答题； 2 暂停答题  3 已交卷  4 已批改", example = "1")
     private Integer status;
     @ApiModelProperty(name = "answerResponse", value = "历史答卷信息")
-    private AnswerResponse answerResponse;
+    private String answerResponse;
     @ApiModelProperty(name = "canTest", value = "能否开始诊断", example = "true")
     private boolean canTest;
 
@@ -69,11 +69,11 @@ public class ExamineAnswerPaperResponse implements Serializable {
         this.status = status;
     }
 
-    public AnswerResponse getAnswerResponse() {
+    public String getAnswerResponse() {
         return answerResponse;
     }
 
-    public void setAnswerResponse(AnswerResponse answerResponse) {
+    public void setAnswerResponse(String answerResponse) {
         this.answerResponse = answerResponse;
     }
 
@@ -92,6 +92,7 @@ public class ExamineAnswerPaperResponse implements Serializable {
         response.setPaperCode((String)examineAnswerPaper.get("paperCode"));
         response.setClassName((String)examineAnswerPaper.get("className"));
         response.setClassAbility((String)examineAnswerPaper.get("ability"));
+        response.setAnswerResponse(String.valueOf(examineAnswerPaper.get("score")));
         response.setStatus((Integer)examineAnswerPaper.get("status"));
         response.setExamTime((Integer)examineAnswerPaper.get("examTime"));
 

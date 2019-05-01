@@ -9,4 +9,24 @@ import com.stylefeng.guns.rest.core.SimpleResponser;
  * @Version 1.0
  */
 public class AnswerResponse extends SimpleResponser {
+
+    private Integer score;
+
+    private Integer examineTime;
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public Integer getExamineTime() {
+        return examineTime;
+    }
+
+    public void setExamineTime(Integer examineTime) {
+        this.examineTime = examineTime;
+    }
 }
