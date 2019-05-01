@@ -179,9 +179,9 @@ public class ExamineServiceImpl implements IExamineService {
             int score = (Integer)result.get("score");
             for(Map<String, Object> apply : examineApplyList){
                 int passScore = Integer.parseInt((String)apply.get("passScore"));
-                ClassAblilityEnum classAbility = ClassAblilityEnum.instanceOf((Integer) apply.get("ability"));
+
                 if (score >= passScore)
-                    abilityBuff.append(classAbility.text).append(",");
+                    abilityBuff.append(ConstantFactory.me().getAbilityName((Integer) apply.get("ability"))).append(",");
             }
             result.put("ability", abilityBuff.length() == 0 ? "很抱歉，没有合适的班型" : abilityBuff.toString());
             examineAnswerPaperList.add(result);
