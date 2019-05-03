@@ -10,6 +10,7 @@ import com.stylefeng.guns.modular.examineMGR.service.IExamineAnswerService;
 import com.stylefeng.guns.modular.system.dao.ExamineAnswerMapper;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.util.CodeKit;
+import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,21 +35,29 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
     @Override
     public ExamineAnswer generatePaper(Student student, ExaminePaper examinePaper, ExamineApply apply) {
 
-        ExamineAnswer answerPaper = new ExamineAnswer();
-        Date now = new Date();
+        Wrapper<ExamineAnswer> queryWrapper = new EntityWrapper<ExamineAnswer>();
+        queryWrapper.eq("student_code", student.getCode());
+        queryWrapper.lt("paper_code", apply.getPaperCode());
+        queryWrapper.notIn("status", new Integer[]{3, 4, -1});
+        queryWrapper.orderBy("id", false);
+        ExamineAnswer answerPaper = selectOne(queryWrapper);
 
-        answerPaper.setCode(CodeKit.generateAnswerPaper());
-        answerPaper.setPaperCode(examinePaper.getCode());
-        answerPaper.setStudentCode(student.getCode());
-        answerPaper.setQuota(examinePaper.getCount());
-        answerPaper.setTotalScore(examinePaper.getTotalScore());
-        answerPaper.setExamTime(apply.getExamTime());
-        answerPaper.setStatus(ExamineAnswerStateEnum.Create.code);
-        answerPaper.setBeginDate(now);
-        answerPaper.setCreateDate(now);
+        if (null == answerPaper) {
+            answerPaper = new ExamineAnswer();
+            Date now = new Date();
 
-        insert(answerPaper);
+            answerPaper.setCode(CodeKit.generateAnswerPaper());
+            answerPaper.setPaperCode(examinePaper.getCode());
+            answerPaper.setStudentCode(student.getCode());
+            answerPaper.setQuota(examinePaper.getCount());
+            answerPaper.setTotalScore(examinePaper.getTotalScore());
+            answerPaper.setExamTime(apply.getExamTime());
+            answerPaper.setStatus(ExamineAnswerStateEnum.Create.code);
+            answerPaper.setBeginDate(now);
+            answerPaper.setCreateDate(now);
 
+            insert(answerPaper);
+        }
         return answerPaper;
     }
 

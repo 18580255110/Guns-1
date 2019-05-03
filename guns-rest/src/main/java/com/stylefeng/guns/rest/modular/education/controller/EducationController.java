@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
+import com.stylefeng.guns.core.admin.Administrator;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.adjustMGR.service.IAdjustStudentService;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
@@ -242,11 +243,10 @@ public class EducationController extends ApiController {
         if (null == classInfo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
 
-        Wrapper<StudentClass> studentClassWrapper = new EntityWrapper<StudentClass>();
-        studentClassWrapper.eq("class_code", code);
-        studentClassWrapper.eq("status", GenericState.Valid.code);
-        int signCount = studentClassService.selectCount(studentClassWrapper);
-        classInfo.setSignQuato(signCount);
+        int signedCount = classService.queryOrderedCount(classInfo.getCode());
+        int maxCount = classInfo.getQuato();
+
+        classInfo.setSignQuato(signedCount > maxCount ? maxCount : signedCount);
 
         Map<String, Object> queryMap = new HashMap<String, Object>();
         queryMap.put("classCode", classInfo.getCode());
@@ -690,7 +690,8 @@ public class EducationController extends ApiController {
         Set<Class> classSet = new HashSet<>();
         for (com.stylefeng.guns.modular.system.model.Class classInfo : classList){
             // 查询班级剩余报名额度
-            if (classService.isNotSpared(classInfo))
+            int signedCount = classService.queryOrderedCount(classInfo.getCode());
+            if (classInfo.getQuato() <= signedCount)
                 continue;
 
             if (null == classInfo){
@@ -763,9 +764,24 @@ public class EducationController extends ApiController {
         Map<String, Object> destData = new HashMap<>();
         destData.put("targetClass", targetClass);
 
-        adjustStudentService.adjustClass(member, student, fromData, destData);
+        AdjustStudent adjustApply = adjustStudentService.adjustClass(member, student, fromData, destData);
+
+        Administrator administrator = new Administrator();
+        administrator.setAccount("1");
+        administrator.setId(1);
+        administrator.setName("科萃教育");
+        adjustStudentService.setAdministrator(administrator);
+
+        AdjustStudentApproveStateEnum action = AdjustStudentApproveStateEnum.Refuse;
+        String remark = "";
+        if (adjustStudentService.canChange(adjustApply)){
+            action = AdjustStudentApproveStateEnum.Appove;
+            remark = "审核通过";
+        }
+        adjustStudentService.doChangeApprove(adjustApply.getId(), action, remark);
+
         SimpleResponser response = SimpleResponser.success();
-        response.setMessage("您的申请提交成功，系统将处理您的请求");
+        response.setMessage("转班成功");
         return response;
     }
 
@@ -859,10 +875,25 @@ public class EducationController extends ApiController {
         Set<com.stylefeng.guns.modular.system.model.Class> classSet = new HashSet<>();
         for(Class classInfo : classList){
             // 去重
+            int maxCount = classInfo.getQuato();
+            int signedCount = classService.queryOrderedCount(classInfo.getCode());
+            classInfo.setSignQuato(signedCount > maxCount ? maxCount : signedCount );
             classSet.add(classInfo);
         }
 
         return ClassListResponse.me(classSet);
+    }
+
+
+    /**
+     * 查询班级已报名数量
+     * @param code
+     * @return
+     */
+    @RequestMapping(value = "/count/signed/{code}")
+    @ResponseBody
+    public Object classSignCount(@PathVariable("code") String code) {
+        return classService.queryOrderedCount(code);
     }
 
 }

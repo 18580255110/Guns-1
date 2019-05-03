@@ -379,7 +379,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                     throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"班级信息"});
 
                 // 查询班级剩余报名额度
-                if (classService.isNotSpared(classInfo)){
+                int signedCount = classService.queryOrderedCount(classInfo.getCode());
+
+                if (classInfo.getQuato() <= signedCount){
                     throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_CAPACITY);
                 }
             }

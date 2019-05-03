@@ -27,7 +27,7 @@ public interface IAdjustStudentService extends IService<AdjustStudent>, IAdminis
      * @param destData
      */
     @Validator(chain = {AdjustCourseValidator.class})
-    void adjustCourse(Member member, Student student, Map<String, Object> fromData, Map<String, Object> destData);
+    AdjustStudent adjustCourse(Member member, Student student, Map<String, Object> fromData, Map<String, Object> destData);
 
     /**
      * 调班申请
@@ -38,7 +38,7 @@ public interface IAdjustStudentService extends IService<AdjustStudent>, IAdminis
      * @param destData
      */
     @Validator(chain = {AdjustClassValidator.class})
-    void adjustClass(Member member, Student student, Map<String, Object> fromData, Map<String, Object> destData);
+    AdjustStudent adjustClass(Member member, Student student, Map<String, Object> fromData, Map<String, Object> destData);
 
     /**
      * 查询调课/转班申请记录

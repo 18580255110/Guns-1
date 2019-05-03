@@ -34,6 +34,10 @@
             <if test="null != student">
                 and ( s.code = #{student} or s.name LIKE CONCAT('%',#{student},'%') )
             </if>
+            <!-- 班级信息 -->
+            <if test="null != classInfo">
+              and ( c.code = #{classInfo} or c.name LIKE CONCAT('%', #{classInfo}, '%') )
+            </if>
             <!-- 老师 -->
             <if test="null != teacher">
                 and

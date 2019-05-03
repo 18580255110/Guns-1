@@ -11,6 +11,7 @@ import com.stylefeng.guns.modular.classMGR.service.ICourseService;
 import com.stylefeng.guns.modular.examineMGR.service.*;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
+import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.ToolUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,6 +113,16 @@ public class ExamineServiceImpl implements IExamineService {
     public Map<String, Collection<Question>> doBeginExamine(Student student, ExaminePaper examinePaper, ExamineApply apply) {
 
         // 生成答卷
+        Wrapper<ExamineAnswer> queryWrapper = new EntityWrapper<ExamineAnswer>();
+        queryWrapper.eq("student_code", student.getCode());
+        queryWrapper.ge("create_date", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, -7));
+        queryWrapper.lt("create_date", new Date());
+        queryWrapper.lt("paper_code", apply.getPaperCode());
+        queryWrapper.in("status", new Integer[]{3, 4});
+        int examineCount = examineAnswerService.selectCount(queryWrapper);
+        if (examineCount > 0){
+            throw new ServiceException(MessageConstant.MessageCode.EXAMINE_LIMIT_FAILED);
+        }
         ExamineAnswer answerPaper = examineAnswerService.generatePaper(student, examinePaper, apply);
 
         Wrapper<ExaminePaperItem> questionListQuery = new EntityWrapper<>();
@@ -120,6 +131,7 @@ public class ExamineServiceImpl implements IExamineService {
 
         if (null == examinePaperItemList || examinePaperItemList.isEmpty()){
             // TODO 阻止业务进行
+
         }
 
         Set<Question> questionSet = new HashSet<>();
@@ -157,6 +169,7 @@ public class ExamineServiceImpl implements IExamineService {
 
         Wrapper<ExamineAnswer> examineAnswerWrapper = new EntityWrapper<>();
         examineAnswerWrapper.eq("student_code", student);
+        examineAnswerWrapper.ne("status", -1);
         List<Map<String, Object>> resultList = examineAnswerService.selectMaps(examineAnswerWrapper);
 
         Set<Map<String, Object>> examineAnswerPaperList = new HashSet<>();
@@ -168,10 +181,7 @@ public class ExamineServiceImpl implements IExamineService {
             ).append(
                 ConstantFactory.me().getsubjectName(Integer.parseInt(paper.getSubject()))
             );
-//            Class classInfo = classService.get((String)result.get("classCode"));
-//            if (null == classInfo)
-//                continue;
-//
+
             result.put("className", classNameBuffer.toString());
             // TODO 0424 班型从paperApply里取
             List<Map<String, Object>> examineApplyList = examineApplyService.listPaperUse(paper.getCode());

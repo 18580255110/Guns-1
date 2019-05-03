@@ -171,6 +171,10 @@ public final class MessageConstant {
          * 提交测试失败
          */
         public static final String EXAMINE_SUBMIT_FAILED = "060101";
+        /**
+         * 入学测试次数限制
+         */
+        public static final String EXAMINE_LIMIT_FAILED = "060103";
 
         /**
          * 批量导入失败

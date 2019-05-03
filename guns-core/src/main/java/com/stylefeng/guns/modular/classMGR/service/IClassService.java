@@ -31,8 +31,7 @@ public interface IClassService extends IService<Class> {
     /**
      * 根据条件查询可报名班级列表
      *
-     * @param userName
-     * @param queryParams
+     * @param queryMap
      * @return
      */
     List<Class> queryListForSign(Map<String, Object> queryMap);
@@ -40,7 +39,7 @@ public interface IClassService extends IService<Class> {
     /**
      * 根据班级编码获取班级
      *
-     * @param classCode
+     * @param code
      * @return
      */
     Class get(String code);
@@ -148,18 +147,10 @@ public interface IClassService extends IService<Class> {
     List<Class> queryListForCrossChange(Map<String, Object> changeClassQuery);
 
     /**
-     * 是否有空余
+     * 查询班级剩余可报名数
      *
-     * @param classInfo
+     * @param code
      * @return
      */
-    boolean isSpared(Class classInfo);
-
-    /**
-     * 是否无空余
-     *
-     * @param classInfo
-     * @return
-     */
-    boolean isNotSpared(Class classInfo);
+    Integer queryOrderedCount(String code);
 }

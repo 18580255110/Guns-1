@@ -59,7 +59,7 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
     private Administrator administrator;
 
     @Override
-    public void adjustCourse(Member member, Student student, Map<String, Object> fromData, Map<String, Object> destData) {
+    public AdjustStudent adjustCourse(Member member, Student student, Map<String, Object> fromData, Map<String, Object> destData) {
 
         com.stylefeng.guns.modular.system.model.Class sourceClassInfo = (com.stylefeng.guns.modular.system.model.Class) fromData.get("sourceClass");
         com.stylefeng.guns.modular.system.model.Class targetClassInfo = (com.stylefeng.guns.modular.system.model.Class) destData.get("targetClass");
@@ -83,10 +83,12 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
         adjustCourseApply.setCreateTime(new Date());
 
         insert(adjustCourseApply);
+
+        return adjustCourseApply;
     }
 
     @Override
-    public void adjustClass(Member member, Student student, Map<String, Object> fromData, Map<String, Object> destData) {
+    public AdjustStudent adjustClass(Member member, Student student, Map<String, Object> fromData, Map<String, Object> destData) {
 
         com.stylefeng.guns.modular.system.model.Class sourceClassInfo = (com.stylefeng.guns.modular.system.model.Class) fromData.get("sourceClass");
         com.stylefeng.guns.modular.system.model.Class targetClassInfo = (com.stylefeng.guns.modular.system.model.Class) destData.get("targetClass");
@@ -108,6 +110,8 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
         adjustCourseApply.setCreateTime(new Date());
 
         insert(adjustCourseApply);
+
+        return adjustCourseApply;
     }
 
     @Override
@@ -269,6 +273,10 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
         Class classInfo = classService.get(targetClassCode);
         if (null == classInfo)
             return false;
+
+        int targetClassSignedCount = classService.queryOrderedCount(targetClassCode);
+        if (targetClassSignedCount >= classInfo.getQuato())
+            throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_CAPACITY);
 
         return true;
     }

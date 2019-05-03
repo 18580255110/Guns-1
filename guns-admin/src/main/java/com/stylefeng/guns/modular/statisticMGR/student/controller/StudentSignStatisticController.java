@@ -87,7 +87,7 @@ public class StudentSignStatisticController extends BaseController {
         //分页查詢
         Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
 
-        Map<String, Object> arguments = buildStudentSignStatisticArguments(queryParams);
+        Map<String, Object> arguments = buildQueryArguments(queryParams);
 
         List<Map<String, Object>> studentSignList = statisticMapper.statisticStudentSign(page, arguments);
 
@@ -107,7 +107,7 @@ public class StudentSignStatisticController extends BaseController {
 
         Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
         page.setSize(2000); // 默认只导出2000条，请加入筛选条件导出
-        Map<String, Object> arguments = buildStudentSignStatisticArguments(queryParams);
+        Map<String, Object> arguments = buildQueryArguments(queryParams);
         List<Map<String, Object>> orderList = statisticMapper.statisticStudentSign(page, arguments);
 
         if (null == orderList){
@@ -228,11 +228,5 @@ public class StudentSignStatisticController extends BaseController {
         }
 
         return workbook;
-    }
-
-    private Map<String, Object> buildStudentSignStatisticArguments(Map<String, Object> queryParams) {
-        Map<String, Object> arguments = buildQueryArguments(queryParams);
-
-        return arguments;
     }
 }

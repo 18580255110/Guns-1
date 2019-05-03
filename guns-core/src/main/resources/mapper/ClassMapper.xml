@@ -229,6 +229,7 @@
         ) a left join (select a.code as class_code, count(a.code) as sign_quato from tb_class a left join tb_student_class b on a.code = b.class_code where b.status = 1 group by a.code) b
         on a.code = b.class_code order by a.createDate desc
     </select>
+
     <select id="queryForList" resultMap="BaseResultMap" parameterType="java.util.HashMap">
         select a.*, IFNULL(b.sign_quato, 0) AS signQuato from (
         select tcr.subject,
@@ -244,7 +245,8 @@
         on a.code = b.class_code order by a.create_date desc
     </select>
 
-    <select id="queryClassSignCount" resultType="java.util.HashMap" parameterType="java.util.HashMap">
-        select count(*) as signCount from tb_order_item a, tb_order b where a.order_no = b.accept_no and  a.item_object = 1 and a.item_object_code = #{classCode} and b.status = 1
+    <!-- 查询在途订单数量 -->
+    <select id="queryOrderingSignCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+        select count(*) as signCount from tb_order_item a, tb_order b where a.order_no = b.accept_no and  a.item_object = 1 and a.item_object_code = #{classCode} and b.status = 1 and pay_status in (-1, 0)
     </select>
 </mapper>

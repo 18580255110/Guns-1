@@ -298,27 +298,25 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     }
 
     @Override
-    public boolean isNotSpared(Class classInfo) {
-        return isSpared(classInfo) ? false : true;
-    }
+    public Integer queryOrderedCount(String code) {
+        if ( null == code )
+            return 0;
 
-    @Override
-    public boolean isSpared(Class classInfo) {
+        Class classInfo = get(code);
+        if ( null == classInfo)
+            return 0;
+
         // 查询已报班缴费学员数
         Wrapper<StudentClass> queryWrapper = new EntityWrapper<>();
-        queryWrapper.eq("class_code", classInfo.getCode());
+        queryWrapper.eq("class_code", code);
         queryWrapper.eq("status", GenericState.Valid.code);
-        int existCount = studentClassService.selectCount(queryWrapper);
+        // 已完成报名的学员数
+        int completeSignedCount = studentClassService.selectCount(queryWrapper);
 
-        if (existCount >= classInfo.getQuato() )
-            return false;
-        // 查询已下订单未缴费学员数
-        Map<String, Object> resultMap = classMapper.queryClassSignCount(classInfo.getCode());
-        existCount = ((Long) resultMap.get("signCount")).intValue();
-        if (existCount >= classInfo.getQuato())
-            return false;
+        // 查询在途订单学员数
+        int orderingSignedCount = classMapper.queryOrderingSignCount(classInfo.getCode());
 
-        return true;
+        return completeSignedCount + orderingSignedCount;
     }
 
     private Map<String, Object> buildQueryArguments(Map<String, Object> queryParams) {

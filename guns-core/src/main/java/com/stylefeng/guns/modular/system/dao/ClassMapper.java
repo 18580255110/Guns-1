@@ -37,5 +37,5 @@ public interface ClassMapper extends BaseMapper<Class> {
      * @param code
      * @return
      */
-    Map<String, Object> queryClassSignCount(String code);
+    Integer queryOrderingSignCount(String code);
 }
