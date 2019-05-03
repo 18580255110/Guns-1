@@ -285,8 +285,11 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
     public StudentClass getCurrentValidClass(StudentClass studentClass) {
 
         AdjustStudent currValidClass = null;
+        StudentClass outStudentClassInfo = studentClass;
         StudentClass studentClassInfo = null;
         String classCode = studentClass.getClassCode();
+        List<Long> excludeIds = new ArrayList<Long>();
+
         while(null == studentClassInfo) {
             Wrapper<AdjustStudent> queryWrapper = new EntityWrapper<AdjustStudent>();
             queryWrapper.eq("source_class", classCode);
@@ -299,10 +302,13 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
             Wrapper<StudentClass> relWrapper = new EntityWrapper<StudentClass>();
             relWrapper.eq("student_code", classChange.getStudentCode());
             relWrapper.eq("class_code", classChange.getTargetClass());
+            relWrapper.notIn("id", excludeIds);
 
             studentClassInfo = studentClassService.selectOne(relWrapper);
 
             if (GenericState.Valid.code != studentClassInfo.getStatus()){
+                excludeIds.add(outStudentClassInfo.getId());
+                outStudentClassInfo = studentClassInfo;
                 currValidClass = null;
                 studentClassInfo = null;
                 classCode = classChange.getTargetClass();
