@@ -99,16 +99,6 @@ PaperDlg.UnSelectQuestion.check = function () {
         return true;
     }
 };
-PaperDlg.SelectedQuestion.check = function () {
-    var selected = $('#' + this.id).bootstrapTable('getSelections');
-    if(selected.length == 0){
-        Feng.info("请先选中表格中的某一记录！");
-        return false;
-    }else{
-        PaperDlg.SelectedQuestion.seItems = selected.slice(0);
-        return true;
-    }
-};
 
 PaperDlg.join = function(){
     if (this.UnSelectQuestion.check()) {

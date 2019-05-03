@@ -56,6 +56,54 @@ Answer.openDetail = function () {
     }
 };
 
+/**
+ * 点击添加成绩单管理
+ */
+Answer.openAddExamineAnswer = function () {
+    var index = layer.open({
+        type: 2,
+        title: '添加成绩单管理',
+        area: ['800px', '420px'], //宽高
+        fix: false, //不固定
+        maxmin: true,
+        content: Feng.ctxPath + '/examine/answer/examineAnswer_add'
+    });
+    this.layerIndex = index;
+};
+
+/**
+ * 打开查看成绩单管理详情
+ */
+Answer.openExamineAnswerDetail = function () {
+    if (this.check()) {
+        var index = layer.open({
+            type: 2,
+            title: '成绩单管理详情',
+            area: ['800px', '420px'], //宽高
+            fix: false, //不固定
+            maxmin: true,
+            content: Feng.ctxPath + '/examine/answer/examineAnswer_update/' + Answer.seItem.id
+        });
+        this.layerIndex = index;
+    }
+};
+
+/**
+ * 删除成绩单管理
+ */
+Answer.delete = function () {
+    if (this.check()) {
+        var ajax = new $ax(Feng.ctxPath + "/examine/answer/delete", function (data) {
+            Feng.success("删除成功!");
+            ExamineAnswer.table.refresh();
+        }, function (data) {
+            Feng.error("删除失败!" + data.responseJSON.message + "!");
+        });
+        ajax.set("examineAnswerId",this.seItem.id);
+        ajax.start();
+        window.parent.Answer.table.refresh();
+    }
+};
 
 /**
  * 查询答卷列表

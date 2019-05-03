@@ -1,0 +1,29 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal" id="anwserInfoForm">
+            <div class="row" >
+                <div class="col-sm-6 b-r">
+                            <#input id="paperCode" name="试卷编码" underline="true"/>
+                            <#input id="studentCode" name="学员编码" underline="true"/>
+                            <#input id="answerQuota" name="已答题数量"/>
+                </div>
+
+                <div class="col-sm-6">
+                            <#input id="score" name="得分数" underline="true"/>
+                            <#input id="beginDate" name="测试开始时间" underline="true"/>
+                            <#input id="teacher" name="评卷人" underline="true"/>
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="ExamineAnswerInfoDlg.addSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="ExamineAnswerInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/examineMGR/answer/examineAnswer_info.js"></script>
+@}
