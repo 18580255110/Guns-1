@@ -23,6 +23,7 @@ import com.stylefeng.guns.modular.system.dao.OrderMemberMapper;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.util.CodeKit;
+import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -295,6 +296,31 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         BeanUtils.copyProperties(sourceOrder, copyOrder, ignoreProperties);
 
         copyOrder.setAcceptNo(CodeKit.generateOrder());
+
+    }
+
+    @Override
+    public void doReverse(String orderNo) {
+
+        Order order = get(orderNo);
+
+        if (null == order)
+            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"订单"});
+
+        order.setStatus(OrderStateEnum.Reverse.code);
+        order.setDesc(DateUtil.getyyMMddHHmmss() + " 撤销订单");
+        updateById(order);
+
+        List<OrderItem> courseOrderItemList = listItems(orderNo, OrderItemTypeEnum.Course);
+        for(OrderItem orderItem : courseOrderItemList){
+            CourseCart courseCart = courseCartService.get(orderItem.getCourseCartCode());
+            if (null == courseCart)
+                continue;
+
+            courseCart.setStatus(CourseCartStateEnum.Invalid.code);
+            courseCartService.updateById(courseCart);
+            studentClassService.doReverse(courseCart.getStudentCode(), courseCart.getClassCode());
+        }
 
     }
 

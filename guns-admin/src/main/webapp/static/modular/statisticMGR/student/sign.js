@@ -15,13 +15,26 @@ StudentSign.initColumn = function () {
     return [
         {field: 'selectItem', radio: true},
         {title: '学员编号', field: 'studentCode', visible: true, align: 'center', valign: 'middle'},
+        {title: '订单编号', field: 'orderNo', visible: false, align: 'center', valign: 'middle'},
         {title: '学员名称', field: 'studentName', visible: true, align: 'center', valign: 'middle'},
         {title: '家长电话', field: 'memberMobile', visible: true, align: 'center', valign: 'middle'},
         {title: '所报班级', field: 'className', visible: true, align: 'center', valign: 'middle'},
         {title: '报名时间', field: 'signDate', visible: true, align: 'center', valign: 'middle'}
     ];
 };
-
+/**
+ * 检查是否选中
+ */
+StudentSign.check = function () {
+    var selected = $('#' + this.id).bootstrapTable('getSelections');
+    if(selected.length == 0){
+        Feng.info("请先选中表格中的某一记录！");
+        return false;
+    }else{
+        StudentSign.seItem = selected[0];
+        return true;
+    }
+};
 /**
  * 导出订单
  */
@@ -43,6 +56,22 @@ StudentSign.export = function () {
     queryData['classInfo'] = $("#classInfo").val();
     ajax.setData(queryData);
     ajax.start();
+};
+/**
+ * 取消订单
+ */
+StudentSign.cancel = function () {
+
+    if (this.check()) {
+        var ajax = new $ax(Feng.ctxPath + "/order/class/doReverse/" + StudentSign.seItem.orderNo, function (data) {
+            Feng.success("操作成功!");
+            StudentSign.table.refresh();
+        }, function (data) {
+            Feng.error("操作失败!" + data.responseJSON.message + "!");
+        });
+
+        ajax.start();
+    }
 };
 
 /**

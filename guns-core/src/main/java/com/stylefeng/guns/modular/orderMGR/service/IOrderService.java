@@ -106,4 +106,10 @@ public interface IOrderService extends IService<Order> {
      * @param targetClass
      */
     void doCopyForChange(String studentCode, String sourceClass, String targetClass);
+
+    /**
+     * 订单撤销
+     * @param orderNo
+     */
+    void doReverse(String orderNo);
 }

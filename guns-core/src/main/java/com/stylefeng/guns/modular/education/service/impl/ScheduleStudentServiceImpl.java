@@ -14,6 +14,7 @@ import com.stylefeng.guns.modular.system.dao.ScheduleStudentMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.ScheduleClass;
 import com.stylefeng.guns.modular.system.model.ScheduleStudent;
+import com.stylefeng.guns.modular.system.model.StudentClass;
 import com.stylefeng.guns.util.CodeKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,5 +159,21 @@ public class ScheduleStudentServiceImpl extends ServiceImpl<ScheduleStudentMappe
     @Override
     public List<StudentPlan> selectPlanList(Map<String, Object> queryMap) {
         return scheduleStudentMapper.selectPlanList(queryMap);
+    }
+
+    @Override
+    public void doReverse(String studentCode, String classCode) {
+        Wrapper<ScheduleStudent> queryWrapper = new EntityWrapper<ScheduleStudent>();
+        queryWrapper.eq("student_code", studentCode);
+        queryWrapper.eq("class_code", classCode);
+        queryWrapper.eq("status", GenericState.Valid.code);
+
+        List<ScheduleStudent> studentPlanList = selectList(queryWrapper);
+
+        for (ScheduleStudent plan : studentPlanList){
+            plan.setStatus(GenericState.Invalid.code);
+            plan.setRemark("已退费");
+            updateById(plan);
+        }
     }
 }

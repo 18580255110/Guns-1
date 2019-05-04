@@ -49,4 +49,12 @@ public interface IScheduleStudentService extends IService<ScheduleStudent>{
      * @return
      */
     List<StudentPlan> selectPlanList(Map<String, Object> queryMap);
+
+    /**
+     * 撤销订单
+     *
+     * @param studentCode
+     * @param classCode
+     */
+    void doReverse(String studentCode, String classCode);
 }

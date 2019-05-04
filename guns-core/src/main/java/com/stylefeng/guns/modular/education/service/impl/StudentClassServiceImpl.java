@@ -7,6 +7,7 @@ import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
+import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
 import com.stylefeng.guns.modular.system.dao.StudentClassMapper;
 import com.stylefeng.guns.modular.system.model.Class;
@@ -31,6 +32,9 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
 
     @Autowired
     private IClassService classService;
+
+    @Autowired
+    private IScheduleStudentService scheduleStudentService;
 
     @Autowired
     private StudentClassMapper studentClassMapper;
@@ -92,5 +96,22 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
     @Override
     public String getOrderNo(String studentCode, String sourceClass) {
         return null;
+    }
+
+    @Override
+    public void doReverse(String studentCode, String classCode) {
+        Wrapper<StudentClass> queryWrapper = new EntityWrapper<StudentClass>();
+        queryWrapper.eq("student_code", studentCode);
+        queryWrapper.eq("class_code", classCode);
+        queryWrapper.eq("status", GenericState.Valid.code);
+        List<StudentClass> currStudentClassList = selectList(queryWrapper);
+
+        for (StudentClass studentClass : currStudentClassList){
+            studentClass.setStatus(GenericState.Invalid.code);
+            studentClass.setRemark("已退费");
+            updateById(studentClass);
+
+            scheduleStudentService.doReverse(studentCode, classCode);
+        }
     }
 }

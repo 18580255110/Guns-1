@@ -2,9 +2,7 @@ package com.stylefeng.guns.modular.orderMGR.controller;
 
 import static com.stylefeng.guns.util.ExcelUtil.*;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.stylefeng.guns.common.constant.factory.PageFactory;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.base.controller.BaseController;
@@ -22,7 +20,6 @@ import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.service.IAttachmentService;
 import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.PathUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -135,6 +132,22 @@ public class OrderController extends BaseController {
             throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"订单号"});
 
         orderService.cancel(orderNo);
+
+        return SUCCESS_TIP;
+    }
+
+
+    /**
+     * 撤销订单管理
+     */
+    @RequestMapping(value = "/class/doReverse/{orderNo}")
+    @ResponseBody
+    public Object reverse(@PathVariable("orderNo") String orderNo) {
+
+        if (null == orderNo)
+            throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"订单号"});
+
+        orderService.doReverse(orderNo);
 
         return SUCCESS_TIP;
     }
