@@ -137,17 +137,20 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             Map<String, Object> queryParams = new HashMap<String, Object>();
             queryParams.put("classCode", classInfo.getCode());
             ExamineApply examineApply = examineService.findExamineApply(queryParams);
-            if (null != examineApply){
-                Wrapper<ExamineAnswer> queryWrapper = new EntityWrapper<>();
-                queryWrapper.eq("paper_code", examineApply.getPaperCode());
-                queryWrapper.eq("student_code", student.getCode());
-                queryWrapper.ge("score", examineApply.getPassScore());
-                queryWrapper.eq("status", ExamineAnswerStateEnum.Finish.code);
-                int passCount = examineAnswerService.selectCount(queryWrapper);
 
-                if (0 >= passCount)
-                    throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
-            }
+            if (null == examineApply)
+                throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
+
+            Wrapper<ExamineAnswer> queryWrapper = new EntityWrapper<>();
+            queryWrapper.eq("paper_code", examineApply.getPaperCode());
+            queryWrapper.eq("student_code", student.getCode());
+            queryWrapper.ge("score", examineApply.getPassScore());
+            queryWrapper.eq("status", ExamineAnswerStateEnum.Finish.code);
+            int passCount = examineAnswerService.selectCount(queryWrapper);
+
+            if (0 >= passCount)
+                throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
+
         }
 
         // 检查班级报名状态
