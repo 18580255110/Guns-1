@@ -255,6 +255,11 @@ public class OrderController extends ApiController {
 
                     if (GenericState.Valid.code != studentClass.getStatus()){
                         StudentClass currentValidClass = adjustStudentService.getCurrentValidClass(studentClass);
+
+                        if (null == currentValidClass)
+                            // 没有找到有效的订购课程，一般是退费了。
+                            continue;
+
                         orgClassCode = currentValidClass.getClassCode();
                     }
                 }

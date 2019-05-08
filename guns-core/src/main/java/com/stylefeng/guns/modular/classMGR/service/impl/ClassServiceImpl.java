@@ -102,13 +102,13 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
 
         if (signEndDate.before(now))
             throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_OUTTIME);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        if (10 > hour)
-            throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+//
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTime(now);
+//        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+//
+//        if (10 > hour)
+//            throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
 
     }
 

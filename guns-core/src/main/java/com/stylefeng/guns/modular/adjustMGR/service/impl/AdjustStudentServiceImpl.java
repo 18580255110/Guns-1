@@ -299,6 +299,10 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
 
             AdjustStudent classChange = selectOne(queryWrapper);
 
+            if (null == classChange)
+                // 找不到有效的订购课程，一般是退费了
+                break;
+
             Wrapper<StudentClass> relWrapper = new EntityWrapper<StudentClass>();
             relWrapper.eq("student_code", classChange.getStudentCode());
             relWrapper.eq("class_code", classChange.getTargetClass());
