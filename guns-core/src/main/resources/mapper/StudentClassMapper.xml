@@ -64,6 +64,7 @@
         <include refid="Student_Column_List" />
         from tb_student s join ( select ss.code from tb_student ss join tb_student_class sc on sc.student_code = ss.code
         <where>
+            and sc.status = 1
         <!-- 班级 -->
         <if test="null != classCode">
             and sc.class_code = #{classCode}
