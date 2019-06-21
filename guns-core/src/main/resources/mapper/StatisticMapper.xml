@@ -26,7 +26,7 @@
         join tb_student s on sc.student_code = s.code)
         join tb_member m on s.user_name = m.user_name)
         join tb_class c on sc.class_code = c.code)
-        join tb_order o on sc.order_no = o.accept_no)
+        join tb_order o on sc.order_no = o.accept_no and o.status = 1)
         join tb_course co on c.course_code = co.code)
         )
         <where>
