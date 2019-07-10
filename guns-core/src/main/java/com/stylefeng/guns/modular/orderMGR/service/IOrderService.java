@@ -112,4 +112,12 @@ public interface IOrderService extends IService<Order> {
      * @param orderNo
      */
     void doReverse(String orderNo);
+
+    /**
+     * 查询已过期订单
+     *
+     * 生成订单后24小时没有支付成功认定为过期订单
+     * @return
+     */
+    List<Map<String, Object>> queryExpiredOrderList();
 }

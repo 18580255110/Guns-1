@@ -63,6 +63,7 @@ public class StudentSignStatisticController extends BaseController {
             add("学员名称");
             add("家长电话");
             add("所报班级");
+            add("教授老师");
             add("报名时间");
         }
     };
@@ -218,6 +219,7 @@ public class StudentSignStatisticController extends BaseController {
             addCell(valueRow, item.get("studentName"), valueStyle);
             addCell(valueRow, item.get("memberMobile"), valueStyle);
             addCell(valueRow, item.get("className"), valueStyle);
+            addCell(valueRow, item.get("teacher"), valueStyle);
             addCell(valueRow, signDate, valueStyle);
         }
 

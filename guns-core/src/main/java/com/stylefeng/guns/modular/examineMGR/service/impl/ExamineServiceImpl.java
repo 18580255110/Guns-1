@@ -169,7 +169,8 @@ public class ExamineServiceImpl implements IExamineService {
 
         Wrapper<ExamineAnswer> examineAnswerWrapper = new EntityWrapper<>();
         examineAnswerWrapper.eq("student_code", student);
-        examineAnswerWrapper.ne("status", -1);
+//        examineAnswerWrapper.ne("status", -1);
+        examineAnswerWrapper.eq("status", 4);
         List<Map<String, Object>> resultList = examineAnswerService.selectMaps(examineAnswerWrapper);
 
         Set<Map<String, Object>> examineAnswerPaperList = new HashSet<>();

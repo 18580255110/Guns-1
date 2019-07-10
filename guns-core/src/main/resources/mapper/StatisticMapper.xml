@@ -14,7 +14,7 @@
 
     <select id="statisticStudentSign" resultMap="StudentSignResultMap" parameterType="java.util.HashMap">
         select
-         s.code as student_code, s.name as student_name, c.code as class_code, c.name as class_name, o.accept_date as sign_date, m.mobile_number as member_mobile, o.accept_no as order_no
+         s.code as student_code, s.name as student_name, c.code as class_code, c.name as class_name, o.accept_date as sign_date, m.mobile_number as member_mobile, o.accept_no as order_no, c.teacher
         from
         (
         (

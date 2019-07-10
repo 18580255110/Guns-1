@@ -447,26 +447,27 @@ public class EducationController extends ApiController {
 
         Set<Class> classSet = new HashSet<>();
         for (com.stylefeng.guns.modular.system.model.Class classInfo : classList){
+
+            if (null == classInfo){
+                continue;
+            }
+
+            if (!(classInfo.isValid())){
+                continue;
+            }
+
+            if (classInfo.getCode().equals(currClass.getCode())){
+                // 过滤掉自己
+                continue;
+            }
+
             // 查询班级剩余报名额度
-            Wrapper<StudentClass> queryWrapper = new EntityWrapper<>();
-            queryWrapper.eq("class_code", classInfo.getCode());
-            queryWrapper.eq("status", GenericState.Valid.code);
-            int existCount = studentClassService.selectCount(queryWrapper);
+            int existCount = classService.queryOrderedCount(classInfo.getCode());
 
             if (existCount >= classInfo.getQuato() ){
                 continue;
             }
 
-            if (null == classInfo){
-                continue;
-            }
-            if (!(classInfo.isValid())){
-                continue;
-            }
-            if (classInfo.getCode().equals(currClass.getCode())){
-                // 过滤掉自己
-                continue;
-            }
             if (currClass.getPrice().equals(classInfo.getPrice())){
                 classSet.add(classInfo);
             }

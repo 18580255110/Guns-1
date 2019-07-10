@@ -19,6 +19,7 @@ StudentSign.initColumn = function () {
         {title: '学员名称', field: 'studentName', visible: true, align: 'center', valign: 'middle'},
         {title: '家长电话', field: 'memberMobile', visible: true, align: 'center', valign: 'middle'},
         {title: '所报班级', field: 'className', visible: true, align: 'center', valign: 'middle'},
+        {title: '任课老师', field: 'teacher', visible: true, align: 'center', valign: 'middle'},
         {title: '报名时间', field: 'signDate', visible: true, align: 'center', valign: 'middle'}
     ];
 };

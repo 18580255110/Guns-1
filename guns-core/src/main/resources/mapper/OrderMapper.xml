@@ -49,6 +49,29 @@
                 and c.cycle = #{cycle}
             </if>
 
+            <!-- 状态 -->
+            <if test="null != stateList and stateList.size() > 0">
+                and (
+                <foreach collection="stateList" item="state" open="" separator=" or " close="">
+                    o.status = #{state}
+                </foreach>
+                )
+            </if>
+
+            <!-- 支付状态 -->
+            <if test="null != payStateList and payStateList.size() > 0">
+                and (
+                <foreach collection="payStateList" item="state" open="" separator=" or " close="">
+                    o.pay_status = #{state}
+                </foreach>
+                )
+            </if>
+
+            <!-- 支付状态 -->
+            <if test="null != expireDate">
+                and accept_date &lt; #{expireDate}
+            </if>
+
         </where>
     </sql>
 
@@ -83,28 +106,23 @@
     </select>
 
     <select id="selectPageList" resultMap="BaseResultMap" parameterType="java.util.HashMap">
-        select
+        select c.name as className, c.teacher, cc.student,
             <include refid="Base_Column_List" />
         from
         (
-        <if test="null != teacher || null != student || null != subject || null != ability || null != cycle">
             (
             (
-        </if>
-        <if test="null != subject || null != ability || null != cycle">
             (
-        </if>
         <if test="null != subject">
             (
         </if>
         tb_order o
-        <if test="null != teacher || null != student || null != subject || null != ability || null != cycle">
+
             join tb_order_item oi on oi.order_no = o.accept_no )
             join tb_course_cart cc on cc.code = oi.course_cart_code )
-        </if>
-        <if test="null != subject || null != ability || null != cycle">
+
             join tb_class c on oi.item_object_code = c.code )
-        </if>
+
         <if test="null != subject">
             join tb_course cr on c.course_code = cr.code )
         </if>

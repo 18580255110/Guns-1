@@ -25,6 +25,7 @@ import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -322,6 +323,28 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             studentClassService.doReverse(courseCart.getStudentCode(), courseCart.getClassCode());
         }
 
+    }
+
+    @Override
+    public List<Map<String, Object>> queryExpiredOrderList() {
+
+        Map<String, Object> queryParams = new HashMap<String, Object>();
+
+        List<Integer> payStateList = new ArrayList<Integer>();
+        List<Integer> stateList = new ArrayList<Integer>();
+        // 支付状态
+        payStateList.add(PayStateEnum.NoPay.code);
+        payStateList.add(PayStateEnum.Failed.code);
+        queryParams.put("payStateList", payStateList);
+        // 有效的订单
+        stateList.add(OrderStateEnum.PreCreate.code);
+        stateList.add(OrderStateEnum.Valid.code);
+        queryParams.put("stateList", stateList);
+
+        Date expireDate = DateUtils.truncate(DateUtil.add(new Date(), Calendar.HOUR_OF_DAY, -24), Calendar.HOUR_OF_DAY );
+        queryParams.put("expireDate", expireDate);
+
+        return queryForList(queryParams);
     }
 
     private Map<String, Object> buildQueryArguments(Map<String, Object> queryParams) {

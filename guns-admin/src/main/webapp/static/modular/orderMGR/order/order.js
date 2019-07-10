@@ -15,7 +15,10 @@ Order.initColumn = function () {
     return [
         {field: 'selectItem', radio: true},
             {title: '标示', field: 'id', visible: false, align: 'center', valign: 'middle'},
-            {title: '订单号', field: 'acceptNo', visible: true, align: 'center', valign: 'middle'},
+            {title: '订单号', field: 'acceptNo', visible: false, align: 'center', valign: 'middle'},
+            {title: '学员', field: 'student', visible: true, align: 'center', valign: 'middle'},
+            {title: '所报班级', field: 'className', visible: true, align: 'center', valign: 'middle'},
+            {title: '教授老师', field: 'teacher', visible: true, align: 'center', valign: 'middle'},
             {title: '金额（元）', field: 'amount', visible: true, align: 'center', valign: 'middle'},
             {title: 'status', field: 'status', visible: false, align: 'center', valign: 'middle'},
             {title: '状态', field: 'statusName', visible: true, align: 'center', valign: 'middle'},
