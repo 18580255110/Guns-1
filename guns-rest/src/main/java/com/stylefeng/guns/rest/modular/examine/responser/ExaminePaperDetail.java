@@ -2,7 +2,6 @@ package com.stylefeng.guns.rest.modular.examine.responser;
 
 import com.stylefeng.guns.modular.system.model.ExamineApply;
 import com.stylefeng.guns.modular.system.model.ExaminePaper;
-import com.stylefeng.guns.rest.core.Responser;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.BeanUtils;

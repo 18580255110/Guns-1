@@ -1,5 +1,6 @@
 package com.stylefeng.guns.modular.system.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -68,12 +69,14 @@ public class Class extends Model<Class> {
      */
     @TableField("begin_date")
     @ApiModelProperty(name = "beginDate", value = "开课起始日期", position = 6, example="2018-11-30")
+    @JSONField(format = "yyyy-MM-dd")
     private Date beginDate;
     /**
      * 开课结束日期
      */
     @TableField("end_date")
-    @ApiModelProperty(name = "beginDate", value = "开课结束日期", position = 7, example="2018-12-30")
+    @ApiModelProperty(name = "endDate", value = "开课结束日期", position = 7, example="2018-12-30")
+    @JSONField(format = "yyyy-MM-dd")
     private Date endDate;
     /**
      * 开课时间描述
@@ -86,21 +89,23 @@ public class Class extends Model<Class> {
      */
     @TableField("cross_start_date")
     @ApiModelProperty(name = "crossStartDate", value = "跨报开始时间", position = 9, example="2019-02-01")
+    @JSONField(format = "yyyy-MM-dd")
     private Date crossStartDate;
     /**
      * 跨报结束时间
      */
     @TableField("cross_end_date")
     @ApiModelProperty(name = "crossEndDate", value = "跨报结束时间", position = 10, example="2019-02-05")
+    @JSONField(format = "yyyy-MM-dd")
     private Date crossEndDate;
     /**
      * 单位：分钟
      */
-    private Integer duration;
+    private Integer duration = 0;
     /**
      * 总课时数
      */
-    private Integer period;
+    private Integer period = 0;
     /**
      * 教室编码
      */
@@ -124,25 +129,27 @@ public class Class extends Model<Class> {
     /**
      * 关注度
      */
-    private Integer star;
+    private Integer star = 0;
     /**
      * 价格： 单位： 分
      */
-    private Long price;
+    private Long price = 0L;
     /**
      * 开班人数
      */
-    private Integer quato;
+    private Integer quato = 0;
 
     /**
      * 报名开始日期
      */
     @TableField("sign_start_date")
+    @JSONField(format = "yyyy-MM-dd")
     private Date signStartDate;
     /**
      * 报名截止日期
      */
     @TableField("sign_end_date")
+    @JSONField(format = "yyyy-MM-dd")
     private Date signEndDate;
     /**
      * 状态
@@ -285,6 +292,7 @@ public class Class extends Model<Class> {
             this.ability = Integer.parseInt(ability);
         }catch(Exception e){}
     }
+
     public Date getBeginDate() {
         return beginDate;
     }

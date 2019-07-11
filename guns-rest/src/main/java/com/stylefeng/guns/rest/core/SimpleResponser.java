@@ -1,8 +1,5 @@
 package com.stylefeng.guns.rest.core;
 
-import com.stylefeng.guns.modular.system.model.Column;
-import com.stylefeng.guns.modular.system.model.ColumnAction;
-import com.stylefeng.guns.rest.core.Responser;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
