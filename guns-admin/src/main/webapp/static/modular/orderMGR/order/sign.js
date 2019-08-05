@@ -5,7 +5,8 @@ var Sign = {
     id: "ClassTable",	//表格id
     seItem: null,		//选中的条目
     table: null,
-    layerIndex: -1
+    layerIndex: -1,
+    queryParams: {status : 1},
 };
 
 /**
@@ -131,15 +132,19 @@ Sign.search = function () {
     queryData['studyDate'] = $("#studyDate").val();
     queryData['signDate'] = $("#signDate").val();
     queryData['offset'] = 0;
+
+    Sign.queryParams = queryData;
     Sign.table.refresh({query: queryData});
+};
+
+Sign.getQueryParams = function(){
+    return Sign.queryParams;
 };
 
 $(function () {
     var defaultColunms = Sign.initColumn();
     var table = new BSTable(Sign.id, "/class/list", defaultColunms);
     table.setPaginationType("server");
-    table.setQueryParams({
-        status: 1 // 查有效的班级
-    });
+    table.setQueryParamsGetter(Sign.getQueryParams)
     Sign.table = table.init();
 });
