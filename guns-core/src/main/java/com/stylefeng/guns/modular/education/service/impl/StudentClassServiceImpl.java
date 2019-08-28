@@ -14,10 +14,12 @@ import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.Member;
 import com.stylefeng.guns.modular.system.model.Student;
 import com.stylefeng.guns.modular.system.model.StudentClass;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -112,6 +114,25 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
             updateById(studentClass);
 
             scheduleStudentService.doReverse(studentCode, classCode);
+        }
+    }
+
+    @Override
+    public void doReverse(String orderNo) {
+        Wrapper<StudentClass> queryWrapper = new EntityWrapper<StudentClass>();
+        queryWrapper.eq("order_no", orderNo);
+        queryWrapper.eq("status", GenericState.Valid.code);
+        List<StudentClass> currStudentClassList = selectList(queryWrapper);
+
+        String now = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss");
+
+        for (StudentClass studentClass : currStudentClassList){
+            studentClass.setStatus(GenericState.Invalid.code);
+
+            studentClass.setRemark(now + " 已退费");
+            updateById(studentClass);
+
+            scheduleStudentService.doReverse(studentClass.getStudentCode(), studentClass.getClassCode());
         }
     }
 }

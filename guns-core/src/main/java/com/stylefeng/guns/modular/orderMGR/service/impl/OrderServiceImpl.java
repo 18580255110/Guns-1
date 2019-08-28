@@ -320,7 +320,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
             courseCart.setStatus(CourseCartStateEnum.Invalid.code);
             courseCartService.updateById(courseCart);
-            studentClassService.doReverse(courseCart.getStudentCode(), courseCart.getClassCode());
+            // 目前有因为转班造成服务通过学员编码、班级编码、状态来取消报名。
+            //studentClassService.doReverse(courseCart.getStudentCode(), courseCart.getClassCode());
+            // 修改为按照订单号来取消报名
+            studentClassService.doReverse(orderItem.getOrderNo());
         }
 
     }
