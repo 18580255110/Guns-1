@@ -1,0 +1,62 @@
+@layout("/common/_container.html"){
+<link href="${ctxPath}/static/css/plugins/steps/jquery.steps.css" rel="stylesheet">
+<style>
+    .wizard-big.wizard > .content{
+        height: auto !important;
+        min-height: 600px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .pagination ul > li
+    {
+        display: inline !important;
+        padding: 0;
+    }
+</style>
+<input type="hidden" id="classCode" value="${classInfo.code}" />
+<div class="ibox float-e-margins" style="heigth: 100%;">
+    <div class="ibox-content">
+        <div id="wizard" class="wizard-big" style="overflow-y:auto; overflow-x: hidden; height: auto !important; min-height: 600px;">
+            <h1>学员信息</h1>
+            <fieldset>
+                <form id="basicForm" class="form-horizontal">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <#input id="studentCode" name="学员编码" value="" underline="true"/>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="text-center">
+                                <div style="margin-top: 110px; margin-left: 55px;">
+                                    <i class="fa fa-sign-in" style="font-size: 180px;color: #e5e5e5 "></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </fieldset>
+            <h1>信息确认</h1>
+            <fieldset>
+                <form id="confirmForm" class="form-horizontal">
+                    <div class="row">
+                        <#input id="student" name="学员姓名" value="" underline="true"/>
+                        <#dictSelector id="gender" name ="gender" code="sys_sex" label="学员性别"  underline="true"  width="75%"/>
+                        <#input id="age" name="学员年龄" value="" underline="true"/>
+                        <#input id="school" name="在读学校" value="" underline="true"/>
+                        <#dictSelector id="grade" name ="grade" code="school_grade" label="在读年级"  underline="true"  width="75%"/>
+                        <#input id="targetSchool" name="目标学校" value="" underline="true"/>
+                        <#input id="mobileNumber" name="家长电话" value="" underline="true"/>
+                        <#input id="memberName" name="家长姓名" value=""/>
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<div class="progress progress-striped" id="progressTipArea" style="margin-top: 20px;">
+    <div id="progressBar" style="width: 0%" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" role="progressbar" class="progress-bar progress-bar-info">
+    </div>
+</div>
+<#script src="/static/js/plugins/steps/jquery.steps.min.js" />
+<#script src="/static/modular/orderMGR/order/auth_wizard.js" />
+@}

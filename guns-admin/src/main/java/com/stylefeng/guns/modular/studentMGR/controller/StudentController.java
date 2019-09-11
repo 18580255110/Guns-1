@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.stylefeng.guns.common.constant.factory.PageFactory;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.base.controller.BaseController;
+import com.stylefeng.guns.core.base.tips.ErrorTip;
+import com.stylefeng.guns.core.base.tips.SuccessTip;
+import com.stylefeng.guns.core.base.tips.Tip;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.log.LogObjectHolder;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
@@ -220,7 +223,13 @@ public class StudentController extends BaseController {
     @RequestMapping(value = "/get/{code}")
     @ResponseBody
     public Object get(@PathVariable("code") String studentCode) {
-        return studentService.get(studentCode);
+        Student student = studentService.get(studentCode);
+
+        if (null == student) {
+            Tip tip = new ErrorTip(500, "无效的学员编码");
+            return tip;
+        }else
+            return student;
     }
 
 }

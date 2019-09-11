@@ -867,7 +867,9 @@ public class EducationController extends ApiController {
                 continue;
             }
 
-            responserList.add(PlanOfDayResponser.me(ClassResponser.me(classInfo), outline));
+            ClassResponser classResponser = ClassResponser.me(classInfo);
+            classResponser.setStudent(plan.getStudentName());
+            responserList.add(PlanOfDayResponser.me(classResponser, outline));
         }
 
         return PlanOfDayResponserWrapper.me(responserList);

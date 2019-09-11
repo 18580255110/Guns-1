@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
+import com.stylefeng.guns.modular.classMGR.service.IClassAuthorityService;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.classMGR.service.ICourseService;
 import com.stylefeng.guns.modular.education.CourseMethodEnum;
@@ -65,6 +66,9 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
     @Autowired
     private IStudentZoneService studentZoneService;
+
+    @Autowired
+    private IClassAuthorityService classAuthorityService;
 
     private static final Map<Integer, String> DayOfWeekMap = new HashMap<Integer, String>();
     private static final Map<Integer, String> DayOfMonthMap = new HashMap<Integer, String>();
@@ -131,9 +135,10 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
         // 是否老学员
         boolean zoneStudent = studentZoneService.isZoneStudent(student, classInfo);
+        boolean hasPrivilege = classAuthorityService.hasPrivilege(student, classInfo);
 
         // 入学测试校验
-        if (!skipTest && !zoneStudent && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
+        if (!skipTest && !zoneStudent && !hasPrivilege && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
             Map<String, Object> queryParams = new HashMap<String, Object>();
             queryParams.put("classCode", classInfo.getCode());
             ExamineApply examineApply = examineService.findExamineApply(queryParams);
@@ -150,11 +155,10 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
             if (0 >= passCount)
                 throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
-
         }
 
         // 检查班级报名状态
-        if (!skipTest && !zoneStudent)
+        if (!skipTest && !zoneStudent && !hasPrivilege)
             classService.checkJoinState(classInfo, member, student);
 
         // 加入选课单

@@ -36,6 +36,9 @@
       FROM tb_adjust_student a , tb_member m, tb_student s
       <where>
           AND a.user_name = m.user_name AND a.student_code = s.code
+          <if test="null != student">
+              AND (s.code = #{student} OR s.name like CONCAT('%',#{student},'%') )
+          </if>
           <if test="type != null">
             AND a.type = #{type}
               <if test="type == 1">
@@ -48,6 +51,16 @@
           <if test="workStatus != null">
               AND a.work_status = #{workStatus}
           </if>
+
+          <!-- 调整时间 -->
+          <if test="null != beginDate">
+              <![CDATA[ and update_time >= #{beginDate} ]]>
+          </if>
+
+          <if test="null != endDate">
+              <![CDATA[ and update_time < #{endDate} ]]>
+          </if>
+
       </where>
     </select>
 

@@ -117,7 +117,7 @@ Classroom.doUpdate = function(reqUrl, data){
 
 $(function () {
     var defaultColunms = Classroom.initColumn();
-    var table = new BSTable(Classroom.id, "/classroom/list", defaultColunms);
+    var table = new BSTable(Classroom.id, "/classroom/list?status=1", defaultColunms);
     table.setPaginationType("server");
     table.setLoadSuccessCallback(function(){
         var switchers = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));

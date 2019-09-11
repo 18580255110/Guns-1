@@ -69,7 +69,7 @@
 
             <!-- 支付状态 -->
             <if test="null != expireDate">
-                and accept_date &lt; #{expireDate}
+                <![CDATA[ and accept_date < #{expireDate} ]]>
             </if>
 
         </where>

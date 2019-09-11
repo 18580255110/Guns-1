@@ -2,6 +2,7 @@ package com.stylefeng.guns.rest.modular.examine.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.stylefeng.guns.common.constant.factory.ConstantFactory;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
@@ -16,8 +17,10 @@ import com.stylefeng.guns.rest.core.Responser;
 import com.stylefeng.guns.rest.core.SimpleResponser;
 import com.stylefeng.guns.rest.modular.examine.requester.*;
 import com.stylefeng.guns.rest.modular.examine.responser.*;
+import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.ToolUtil;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +53,9 @@ public class ExamController extends ApiController {
     private IExamineService examineService;
 
     @Autowired
+    private IExamineApplyService examineApplyService;
+
+    @Autowired
     private IQuestionService questionService;
 
     @Autowired
@@ -61,8 +67,6 @@ public class ExamController extends ApiController {
     @Autowired
     private IExaminePaperService examinePaperService;
 
-    @Autowired
-    private IExamineApplyService examineApplyService;
 
     @ApiOperation(value="班级所需试卷", httpMethod = "POST", response = ExaminePaperDetailResponse.class)
     @RequestMapping(value = "/paper/findone", method = RequestMethod.POST)
@@ -142,7 +146,59 @@ public class ExamController extends ApiController {
         Set<ExamineAnswerPaperResponse> paperResponseList = new HashSet<>();
         // 查找学员的试卷列表
         Collection<Map<String, Object>> examineAnswerPaperList = examineService.findExamineAnswerPaperList(student.getCode());
+        List<String> classCodeList = new ArrayList<String>();
         for(Map<String, Object> examineAnswerPaper : examineAnswerPaperList){
+            classCodeList.add((String) examineAnswerPaper.get("paperCode"));
+            paperResponseList.add(ExamineAnswerPaperResponse.me(examineAnswerPaper));
+        }
+
+        // 查找符合当前学员和的试卷
+        Map<String, Object> queryParams = new HashMap<String, Object>();
+        queryParams.put("student", student.getCode());
+        queryParams.put("grade", student.getGrade());
+        List<ExaminePaper> examinePaperList = examinePaperService.selectList(new EntityWrapper<ExaminePaper>(){
+
+            {
+                eq("grades", student.getGrade());
+                eq("status", GenericState.Valid.code);
+            }
+
+        });
+
+        for(ExaminePaper paper : examinePaperList){
+
+            List<ExamineApply> paperApplyList = examineApplyService.selectList(new EntityWrapper<ExamineApply>(){
+                {
+                    eq("paper_code", paper.getCode());
+                    eq("status", GenericState.Valid.code);
+                }
+            });
+
+            if (null == paperApplyList || paperApplyList.isEmpty())
+                continue;
+
+            Map<String, Object> examineAnswerPaper = new HashMap<String, Object>();
+            examineAnswerPaper.put("paperCode", paper.getCode());
+            examineAnswerPaper.put("studentCode", student.getCode());
+            examineAnswerPaper.put("userName", student.getUserName());
+            examineAnswerPaper.put("quota", paper.getCount());
+            examineAnswerPaper.put("totalScore", paper.getTotalScore());
+            examineAnswerPaper.put("examTime", paperApplyList.get(0).getExamTime());
+            examineAnswerPaper.put("answerQuota", 0);
+            examineAnswerPaper.put("score", 0);
+            examineAnswerPaper.put("duration", 0);
+            examineAnswerPaper.put("status", 0);
+
+            StringBuffer classNameBuffer = new StringBuffer();
+            classNameBuffer.append(
+                    ConstantFactory.me().getGradeName(Integer.parseInt(paper.getGrades()))
+            ).append(
+                    ConstantFactory.me().getsubjectName(Integer.parseInt(paper.getSubject()))
+            );
+
+            examineAnswerPaper.put("className", classNameBuffer.toString());
+            examineAnswerPaper.put("ability", "很抱歉，没有合适的班型");
+
             paperResponseList.add(ExamineAnswerPaperResponse.me(examineAnswerPaper));
         }
 
