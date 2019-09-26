@@ -123,7 +123,7 @@ $(function () {
     var editor = new E('#editor');
     // 配置服务器端地址
     editor.customConfig.uploadImgServer = Feng.ctxPath + '/attachment/upload/async';
-    editor.customConfig.uploadFileName = 'file';
+    editor.customConfig.uploadFileName = 'files';
     editor.customConfig.uploadImgHooks = {
         customInsert: function (insertImg, result, editor) {
             // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
