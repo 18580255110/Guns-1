@@ -1,9 +1,9 @@
 package com.stylefeng.guns.task.controller;
 
 import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
-import com.stylefeng.guns.modular.system.model.Order;
 import com.stylefeng.guns.task.batch.ClassImportTask;
 import com.stylefeng.guns.task.batch.SignImportTask;
+import com.stylefeng.guns.task.order.OrderRecycleTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +27,9 @@ public class TaskController {
 
     @Autowired
     private SignImportTask signImportTask;
+
+    @Autowired
+    private OrderRecycleTask orderRecycleTask;
 
     @Autowired
     private IOrderService orderService;
@@ -71,6 +74,15 @@ public class TaskController {
     public String payMock(@PathVariable("orderNo") String orderNo){
         // 支付下单
         orderService.completePay(orderNo);
+
+        return "ok";
+    }
+
+
+    @RequestMapping("/start/order/recycle")
+    @ResponseBody
+    public String orderRecycle(){
+        orderRecycleTask.expireClean();
 
         return "ok";
     }
