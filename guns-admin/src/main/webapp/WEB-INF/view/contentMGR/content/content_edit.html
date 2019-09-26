@@ -11,7 +11,22 @@
 
             <div class="row">
                 <div class="col-sm-5 col-sm-offset-1 b-r">
-                            <#avatar id="${item.id}" name="timage" label="标题图片" underline="true"/>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label head-scu-label">标题图片</label>
+                                <div class="col-sm-4">
+                                    <div id="timagePreId">
+                                        <div><img width="100" height="100" src="${item.timage!''}"></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <div class="head-scu-btn upload-btn" id="timageBtnId">
+                                        <i class="fa fa-upload"></i>&nbsp;上传
+                                    </div>
+                                </div>
+                                <input type="hidden" id="masterCode" value=""/>
+                                <input type="hidden" id="masterName" value=""/>
+                            </div>
                             <#input id="code" name="内容编码" value="${item.code}" underline="true"/>
                             <#dictSelector id="type" name ="类型" code="content_type" label="类型"  underline="true"  width="75%"/>
                             <#input id="title" name="标题" value="${item.title}" underline="true"/>
