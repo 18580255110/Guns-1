@@ -42,7 +42,7 @@ public class GunsTaskApplication {
     }
 
     public static void main(String[] args) {
-        logger.info("test");
+        logger.info("test...test");
         SpringApplication.run(GunsTaskApplication.class, args);
         logger.info("GunsTaskApplication is success!");
     }
