@@ -17,7 +17,7 @@ Order.initColumn = function () {
             {title: '标示', field: 'id', visible: false, align: 'center', valign: 'middle'},
             {title: '订单号', field: 'acceptNo', visible: true, align: 'center', valign: 'middle'},
             {title: '金额（元）', field: 'amount', visible: true, align: 'center', valign: 'middle'},
-            {title: 'status', field: 'status', visible: false, align: 'center', valign: 'middle'},
+            {title: '状态值    ', field: 'status', visible: false, align: 'center', valign: 'middle'},
             {title: '状态', field: 'statusName', visible: true, align: 'center', valign: 'middle'},
             {title: '支付结果', field: 'payResult', visible: true, align: 'center', valign: 'middle'},
             {title: '支付渠道', field: 'payMethodName', visible: true, align: 'center', valign: 'middle'},
@@ -119,7 +119,7 @@ Order.export = function () {
  */
 Order.search = function () {
     var queryData = {};
-    queryData['orderNo'] = $("#condition").val();
+    queryData['orderNo'] = $("#orderNo").val();
     queryData['teacher'] = $("#teacher").val();
     queryData['student'] = $("#student").val();
     queryData['subject'] = $("#subject").val();
