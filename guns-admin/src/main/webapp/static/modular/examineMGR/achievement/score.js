@@ -38,6 +38,7 @@ Score.search = function () {
     queryData['beginScore'] = $("#beginScore").val();
     queryData['endScore'] = $("#endScore").val();
     Score.table.refresh({query: queryData});
+    Score.table.setQueryParams(queryData);
 };
 
 $(function () {

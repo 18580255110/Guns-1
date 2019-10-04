@@ -101,6 +101,7 @@ Content.search = function () {
     var queryData = {};
     queryData['condition'] = $("#condition").val();
     Content.table.refresh({query: queryData});
+    Content.table.setQueryParams(queryData);
 };
 
 $(function () {

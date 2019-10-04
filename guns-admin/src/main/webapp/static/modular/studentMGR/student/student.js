@@ -94,6 +94,7 @@ Student.search = function () {
     queryData['condition'] = $("#condition").val();
     queryData['status'] = $("#status").val();
     Student.table.refresh({query: queryData});
+    Student.table.setQueryParams(queryData);
 };
 
 Student.doUpdate = function(reqUrl, data){

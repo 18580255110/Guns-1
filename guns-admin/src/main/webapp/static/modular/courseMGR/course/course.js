@@ -124,6 +124,7 @@ Course.search = function () {
     queryData['subject'] = $("#subject").val();
     queryData['status'] = $("#status").val();
     Course.table.refresh({query: queryData});
+    Course.table.setQueryParams(queryData);
 };
 
 $(function () {
