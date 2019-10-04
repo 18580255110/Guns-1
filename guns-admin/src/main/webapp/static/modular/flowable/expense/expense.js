@@ -83,6 +83,7 @@ Expense.search = function () {
     var queryData = {};
     queryData['condition'] = $("#condition").val();
     Expense.table.refresh({query: queryData});
+    Expense.table.setQueryParams(queryData);
 };
 
 $(function () {

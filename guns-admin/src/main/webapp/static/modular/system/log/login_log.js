@@ -59,6 +59,7 @@ LoginLog.search = function () {
     queryData['endTime'] = $("#endTime").val();
 
     LoginLog.table.refresh({query: queryData});
+    LoginLog.table.setQueryParams(queryData);
 };
 
 $(function () {

@@ -67,6 +67,7 @@ Process.search = function () {
     var queryData = {};
     queryData['condition'] = $("#condition").val();
     Process.table.refresh({query: queryData});
+    Process.table.setQueryParams(queryData);
 };
 
 $(function () {

@@ -101,6 +101,7 @@ Classroom.search = function () {
     queryData['condition'] = $("#condition").val();
     queryData['status'] = $("#status").val();
     Classroom.table.refresh({query: queryData});
+    Classroom.table.setQueryParams(queryData);
 };
 
 Classroom.doUpdate = function(reqUrl, data){
