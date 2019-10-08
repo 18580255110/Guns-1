@@ -197,6 +197,7 @@ public class ClassController extends BaseController {
             }
         }
 
+        queryParams.put("status","1");
         Page<Map<String, Object>> pageMap = classService.selectMapsPage(queryParams);
         //包装数据
         new ClassWrapper(pageMap.getRecords()).warp();

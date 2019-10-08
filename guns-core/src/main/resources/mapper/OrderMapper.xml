@@ -30,7 +30,7 @@
             </if>
 
             <if test="null != teacher">
-                and cc.teacher like CONCAT('%',#{teacher},'%'))
+                and cc.teacher like CONCAT('%',#{teacher},'%')
             </if>
 
             <if test="null != student">
