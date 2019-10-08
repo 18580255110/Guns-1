@@ -26,11 +26,22 @@
         join tb_student s on sc.student_code = s.code)
         join tb_member m on s.user_name = m.user_name)
         join tb_class c on sc.class_code = c.code)
-        join tb_order o on sc.order_no = o.accept_no and o.status = 1)
+        join tb_order o on sc.order_no = o.accept_no
+          <if test="orderStatus != 2 ">
+              and o.status = 1)
+          </if>
+          <if test="orderStatus == 2">
+              and o.status = 2)
+          </if>
         join tb_course co on c.course_code = co.code)
         )
         <where>
-            and sc.status = 1
+            <if test="orderStatus == 2">
+                and sc.status = 0 AND sc.remark LIKE '%已退费%'
+            </if>
+            <if test="orderStatus != 2">
+                and sc.status = 1
+            </if>
 
             <if test="null != student">
                 and ( s.code = #{student} or s.name LIKE CONCAT('%',#{student},'%') )
@@ -65,7 +76,7 @@
                 and c.grade = #{grade}
             </if>
         </where>
-
+        order by o.accept_date desc
     </select>
 
 </mapper>

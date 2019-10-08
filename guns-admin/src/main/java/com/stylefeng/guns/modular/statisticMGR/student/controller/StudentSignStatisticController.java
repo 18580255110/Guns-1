@@ -80,7 +80,7 @@ public class StudentSignStatisticController extends BaseController {
     }
 
     /**
-     * 获取入学诊断列表
+     * 学员报名记录列表
      */
     @RequestMapping(value = "/list")
     @ResponseBody

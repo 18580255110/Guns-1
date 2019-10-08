@@ -43,6 +43,9 @@
                             @if(shiro.hasPermission("/statistic/student/sign/export")){
                             <#button name="退费" icon="fa-download" clickFun="StudentSign.cancel()" space="true"/>
                             @}
+                            @if(shiro.hasPermission("/statistic/student/sign/export")){
+                            <#button name="退费查询" icon="fa-download" clickFun="StudentSign.cancelSearch()" space="true"/>
+                            @}
                         </div>
                         <#table id="StudentSignTable"/>
                     </div>

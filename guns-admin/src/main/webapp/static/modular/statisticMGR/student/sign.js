@@ -89,6 +89,24 @@ StudentSign.search = function () {
     queryData['classInfo'] = $("#classInfo").val();
 
     StudentSign.table.refresh({query: queryData});
+    StudentSign.table.setQueryParams(queryData);
+};
+/**
+ * 查询《退费》订单管理列表
+ */
+StudentSign.cancelSearch = function () {
+    var queryData = {};
+    queryData['teacher'] = $("#teacher").val();
+    queryData['student'] = $("#student").val();
+    queryData['subject'] = $("#subject").val();
+    queryData['ability'] = $("#ability").val();
+    queryData['cycle'] = $("#cycle").val();
+    queryData['grade'] = $("#grade").val();
+    queryData['classInfo'] = $("#classInfo").val();
+    queryData['orderStatus'] = 2;
+
+    StudentSign.table.refresh({query: queryData});
+    StudentSign.table.setQueryParams(queryData);
 };
 
 /**
