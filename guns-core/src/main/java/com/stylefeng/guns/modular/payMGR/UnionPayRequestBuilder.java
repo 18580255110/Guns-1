@@ -1,5 +1,6 @@
 package com.stylefeng.guns.modular.payMGR;
 
+import com.stylefeng.guns.modular.payMGR.sdk.SDKUtil;
 import com.stylefeng.guns.modular.system.model.Order;
 import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.MD5Util;
@@ -59,6 +60,10 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
      * 超时时间， 单位： 秒
      */
     private Integer payTimeout = 3600;
+    /**
+     * 交易币种
+     */
+    private String currencyCode = "156";
     /**
      * 证书ID
      */
@@ -152,7 +157,7 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
         postData.put("txnSubType", this.txnSubType);
         postData.put("bizType", this.bizType);
         postData.put("channelType", ""); // todo
-        postData.put("fontUrl", this.notifyUrl); // todo
+        //postData.put("fontUrl", this.notifyUrl); // todo
         postData.put("backUrl", this.notifyUrl); // todo
         postData.put("accessType", this.accessType); // todo
         postData.put("merId", this.merId); // todo
@@ -160,11 +165,11 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
         postData.put("txnTime", DateUtil.format(now, "yyyyMMddHHmmss")); //todo
         postData.put("accNO", this.accNo);
         postData.put("txnAmt", merchantOrder.getAmount());
-        postData.put("currencyCode", "156"); // 币种
+        postData.put("currencyCode", this.currencyCode); // 币种
         postData.put("orderDesc", merchantOrder.getDesc());
         postData.put("reqReserved", "39.98.48.194");
 
-        postData.put("sign", signPost(postData));
+        //postData.put("sign", SDKUtil.signByCertInfo(postData));
 
         XStream xStream = new XStream(new StaxDriver(new NoNameCoder()));
         xStream.alias("xml", Map.class);

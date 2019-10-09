@@ -17,6 +17,7 @@ import com.stylefeng.guns.modular.education.service.IStudentClassService;
 import com.stylefeng.guns.modular.system.dao.ClassMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.*;
+import com.stylefeng.guns.modular.system.service.IDictService;
 import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +52,9 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
 
     @Autowired
     private IClassroomService classroomService;
+
+    @Autowired
+    private IDictService dictService;
 
     @Override
     public Page<Map<String, Object>> selectMapsPage(Map<String, Object> queryParams) {
@@ -109,6 +113,108 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
 //
 //        if (10 > hour)
 //            throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+
+    }
+
+    @Override
+    public void checkJoinState(Class classInfo, SignType type) {
+        Date now = new Date();
+
+        Integer inheritSignBeginTime = 9;
+        Integer inheritSignEndTime = 18;
+        try {
+            inheritSignBeginTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
+                {
+                    eq("name", "InheritSignBeginTime");
+                    eq("status", GenericState.Valid.code);
+                }
+            }).getCode());
+        }catch(Exception e){}
+        try {
+            inheritSignEndTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
+                {
+                    eq("name", "InheritSignEndTime");
+                    eq("status", GenericState.Valid.code);
+                }
+            }).getCode());
+        }catch(Exception e){}
+
+        Integer crossSignBeginTime = 9;
+        Integer crossSignEndTime = 18;
+        try {
+            crossSignBeginTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
+                {
+                    eq("name", "CrossSignBeginTime");
+                    eq("status", GenericState.Valid.code);
+                }
+            }).getCode());
+        }catch(Exception e){}
+        try {
+            crossSignEndTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
+                {
+                    eq("name", "CrossSignEndTime");
+                    eq("status", GenericState.Valid.code);
+                }
+            }).getCode());
+        }catch(Exception e){}
+
+        Integer normalSignBeginTime = 9;
+        Integer normalSignEndTime = 22;
+        try {
+            normalSignBeginTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
+                {
+                    eq("name", "NormalSignBeginTime");
+                    eq("status", GenericState.Valid.code);
+                }
+            }).getCode());
+        }catch(Exception e){}
+        try {
+            normalSignEndTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
+                {
+                    eq("name", "NormalSignEndTime");
+                    eq("status", GenericState.Valid.code);
+                }
+            }).getCode());
+        }catch(Exception e){}
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        switch (type){
+            case Inherit:
+                if (now.compareTo(classInfo.getPresignStartDate()) < 0)
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+
+                if (classInfo.getPresignEndDate().before(now))
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_OUTTIME);
+
+                if (hour < inheritSignBeginTime || hour > inheritSignEndTime)
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+                break;
+            case Cross:
+                if (now.compareTo(classInfo.getCrossStartDate()) < 0)
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+
+                if (classInfo.getCrossEndDate().before(now))
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_OUTTIME);
+
+                if (hour < crossSignBeginTime || hour > crossSignEndTime)
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+                break;
+            case Normal:
+            default:
+                // 班级正常报名时间
+                if (now.compareTo(classInfo.getSignStartDate()) < 0)
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+
+                if (classInfo.getSignEndDate().before(now))
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_OUTTIME);
+
+                if (hour < normalSignBeginTime || hour > normalSignEndTime)
+                    throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECT_NOTIME);
+                break;
+        }
 
     }
 

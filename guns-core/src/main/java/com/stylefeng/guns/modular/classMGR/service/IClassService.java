@@ -5,6 +5,7 @@ import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.baomidou.mybatisplus.service.IService;
 import com.stylefeng.guns.modular.system.model.Member;
+import com.stylefeng.guns.modular.system.model.SignType;
 import com.stylefeng.guns.modular.system.model.Student;
 
 import java.util.Collection;
@@ -60,9 +61,17 @@ public interface IClassService extends IService<Class> {
      * @param student
      *
      * @Exception ServiceException
+     * @Depredated
      */
     void checkJoinState(Class classInfo, Member member, Student student);
 
+    /**
+     * 检查班级报名状态
+     *
+     * @param classInfo
+     * @param type
+     */
+    void checkJoinState(Class classInfo, SignType type);
     /**
      * 创建班级
      *

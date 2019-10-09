@@ -1,11 +1,13 @@
 package com.stylefeng.guns.rest.modular.auth.util;
 
+import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.ToolUtil;
 import com.stylefeng.guns.rest.config.properties.AuthProperties;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,7 +122,10 @@ public class JwtTokenUtil {
      */
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         final Date createdDate = new Date();
-        final Date expirationDate = new Date(createdDate.getTime() + jwtProperties.getExpiration() * 1000);
+        Date expirationDate = DateUtil.add(createdDate, Calendar.YEAR, 20);
+        if (jwtProperties.getExpiration() > 0){
+            expirationDate = new Date(createdDate.getTime() + jwtProperties.getExpiration() * 1000);
+        }
 
         return Jwts.builder()
                 .setClaims(claims)

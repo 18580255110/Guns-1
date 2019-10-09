@@ -143,6 +143,10 @@ public final class MessageConstant {
          */
         public static final String ORDER_NO_CAPACITY = "040003";
         /**
+         * 学员权限不足
+         */
+        public static final String ORDER_NO_PRIVILEGE = "040004";
+        /**
          * 您已有相同的调课申请
          */
         public static final String ADJUST_COURSE_DUPLICATE = "050001";

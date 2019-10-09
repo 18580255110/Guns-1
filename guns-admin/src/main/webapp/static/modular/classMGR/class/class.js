@@ -197,6 +197,7 @@ Class.search = function () {
     queryData['studyDate'] = $("#studyDate").val();
     queryData['signDate'] = $("#signDate").val();
     queryData['offset'] = 0;
+    queryData['status'] = 1;
     // queryData['pageNumber'] = 1;
     Class.queryParams = queryData;
     Class.table.refresh({query: queryData});
@@ -246,7 +247,7 @@ Class.initSwitcher = function(selector, options){
 $(function () {
 
     var defaultColunms = Class.initColumn();
-    var table = new BSTable(Class.id, "/class/list", defaultColunms);
+    var table = new BSTable(Class.id, "/class/list?status=1", defaultColunms);
     table.setPaginationType("server");
     table.setLoadSuccessCallback(function(){
         // 初始化报名开关

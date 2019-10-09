@@ -18,9 +18,9 @@ application:
       notify-url: http://api.kecui.com.cn/pay/weixin/notify
     unionpay:
       certId: 1
-      merId: 777290058166500
+      merId: 802500082990505
       order-url: https://gateway.test.95516.com/gateway/api/appTransReq.do
-      notify-url: http://api.kecui.com.cn/pay/weixin/notify
+      notify-url: http://api.kecui.com.cn/pay/union/notify
   message:
     captch.template: SMS_163431486
   education:
@@ -29,7 +29,7 @@ application:
     enable: true #jwt鉴权机制是否开启(true或者false)
     header: Authorization #http请求头所需要的字段
     secret: kc-secret-!q2W        #jwt秘钥
-    expiration: 604800      #7天 单位:秒
+    expiration: -1      #7天 单位:秒, -1 wuxian
     path: auth         #认证请求的路径
     md5-key: randomKey      #md5加密混淆key
     exclude-pattern:

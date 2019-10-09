@@ -83,7 +83,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
     }
 
     @Override
-    public String doJoin(Member member, Student student, com.stylefeng.guns.modular.system.model.Class classInfo, boolean skipTest) {
+    public String doJoin(Member member, Student student, com.stylefeng.guns.modular.system.model.Class classInfo, boolean skipTest, SignChannel channel, SignType type) {
         if (null == member)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
 
@@ -134,7 +134,8 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECTED);
 
         // 是否老学员
-        boolean zoneStudent = studentZoneService.isZoneStudent(student, classInfo);
+        //boolean zoneStudent = studentZoneService.isZoneStudent(student, classInfo);
+        boolean zoneStudent = false; // StudentZone 只是在割接上线时临时解决方案，不使用了。
         boolean hasPrivilege = classAuthorityService.hasPrivilege(student, classInfo);
 
         // 入学测试校验
@@ -157,9 +158,16 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
                 throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
         }
 
+        if (!hasPrivilege){
+            throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_PRIVILEGE);
+        }
+
         // 检查班级报名状态
-        if (!skipTest && !zoneStudent && !hasPrivilege)
-            classService.checkJoinState(classInfo, member, student);
+        // 2019-09-30 调整逻辑
+        //if (!skipTest && !zoneStudent && !hasPrivilege)
+        //    classService.checkJoinState(classInfo, member, student);
+        if (SignChannel.Admin.code != channel.code)
+            classService.checkJoinState(classInfo, type);
 
         // 加入选课单
         Map<String, Object> extraParams = new HashMap<String, Object>();
@@ -235,7 +243,8 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             Member member = memberService.get(student.getUserName());
 
             try {
-                String courseCartCode = doJoin(member, student, classInfo, true);
+                // 使用新的报名接口 20190930
+                String courseCartCode = doJoin(member, student, classInfo, true, SignChannel.Admin, SignType.Inherit);
                 OrderItem orderItem = new OrderItem();
                 orderItem.setCourseCartCode(courseCartCode);
                 orderItem.setItemObject(OrderItemTypeEnum.Course.code);

@@ -1,10 +1,8 @@
 package com.stylefeng.guns.modular.orderMGR.service;
 
 import com.baomidou.mybatisplus.service.IService;
+import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
-import com.stylefeng.guns.modular.system.model.CourseCart;
-import com.stylefeng.guns.modular.system.model.Member;
-import com.stylefeng.guns.modular.system.model.Student;
 
 /**
  * @Description //TODO
@@ -19,8 +17,11 @@ public interface ICourseCartService extends IService<CourseCart> {
      * @param member
      * @param student
      * @param classInfo
+     * @param skipTest
+     * @param channel
+     * @param type
      */
-    String doJoin(Member member, Student student, Class classInfo, boolean skipTest);
+    String doJoin(Member member, Student student, Class classInfo, boolean skipTest, SignChannel channel, SignType type);
 
     /**
      * 从选课单移除
