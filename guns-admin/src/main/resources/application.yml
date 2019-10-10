@@ -63,6 +63,31 @@ application:
 ---
 
 server:
+  port: 18087
+  servlet:
+    context-path: /
+  tomcat:
+    max-connections: 1024
+    uri-encoding: UTF-8
+    accept-count: 768
+    max-threads: 1024
+
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:mysql://39.108.237.254:3306/kcdb?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
+    username: db_user_devep
+    password: rootQAZxsw
+    db-name: kcdb #用来搜集数据库的所有表
+    filters: wall,mergeStat
+application:
+  attachment:
+    visit-url: http://39.98.176.139:18087/attachment/download
+    store-path: /home/app/data/upload
+
+---
+
+server:
   port: 18001
   servlet:
     context-path: /
@@ -75,7 +100,7 @@ server:
 spring:
   profiles: produce
   datasource:
-    url: jdbc:mysql://172.26.140.96:33009/kcdb?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false
+    url: jdbc:mysql://172.26.140.96:33009/kcdb?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
     username: kcapp
     password: h,M)Hww0,.rz
     db-name: kcdb #用来搜集数据库的所有表
