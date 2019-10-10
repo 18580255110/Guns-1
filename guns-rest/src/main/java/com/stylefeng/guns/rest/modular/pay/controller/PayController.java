@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
+import com.stylefeng.guns.modular.payMGR.sdk.AcpService;
 import com.stylefeng.guns.modular.payMGR.service.IPayService;
+import com.stylefeng.guns.modular.payMGR.transfer.UnionNotifier;
 import com.stylefeng.guns.modular.payMGR.transfer.WeixinNotifier;
 import com.stylefeng.guns.modular.system.model.Order;
 import com.stylefeng.guns.rest.core.ApiController;
@@ -121,7 +123,7 @@ public class PayController extends ApiController {
 
             resXml = resSuccessXml;
         } catch (Exception e) {
-            log.warn("支付通知 处理失败： {}", e.getMessage());
+            log.warn("支付通知 处理失败： {}", e.getMessage(), e);
         } finally {
             try {
                 // 处理业务完毕
@@ -136,8 +138,31 @@ public class PayController extends ApiController {
     }
 
     @RequestMapping(value = "/union/notify", method = RequestMethod.POST)
-    public void unionPayNotifyHandler(@RequestBody String notifyMessage) {
-        // TODO
+    public void unionPayNotifyHandler(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.info("Union pay notify handle finish!");
+        String encoding = request.getParameter("encoding");
+        log.info("message encoding = {}", encoding);
+        // 获取银联通知服务器发送的后台通知参数
+        Map<String, String> reqParam = getAllRequestParam(request);
+
+        try {
+            UnionNotifier unionNotifier = UnionNotifier.parse(reqParam, encoding);
+            payService.notify(unionNotifier);
+        }catch(Exception e){
+            log.warn("支付通知 处理失败： {}", e.getMessage(), e);
+        }finally {
+            log.info("Union pay notify handle finish!");
+            try {
+                // 处理业务完毕
+                BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
+                out.write("ok".getBytes());
+                out.flush();
+                out.close();
+            } catch (IOException e) {
+            }
+        }
+
+
     }
 
 
@@ -166,5 +191,29 @@ public class PayController extends ApiController {
         String sign = MD5Util.encrypt(stringSignBuilder.toString()).toUpperCase();
         log.debug("sign ===> {}", sign);
         return sign;
+    }
+
+    /**
+     * 获取请求参数中所有的信息
+     *
+     * @param request
+     * @return
+     */
+    public static Map<String, String> getAllRequestParam(final HttpServletRequest request) {
+        Map<String, String> res = new HashMap<String, String>();
+        Enumeration<?> temp = request.getParameterNames();
+        if (null != temp) {
+            while (temp.hasMoreElements()) {
+                String en = (String) temp.nextElement();
+                String value = request.getParameter(en);
+                res.put(en, value);
+                //在报文上送时，如果字段的值为空，则不上送<下面的处理为在获取所有参数数据时，判断若值为空，则删除这个字段>
+                //System.out.println("ServletUtil类247行  temp数据的键=="+en+"     值==="+value);
+                if (null == res.get(en) || "".equals(res.get(en))) {
+                    res.remove(en);
+                }
+            }
+        }
+        return res;
     }
 }

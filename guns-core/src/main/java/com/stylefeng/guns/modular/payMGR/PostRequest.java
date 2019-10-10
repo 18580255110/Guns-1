@@ -1,6 +1,8 @@
 package com.stylefeng.guns.modular.payMGR;
 
 import com.stylefeng.guns.modular.adjustMGR.service.impl.AdjustStudentServiceImpl;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -10,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * @Description //TODO
@@ -21,7 +25,7 @@ public abstract class PostRequest {
 
     private static final Logger log = LoggerFactory.getLogger(PostRequest.class);
 
-    private String url;
+    protected String url;
     /**
      * 随机字符串
      */
@@ -29,7 +33,7 @@ public abstract class PostRequest {
     /**
      * 请求报文
      */
-    private String datagram;
+    protected String datagram;
     /**
      * 当前业务
      */
@@ -70,4 +74,6 @@ public abstract class PostRequest {
     public boolean equals(Object obj) {
         return this.nonceStr.equals(obj.toString());
     }
+
+    public abstract Map<String, String> post();
 }

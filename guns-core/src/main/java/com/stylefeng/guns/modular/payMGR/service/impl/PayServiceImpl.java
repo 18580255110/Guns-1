@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 /**
  * @Description //TODO
@@ -73,35 +74,31 @@ public class PayServiceImpl implements IPayService {
             throw new ServiceException(MessageConstant.MessageCode.PAY_METHOD_NOT_FOUND, new String[0]);
         }
 
-        String prepayid = null;
+        log.info("Begin pay order...");
+        Map<String, String> postResult = requestFactory.select(payChannel).order(order).post();
 
-        Map<String, String> postResult = new HashMap<String, String>();
-        requestFactory.select(payChannel).order(order).post(new ResponseHandler<String>() {
-            @Override
-            public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
-
-                XStream xStream = new XStream(new StaxDriver());
-                xStream.alias("xml", Map.class);
-                xStream.registerConverter(new MapEntryConvert());
-                Map<String, String> response = (Map<String, String>) xStream.fromXML(httpResponse.getEntity().getContent());
-
-                log.debug("Response ===>  {}" , JSON.toJSONString(response));
-                postResult.putAll(response);
-
-                return null;
-            }
-        });
+//        requestFactory.select(payChannel).order(order).post(new ResponseHandler<String>() {
+//            @Override
+//            public String handleResponse(HttpResponse httpResponse) throws ClientProtocolException, IOException {
+//
+//                XStream xStream = new XStream(new StaxDriver());
+//                xStream.alias("xml", Map.class);
+//                xStream.registerConverter(new MapEntryConvert());
+//                Map<String, String> response = (Map<String, String>) xStream.fromXML(httpResponse.getEntity().getContent());
+//
+//                log.debug("Response ===>  {}" , JSON.toJSONString(response));
+//                postResult.putAll(response);
+//
+//                return null;
+//            }
+//        });
 
         String prepayId = null;
         String message = null;
-        if ("SUCCESS".equals(postResult.get("return_code"))){
-            if ("SUCCESS".equals(postResult.get("result_code"))){
-                prepayId = postResult.get("prepay_id");
-            }else{
-                message = postResult.get("err_code_des");
-            }
+        if ("SUCCESS".equals(postResult.get("code"))){
+            prepayId = postResult.get("result");
         }else{
-            message = postResult.get("return_msg");
+            message = postResult.get("result");
         }
 
         if (null == prepayId)
@@ -116,15 +113,15 @@ public class PayServiceImpl implements IPayService {
         if(!notifier.paySuccess()){
             // 支付失败
             orderService.failedPay(notifier.getOrder(), notifier.getMessage());
-        }
-
-        switch (notifier.getChannel()){
-            case weixin:
-                weixinNotify((WeixinNotifier) notifier);
-                break;
-            case unionpay:
-                unionNotify((UnionNotifier) notifier);
-                break;
+        }else {
+            switch (notifier.getChannel()) {
+                case weixin:
+                    weixinNotify((WeixinNotifier) notifier);
+                    break;
+                case unionpay:
+                    unionNotify((UnionNotifier) notifier);
+                    break;
+            }
         }
     }
 
@@ -137,7 +134,6 @@ public class PayServiceImpl implements IPayService {
     private void weixinNotify(WeixinNotifier notifier) {
         //TODO 可以添加其他的逻辑
 
-//        notifier.
         orderService.completePay(notifier.getOrder());
     }
 

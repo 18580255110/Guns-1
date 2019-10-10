@@ -1,5 +1,6 @@
 package com.stylefeng.guns.modular.payMGR;
 
+import com.stylefeng.guns.modular.payMGR.sdk.AcpService;
 import com.stylefeng.guns.modular.payMGR.sdk.SDKUtil;
 import com.stylefeng.guns.modular.system.model.Order;
 import com.stylefeng.guns.util.DateUtil;
@@ -40,8 +41,16 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
     private String txnType = "01";
     /**
      * 产品类型
+     * 000201  B2C 网关支付
      */
-    private String bizType = "000000";
+    private String bizType = "000201";
+    /**
+     * 渠道类型
+     * 05 语音
+     * 07 互联网
+     * 08 移动
+     */
+    private String channelType = "08";
     /**
      * 交易子类型
      * 01 自助交易
@@ -50,18 +59,30 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
     private String txnSubType = "01";
     /**
      * 签名方法
+     * 证书方式固定01
      */
-    private String signMethod = "11";
+    private String signMethod = "01";
     /**
      * 接入类型
+     * 0 直连商户
+     * 1 收单机构
+     * 2 平台商户
      */
     private String accessType = "0";
+    /**
+     * 账号类型
+     * 01 银行卡
+     * 02 存折
+     * 03 IC卡账号类型(卡介质)
+     */
+    private String accType = "01";
     /**
      * 超时时间， 单位： 秒
      */
     private Integer payTimeout = 3600;
     /**
      * 交易币种
+     * 156 人民币
      */
     private String currencyCode = "156";
     /**
@@ -141,6 +162,7 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
             }
         }
     }
+
     @Override
     public PostRequest order(Order merchantOrder) {
 
@@ -148,34 +170,27 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
 
         Date now = new Date();
 
-        Map<String, Object> postData = new HashMap<String, Object>();
-        postData.put("version", this.version);
-        postData.put("encoding", this.encoding);
-        postData.put("certId", this.certId);
-        postData.put("signMethod", this.signMethod);
-        postData.put("txnType", this.txnType);
-        postData.put("txnSubType", this.txnSubType);
-        postData.put("bizType", this.bizType);
-        postData.put("channelType", ""); // todo
-        //postData.put("fontUrl", this.notifyUrl); // todo
-        postData.put("backUrl", this.notifyUrl); // todo
-        postData.put("accessType", this.accessType); // todo
-        postData.put("merId", this.merId); // todo
-        postData.put("orderId", merchantOrder.getAcceptNo());
-        postData.put("txnTime", DateUtil.format(now, "yyyyMMddHHmmss")); //todo
-        postData.put("accNO", this.accNo);
-        postData.put("txnAmt", merchantOrder.getAmount());
-        postData.put("currencyCode", this.currencyCode); // 币种
-        postData.put("orderDesc", merchantOrder.getDesc());
-        postData.put("reqReserved", "39.98.48.194");
+        Map<String, String> contentData = new HashMap<String, String>();
+        contentData.put("version", this.version);
+        contentData.put("encoding", this.encoding);
+        contentData.put("signMethod", this.signMethod);
+        contentData.put("txnType", this.txnType);
+        contentData.put("txnSubType", this.txnSubType);
+        contentData.put("bizType", this.bizType);
+        contentData.put("channelType", channelType);
 
-        //postData.put("sign", SDKUtil.signByCertInfo(postData));
+        contentData.put("merId", this.merId); // 在application.yml 中 application.pay.unionpay中配置
+        contentData.put("accessType", this.accessType);
+        contentData.put("orderId", merchantOrder.getAcceptNo());
+        contentData.put("txnTime", DateUtil.format(now, "yyyyMMddHHmmss"));
+        contentData.put("accType", this.accType);
+        contentData.put("txnAmt", String.valueOf(merchantOrder.getAmount()));
+        contentData.put("currencyCode", this.currencyCode); // 人民币
+        contentData.put("orderDesc", merchantOrder.getDesc());
 
-        XStream xStream = new XStream(new StaxDriver(new NoNameCoder()));
-        xStream.alias("xml", Map.class);
-        xStream.registerConverter(new MapEntryConvert());
+        contentData.put("backUrl", this.notifyUrl);
 
-        postRequest.setDatagram(StringEscapeUtils.unescapeXml(xStream.toXML(postData)));
+        postRequest.pushPostData(AcpService.sign(contentData, this.encoding));
         postRequest.setUrl(getOrderUrl());
         return postRequest;
     }
