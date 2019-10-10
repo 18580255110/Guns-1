@@ -9,6 +9,7 @@
         <result column="accept_date" property="acceptDate" />
         <result column="status" property="status" />
         <result column="amount" property="amount" />
+        <result column="old_amount" property="oldAmount" />
         <result column="pay_status" property="payStatus" />
         <result column="pay_result" property="payResult" />
         <result column="pay_date" property="payDate" />
@@ -107,7 +108,7 @@
     </select>
 
     <select id="selectPageList" resultMap="BaseResultMap" parameterType="java.util.HashMap">
-        select c.name as className, c.teacher, cc.student,
+        select c.name as className, c.teacher, cc.student, cc.amount old_amount,
             <include refid="Base_Column_List" />
         from
         (

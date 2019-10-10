@@ -24,6 +24,7 @@ public class OrderWrapper extends BaseControllerWarpper{
     protected void warpTheMap(Map<String, Object> map) {
         map.put("payMethodName", ConstantFactory.me().getPayMethodName(Integer.valueOf(map.get("payMethod").toString())));
         map.put("amount", ConstantFactory.me().fenToYuan(map.get("amount").toString()));
+        map.put("oldAmount", ConstantFactory.me().fenToYuan(map.get("oldAmount").toString()));
 
         int state = Integer.parseInt(map.get("status").toString());
         int payState = Integer.parseInt(map.get("payStatus").toString());
