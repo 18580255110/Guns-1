@@ -16,11 +16,13 @@ import com.stylefeng.guns.modular.contentMGR.service.IContentService;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
+import com.stylefeng.guns.modular.education.transfer.StudentClassInfo;
 import com.stylefeng.guns.modular.education.transfer.StudentPlan;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
+import com.stylefeng.guns.modular.teacherMGR.service.TeacherService;
 import com.stylefeng.guns.rest.core.ApiController;
 import com.stylefeng.guns.rest.core.Responser;
 import com.stylefeng.guns.rest.core.SimpleResponser;
@@ -71,6 +73,9 @@ public class EducationController extends ApiController {
     private IStudentService studentService;
 
     @Autowired
+    private TeacherService teacherService;
+
+    @Autowired
     private ICourseOutlineService courseOutlineService;
 
     @Autowired
@@ -103,7 +108,9 @@ public class EducationController extends ApiController {
         Map<String, Object> queryMap = requester.toMap();
 
         // 当前开放报名的班级
-//        queryMap.put("signDate", DateUtil.format(DateUtils.truncate(now, Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
+        // 客户要求没有到报名时间的班级仍然可以搜索到，但是不能实际报名，所以这里不能限制时间
+        // queryMap.put("signDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
+        queryMap.put("forceSignEndDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
         queryMap.put("signable", ClassSignableEnum.YES.code);
         List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForSign(queryMap);
 
@@ -188,7 +195,7 @@ public class EducationController extends ApiController {
 
         Map<String, Object> queryMap = requester.toMap();
         queryMap.put("teacherCode", member.getUserName()); // 设置为当前老师
-        Date now = new Date();
+        queryMap.put("forceSignEndDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
 
         List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForTeacher(member.getUserName(), queryMap);
 
@@ -209,10 +216,10 @@ public class EducationController extends ApiController {
         Map<String, Object> queryMap = requester.toMap();
         Date now = new Date();
 
-        List<Student> studentList = studentClassService.listSignedStudent(queryMap);
+        List<StudentClassInfo> studentList = studentClassService.listSignedStudent(queryMap);
 
         Set<StudentResponse> studentSet = new HashSet<>();
-        for(Student student : studentList){
+        for(StudentClassInfo student : studentList){
             StudentResponse studentResponse = new StudentResponse();
             BeanUtils.copyProperties(student, studentResponse);
 
@@ -787,6 +794,26 @@ public class EducationController extends ApiController {
         return response;
     }
 
+    @ApiOperation(value="教师课程表", httpMethod = "POST", response = ClassPlanListResponser.class)
+    @RequestMapping("/course/plan/list4teacher")
+    public Responser teacherPlanList(){
+
+        Member member = currMember();
+
+            // 老师用户, 展示老师的课程表
+            Date now = new Date();
+
+            Map<String, Object> queryMap = new HashMap<String, Object>();
+
+            queryMap.put("endDate", now);
+            queryMap.put("teacherCode", member.getUserName());
+            queryMap.put("status", GenericState.Valid.code);
+
+            List<ClassPlan> planList = scheduleClassService.selectPlanList(queryMap);
+
+            return ClassPlanListResponser.me(planList);
+    }
+
     @ApiOperation(value="课程表", httpMethod = "POST", response = PlanListResponser.class)
     @RequestMapping("/course/plan/list")
     public Responser planList(
@@ -797,38 +824,69 @@ public class EducationController extends ApiController {
 
         Member member = currMember();
 
-        Map<String, Object> queryMap = new HashMap<String, Object>();
-        String studentCode = requester.getStudent();
-        String classCode = requester.getClassCode();
+        if (member.isTeacher()){
+            // 老师用户, 展示老师的课程表
+            Date now = new Date();
 
-        List<String> studentCodeList = new ArrayList<>();
-        if (ToolUtil.isNotEmpty(studentCode)) {
-            studentCodeList.add(studentCode);
+            Map<String, Object> queryMap = new HashMap<String, Object>();
+
+            queryMap.put("endDate", now);
+            queryMap.put("teacherCode", member.getUserName());
+            queryMap.put("status", GenericState.Valid.code);
+
+            List<ClassPlan> planList = scheduleClassService.selectPlanList(queryMap);
+
+            return ClassPlanListResponser.me(planList);
         }else{
-            // 没有指定学员， 展示当前会员所有学员的课程表信息
-            List<Student> studentList = studentService.listStudents(member.getUserName()) ;
-            if (null != studentList){
-                for(Student student : studentList){
-                    studentCodeList.add(student.getCode());
+            Map<String, Object> queryMap = new HashMap<String, Object>();
+            String studentCode = requester.getStudent();
+            String classCode = requester.getClassCode();
+
+            List<String> studentCodeList = new ArrayList<>();
+            if (ToolUtil.isNotEmpty(studentCode)) {
+                studentCodeList.add(studentCode);
+            }else{
+                // 没有指定学员， 展示当前会员所有学员的课程表信息
+                List<Student> studentList = studentService.listStudents(member.getUserName()) ;
+                if (null != studentList){
+                    for(Student student : studentList){
+                        studentCodeList.add(student.getCode());
+                    }
                 }
             }
+            queryMap.put("students", studentCodeList);
+
+            if (ToolUtil.isNotEmpty(classCode))
+                queryMap.put("classCode", classCode);
+
+            if (ToolUtil.isNotEmpty(requester.getMonth())){
+                Date queryDate = DateUtil.parse(requester.getMonth(), "yyyyMM");
+                queryMap.put("beginDate", DateUtil.format(queryDate, "yyyy-MM-dd"));
+                queryMap.put("endDate", DateUtil.format(DateUtil.add(queryDate, Calendar.MONTH, 1), "yyyy-MM-dd"));
+            }
+
+            queryMap.put("status", GenericState.Valid.code);
+
+            List<StudentPlan> planList = scheduleStudentService.selectPlanList(queryMap);
+
+            return PlanListResponser.me(planList);
         }
-        queryMap.put("students", studentCodeList);
+    }
 
-        if (ToolUtil.isNotEmpty(classCode))
-            queryMap.put("classCode", classCode);
+    @ApiOperation(value="教师单天课程表", httpMethod = "POST", response = PlanOfDayResponserWrapper.class)
+    @RequestMapping(value = "/course/plan/day4teacher", method = RequestMethod.POST)
+    public Responser queryClassPlanOfDay(
+            @ApiParam(required = true, value = "单天课程表查询")
+            @RequestBody
+            @Valid
+            QueryPlanOfDayRequester requester, HttpServletRequest request
+    ){
+        Member member = currMember();
 
-        if (ToolUtil.isNotEmpty(requester.getMonth())){
-            Date queryDate = DateUtil.parse(requester.getMonth(), "yyyyMM");
-            queryMap.put("beginDate", DateUtil.format(queryDate, "yyyy-MM-dd"));
-            queryMap.put("endDate", DateUtil.format(DateUtil.add(queryDate, Calendar.MONTH, 1), "yyyy-MM-dd"));
-        }
+        List<PlanOfDayResponser> responserList = new ArrayList<PlanOfDayResponser>();
 
-        queryMap.put("status", GenericState.Valid.code);
 
-        List<StudentPlan> planList = scheduleStudentService.selectPlanList(queryMap);
-
-        return PlanListResponser.me(planList);
+        return PlanOfDayResponserWrapper.me(responserList);
     }
 
     @ApiOperation(value="单天课程表", httpMethod = "POST", response = PlanOfDayResponserWrapper.class)
@@ -876,7 +934,12 @@ public class EducationController extends ApiController {
     }
 
     private Responser assembleClassList(List<Class> classList) {
-        Set<com.stylefeng.guns.modular.system.model.Class> classSet = new HashSet<>();
+        Set<com.stylefeng.guns.modular.system.model.Class> classSet = new TreeSet<>(new Comparator<Class>() {
+            @Override
+            public int compare(Class c1, Class c2) {
+                return 0 == c1.getBeginDate().compareTo(c2.getBeginDate()) ? c1.getId().compareTo(c2.getId()) : c1.getBeginDate().compareTo(c2.getBeginDate());
+            }
+        });
         for(Class classInfo : classList){
             // 去重
             int maxCount = classInfo.getQuato();

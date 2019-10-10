@@ -1,5 +1,6 @@
 package com.stylefeng.guns.modular.system.dao;
 
+import com.stylefeng.guns.modular.education.transfer.StudentClassInfo;
 import com.stylefeng.guns.modular.system.model.*;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.stylefeng.guns.modular.system.model.Class;
@@ -23,7 +24,7 @@ public interface StudentClassMapper extends BaseMapper<StudentClass> {
      * @param queryMap
      * @return
      */
-    List<Student> listSignedStudent(Map<String, Object> queryMap);
+    List<StudentClassInfo> listSignedStudent(Map<String, Object> queryMap);
 
     /**
      * 查询会员所报班级列表

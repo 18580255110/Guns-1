@@ -21,4 +21,18 @@
         id, student_code, student_name, academic_year, grade, cycle, ability, `type`, status, comments
     </sql>
 
+    <select id="">
+        select a.student_code, a.academic_year, a.grade, a.cycle, a.ability, count(a.student_code) as c, count(a.spid) as cc from (
+        select sc.student_code, sc.class_code, cs.academic_year, ce.grade, cs.cycle, cs.ability, sp.id as spid from
+        (
+        (
+        (
+        tb_student_class sc
+        ) join tb_class cs on sc.class_code = cs.code
+        ) join tb_course ce on cs.course_code = ce.code
+        ) left join tb_student_privilege sp on sc.student_code = sp.student_code and cs.ability = sp.ability and ce.grade = sp.grade and cs.academic_year = sp.academic_year and cs.cycle = sp.cycle
+        where sc.status = 1 and cs.cycle != 99
+        ) a group by a.student_code, a.academic_year, a.grade, a.cycle, a.ability
+    </select>
+
 </mapper>

@@ -54,35 +54,58 @@
         s.id, s.code, s.name, s.avatar, s.gender, s.grade, s.school, s.target_school as targetSchool, s.status, s.user_name as userName
     </sql>
 
-    <!-- 班级查询结果列 -->
-    <sql id="Class_Column_List">
-        c.id, c.code, c.name, c.grade, c.cycle, c.ability, c.begin_date, c.end_date, c.duration, c.period, c.class_room_code, c.class_room, c.course_code, c.course_name, c.star, c.price, c.quato, c.sign_start_date, c.sign_end_date, c.status, c.teacher, c.teacher_code, c.teacher_second, c.teacher_second_code, c.study_time_desp, c.signable, c.examinable
-    </sql>
 
-    <select id="listSignedStudent" resultType="com.stylefeng.guns.modular.system.model.Student" parameterType="java.util.HashMap">
+    <!-- 班级查询结果列 -->
+    <select id="listSignedStudent" resultType="com.stylefeng.guns.modular.education.transfer.StudentClassInfo" parameterType="java.util.HashMap">
         select
         <include refid="Student_Column_List" />
-        from tb_student s join ( select ss.code from tb_student ss join tb_student_class sc on sc.student_code = ss.code
+        , case when sss.chgIn then 1 else 0 end as changeIn
+        , case when sss.chgOut then 1 else 0 end as changeOut
+        , case when sss.adjIn then 1 else 0 end as adjustIn
+        , case when sss.adjOut then 1 else 0 end as adjustOut
+        from
+        (
+        (
+        tb_student s
+        ) join (
+        select ss.code
+        , (select count(adj.id) from tb_adjust_student adj where adj.student_code = ss.code and adj.type = 2 and adj.target_class = rel.class_code and adj.status = 1 and adj.work_status = 11) as chgIn
+        , (select count(adj.id) from tb_adjust_student adj where adj.student_code = ss.code and adj.type = 2 and adj.source_class = rel.class_code and adj.status = 1 and adj.work_status = 11) as chgOut
+        , (select count(adj.id) from tb_adjust_student adj where adj.student_code = ss.code and adj.type = 1 and adj.target_class = rel.class_code and adj.status = 1 and adj.work_status = 11) as adjIn
+        , (select count(adj.id) from tb_adjust_student adj where adj.student_code = ss.code and adj.type = 1 and adj.source_class = rel.class_code and adj.status = 1 and adj.work_status = 11) as adjOut
+        from
+        (
+        (
+        (
+        tb_student ss
+        )
+        <if test="null == outlineCode">
+            join (select * from tb_student_class sc where and class_code = #{classCode} and status = 1) rel on rel.student_code = ss.code
+        </if>
+        )
+        <if test="null != outlineCode">
+            join (select * from tb_schedule_student where class_code = #{classCode} and outline_code = #{outlineCode}) rel on ss.code = rel.student_code
+        </if>
+        )
         <where>
-            and sc.status = 1
-        <!-- 班级 -->
-        <if test="null != classCode">
-            and sc.class_code = #{classCode}
-        </if>
+            <!-- 学员名称 -->
+            <if test="null != studentName">
+                and ss.name like CONCAT('%',#{studentName},'%')
+            </if>
 
-        <!-- 学员名称 -->
-        <if test="null != studentName">
-            and ss.name like CONCAT('%',#{studentName},'%')
-        </if>
-
-        <if test="null != targetSchoolName">
-            and ss.targetSchool like CONCAT('%',#{targetSchoolName},'%')
-        </if>
+            <if test="null != targetSchoolName">
+                and ss.targetSchool like CONCAT('%',#{targetSchoolName},'%')
+            </if>
         </where>
         group by ss.code) sss on sss.code = s.code
+        )
+
 
     </select>
 
+    <sql id="Class_Column_List">
+        c.id, c.code, c.name, c.grade, c.cycle, c.ability, c.begin_date, c.end_date, c.duration, c.period, c.class_room_code, c.class_room, c.course_code, c.course_name, c.star, c.price, c.quato, c.sign_start_date, c.sign_end_date, c.status, c.teacher, c.teacher_code, c.teacher_second, c.teacher_second_code, c.study_time_desp, c.signable, c.examinable
+    </sql>
 
     <select id="selectMemberSignedClass" resultMap="ClassResultMap" parameterType="java.util.HashMap">
         select

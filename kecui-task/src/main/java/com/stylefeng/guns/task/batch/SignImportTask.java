@@ -130,19 +130,7 @@ public class SignImportTask extends ImportTaskSupport {
             throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"班级信息"});
 
         Member member = request.getMember();
-        Map<String, Object> memberRegistMap = new HashMap<>();
-        memberRegistMap.put("number", member.getMobileNumber());
-        memberRegistMap.put("name", member.getName());
-
-        Member currMember = null;
-        try {
-            currMember = memberService.createMember(memberService.generateUserName(), memberRegistMap);
-        }catch(ServiceException sere){
-            if (!MessageConstant.MessageCode.SYS_SUBJECT_DUPLICATE.equals(sere.getMessageCode()))
-                throw sere;
-            else
-                currMember = memberService.getByMobile(member.getMobileNumber());
-        }
+        Member currMember = memberService.getOrCreateIfNotExists(member.getMobileNumber(), member.getName());
 
         if (null == currMember)
             throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"用户信息"});
@@ -165,7 +153,7 @@ public class SignImportTask extends ImportTaskSupport {
             throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"学员信息"});
 
         // 下订单
-        String courseCartCode = courseCartService.doJoin(currMember, currStudent, classInfo, true);
+        String courseCartCode = courseCartService.doJoin(currMember, currStudent, classInfo, true, SignChannel.Admin, SignType.Normal);
 
         PayTypeEnum paytype = PayTypeEnum.AppPay;
 

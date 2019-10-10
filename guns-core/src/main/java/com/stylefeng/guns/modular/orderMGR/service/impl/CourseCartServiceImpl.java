@@ -11,6 +11,7 @@ import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.classMGR.service.ICourseService;
 import com.stylefeng.guns.modular.education.CourseMethodEnum;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
+import com.stylefeng.guns.modular.education.service.IStudentPrivilegeService;
 import com.stylefeng.guns.modular.examineMGR.service.IExamineAnswerService;
 import com.stylefeng.guns.modular.examineMGR.service.IExamineService;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
@@ -70,6 +71,9 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
     @Autowired
     private IClassAuthorityService classAuthorityService;
 
+    @Autowired
+    private IStudentPrivilegeService studentPrivilegeService;
+
     private static final Map<Integer, String> DayOfWeekMap = new HashMap<Integer, String>();
     private static final Map<Integer, String> DayOfMonthMap = new HashMap<Integer, String>();
     static {
@@ -93,84 +97,123 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         if (null == classInfo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
 
-        int studentGrade = student.getGrade();
-        int classGrade = classInfo.getGrade();
+        // 报名附加信息
+        Map<String, Object> extraParams = new HashMap<String, Object>();
 
-        if (studentGrade != classGrade){
-            throw new ServiceException(MessageConstant.MessageCode.GRADE_NOT_MATCH);
-        }
+        if (SignChannel.Admin.equals(channel)){
+            // 后台报名逻辑
+            Map<String, Object> queryParams = new HashMap<String, Object>();
+            List<Integer> stateList = new ArrayList<>();
+            List<Integer> payStateList = new ArrayList<>();
 
-        List<CourseCart> existSelected = selectList(new EntityWrapper<CourseCart>()
-                .eq("user_name", member.getUserName())
-                .eq("student_code", student.getCode())
-                .eq("class_code", classInfo.getCode())
-                .ne("status", CourseCartStateEnum.Invalid.code)
-        );
+            stateList.add(OrderStateEnum.PreCreate.code);
+            stateList.add(OrderStateEnum.Valid.code);
 
-        int existSelectedCount = 0;
-        if (existSelected.size() > 0){
-            // 包含有已失效、过期的订单不纳入已订购的范围
-            for(CourseCart courseCart : existSelected){
-                if (CourseCartStateEnum.Valid.code == courseCart.getStatus()){
-                    // 有效的购课单项目
-                    existSelectedCount++;
-                }else if (CourseCartStateEnum.Ordered.code == courseCart.getStatus()){
-                    Order order = orderService.get(courseCart);
-                    if (null == order)
-                        continue;
+            queryParams.put("stateList", stateList);
 
-                    int orderState = order.getStatus();
-                    if (OrderStateEnum.InValid.code == orderState
-                            || OrderStateEnum.Expire.code == orderState){
-                        continue;
+            payStateList.add(PayStateEnum.Failed.code);
+            payStateList.add(PayStateEnum.NoPay.code);
+            queryParams.put("payStateList", payStateList);
+
+            List<Map<String, Object>> orderList = orderService.queryForList(queryParams);
+            for(Map<String, Object> order : orderList){
+                String orderNo = (String)order.get("accept_no");
+                Order existOrder = orderService.get(orderNo);
+
+                if (null == existOrder)
+                    continue;
+
+                existOrder.setStatus(OrderStateEnum.InValid.code);
+                existOrder.setDesc("后台报名置失效");
+
+                orderService.updateById(existOrder);
+            }
+        }else{
+            // 前台报名逻辑
+            int studentGrade = student.getGrade();
+            int classGrade = classInfo.getGrade();
+
+            if (studentGrade != classGrade){
+                throw new ServiceException(MessageConstant.MessageCode.GRADE_NOT_MATCH);
+            }
+
+            List<CourseCart> existSelected = selectList(new EntityWrapper<CourseCart>()
+                    .eq("user_name", member.getUserName())
+                    .eq("student_code", student.getCode())
+                    .eq("class_code", classInfo.getCode())
+                    .ne("status", CourseCartStateEnum.Invalid.code)
+            );
+
+            int existSelectedCount = 0;
+            if (existSelected.size() > 0){
+                // 包含有已失效、过期的订单不纳入已订购的范围
+                for(CourseCart courseCart : existSelected){
+                    if (CourseCartStateEnum.Valid.code == courseCart.getStatus()){
+                        // 有效的购课单项目
+                        existSelectedCount++;
+                    }else if (CourseCartStateEnum.Ordered.code == courseCart.getStatus()){
+                        Order order = orderService.get(courseCart);
+                        if (null == order)
+                            continue;
+
+                        int orderState = order.getStatus();
+                        if (OrderStateEnum.InValid.code == orderState
+                                || OrderStateEnum.Expire.code == orderState){
+                            continue;
+                        }
+
+                        existSelectedCount++;
                     }
-
-                    existSelectedCount++;
                 }
             }
-        }
 
-        if (existSelectedCount > 0)
-            throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECTED);
+            if (existSelectedCount > 0)
+                throw new ServiceException(MessageConstant.MessageCode.COURSE_SELECTED);
 
-        // 是否老学员
-        //boolean zoneStudent = studentZoneService.isZoneStudent(student, classInfo);
-        boolean zoneStudent = false; // StudentZone 只是在割接上线时临时解决方案，不使用了。
-        boolean hasPrivilege = classAuthorityService.hasPrivilege(student, classInfo);
+            // 班型报名权限
+            boolean hasPrivilege = studentPrivilegeService.hasPrivilege(student, classInfo);
 
-        // 入学测试校验
-        if (!skipTest && !zoneStudent && !hasPrivilege && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
-            Map<String, Object> queryParams = new HashMap<String, Object>();
-            queryParams.put("classCode", classInfo.getCode());
-            ExamineApply examineApply = examineService.findExamineApply(queryParams);
+            if (!hasPrivilege){
+                // 没有报名权限
 
-            if (null == examineApply)
-                throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
+                // 检查是否没有做入学测试
+                // 入学测试校验
+                // 正常情况下不会出现没有权限但是测试达标的数据， 因为入学测试需要弹出提示让用户做题，所以保留
+                if (!skipTest && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
+                    Map<String, Object> queryParams = new HashMap<String, Object>();
+                    queryParams.put("classCode", classInfo.getCode());
+                    ExamineApply examineApply = examineService.findExamineApply(queryParams);
 
-            Wrapper<ExamineAnswer> queryWrapper = new EntityWrapper<>();
-            queryWrapper.eq("paper_code", examineApply.getPaperCode());
-            queryWrapper.eq("student_code", student.getCode());
-            queryWrapper.ge("score", examineApply.getPassScore());
-            queryWrapper.eq("status", ExamineAnswerStateEnum.Finish.code);
-            int passCount = examineAnswerService.selectCount(queryWrapper);
+                    if (null == examineApply)
+                        throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
 
-            if (0 >= passCount)
-                throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
-        }
+                    Wrapper<ExamineAnswer> queryWrapper = new EntityWrapper<>();
+                    queryWrapper.eq("paper_code", examineApply.getPaperCode());
+                    queryWrapper.eq("student_code", student.getCode());
+                    queryWrapper.ge("score", examineApply.getPassScore());
+                    queryWrapper.eq("status", ExamineAnswerStateEnum.Finish.code);
+                    int passCount = examineAnswerService.selectCount(queryWrapper);
 
-        if (!hasPrivilege){
-            throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_PRIVILEGE);
-        }
+                    if (0 >= passCount)
+                        throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
+                    else{
+                        // 如果出现了没有权限但是测试达标的情况， 添加用户班型权限
+                        hasPrivilege = true;
+                    }
+                }
+            }
 
-        // 检查班级报名状态
-        // 2019-09-30 调整逻辑
-        //if (!skipTest && !zoneStudent && !hasPrivilege)
-        //    classService.checkJoinState(classInfo, member, student);
-        if (SignChannel.Admin.code != channel.code)
+            if (!hasPrivilege)
+                throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_PRIVILEGE);
+
+            // 检查班级报名状态
+            // 2019-09-30 调整逻辑
+            //if (!skipTest && !zoneStudent && !hasPrivilege)
+            //    classService.checkJoinState(classInfo, member, student);
             classService.checkJoinState(classInfo, type);
+        }
 
         // 加入选课单
-        Map<String, Object> extraParams = new HashMap<String, Object>();
         return select(member, student, classInfo, extraParams);
     }
 

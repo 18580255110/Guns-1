@@ -165,7 +165,17 @@
 
             <!-- 报名时间 -->
             <if test="null != signDate">
-                and tc.sign_start_date &lt;= #{signDate} and tc.sign_end_date &gt;= #{signDate}
+                <![CDATA[
+                and tc.sign_start_date <= #{signDate} and tc.sign_end_date >= #{signDate}
+                and tc.end_date >= #{signDate}
+                ]]>
+            </if>
+
+            <!-- 强制报名时间限制 -->
+            <if test="null != forceSignEndDate">
+                <![CDATA[
+                and tc.end_date >= #{forceSignEndDate}
+                ]]>
             </if>
 
             <!-- 转班时间 -->
@@ -242,7 +252,7 @@
         </choose>
         <include refid="Where_Sql" />
         ) a left join (select a.code as class_code, count(a.code) as sign_quato from tb_class a left join tb_student_class b on a.code = b.class_code where b.status = 1 group by a.code) b
-        on a.code = b.class_code order by a.create_date desc
+        on a.code = b.class_code
     </select>
 
     <!-- 查询在途订单数量 -->

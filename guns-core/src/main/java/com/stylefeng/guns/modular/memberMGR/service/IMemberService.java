@@ -105,4 +105,14 @@ public interface IMemberService extends IService<Member> {
      * @return
      */
     Member getByMobile(String mobileNumber);
+
+    /**
+     * 获取用户或创建新用户
+     *
+     * 当
+     * @param mobileNumber
+     * @param name
+     * @return
+     */
+    Member getOrCreateIfNotExists(String mobileNumber, String name);
 }

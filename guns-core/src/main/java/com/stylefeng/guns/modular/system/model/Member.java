@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.stylefeng.guns.modular.member.MemberStarEnum;
 import com.stylefeng.guns.modular.member.MemberStateEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -248,5 +249,12 @@ public class Member extends Model<Member> {
             return false;
 
         return MemberStateEnum.Valid.code == this.status;
+    }
+
+    public boolean isTeacher() {
+        if (null == this.star)
+            return false;
+
+        return MemberStarEnum.Star_99.code == this.star;
     }
 }

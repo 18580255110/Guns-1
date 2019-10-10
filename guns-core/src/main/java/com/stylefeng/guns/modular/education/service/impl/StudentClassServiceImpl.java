@@ -9,6 +9,7 @@ import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
+import com.stylefeng.guns.modular.education.transfer.StudentClassInfo;
 import com.stylefeng.guns.modular.system.dao.StudentClassMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.Member;
@@ -72,7 +73,7 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
     }
 
     @Override
-    public List<Student> listSignedStudent(Map<String, Object> queryMap) {
+    public List<StudentClassInfo> listSignedStudent(Map<String, Object> queryMap) {
         return studentClassMapper.listSignedStudent(queryMap);
     }
 

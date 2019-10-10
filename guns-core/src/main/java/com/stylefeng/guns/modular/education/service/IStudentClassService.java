@@ -1,6 +1,7 @@
 package com.stylefeng.guns.modular.education.service;
 
 import com.baomidou.mybatisplus.service.IService;
+import com.stylefeng.guns.modular.education.transfer.StudentClassInfo;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
 
@@ -29,7 +30,7 @@ public interface IStudentClassService extends IService<StudentClass> {
      * @param queryMap
      * @return
      */
-    List<Student> listSignedStudent(Map<String, Object> queryMap);
+    List<StudentClassInfo> listSignedStudent(Map<String, Object> queryMap);
 
     /**
      * 用户历史报班列表

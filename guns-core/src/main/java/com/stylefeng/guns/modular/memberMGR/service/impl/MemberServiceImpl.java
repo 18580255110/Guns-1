@@ -309,6 +309,24 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         return selectOne(queryWrapper);
     }
 
+    @Override
+    public Member getOrCreateIfNotExists(String mobileNumber, String name) {
+        Member currMember = null;
+        Map<String, Object> memberRegistMap = new HashMap<String, Object>();
+        memberRegistMap.put("number", mobileNumber);
+        memberRegistMap.put("name", name);
+        try {
+            currMember = memberService.createMember(memberService.generateUserName(), memberRegistMap);
+        }catch(ServiceException sere){
+            if (!MessageConstant.MessageCode.SYS_SUBJECT_DUPLICATE.equals(sere.getMessageCode()))
+                throw sere;
+            else
+                currMember = memberService.getByMobile(mobileNumber);
+        }
+
+        return currMember;
+    }
+
     private MemberAuth buildMemberAuthInfo(Member member) {
         MemberAuth memberAuth = new MemberAuth();
         Date now = new Date();
