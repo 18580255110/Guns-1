@@ -67,22 +67,26 @@ public class PayProperties {
     public Properties getUnionProperties() {
 
         Properties properties = new Properties();
-//
-//        PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(UnionProperties.class);
-//        for(PropertyDescriptor propertyDescriptor : propertyDescriptors){
-//            String key = propertyDescriptor.getName();
-//            String value = null;
-//            try {
-//                value = (String)propertyDescriptor.getReadMethod().invoke(this.union, new Object[0]);
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            } catch (InvocationTargetException e) {
-//                e.printStackTrace();
-//            }
-//
-//            if (null != value)
-//                properties.setProperty(key, value);
-//        }
+
+        PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(UnionProperties.class);
+        for(PropertyDescriptor propertyDescriptor : propertyDescriptors){
+            if (!String.class.equals(propertyDescriptor.getPropertyType())){
+                continue;
+            }
+
+            String key = propertyDescriptor.getName();
+            String value = null;
+            try {
+                value = (String)propertyDescriptor.getReadMethod().invoke(this.union, new Object[0]);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+
+            if (null != value)
+                properties.setProperty(key, value);
+        }
         return properties;
     }
 

@@ -92,7 +92,7 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
     /**
      * 商户号
      */
-    private String merId;
+    private String mchId;
     /**
      * 账户号
      */
@@ -110,12 +110,12 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
         this.certId = certId;
     }
 
-    public String getMerId() {
-        return merId;
+    public String getMchId() {
+        return mchId;
     }
 
-    public void setMerId(String merId) {
-        this.merId = merId;
+    public void setMchId(String mchId) {
+        this.mchId = mchId;
     }
 
     public String getNotifyUrl() {
@@ -177,16 +177,16 @@ public class UnionPayRequestBuilder extends PayRequestBuilder {
         contentData.put("txnType", this.txnType);
         contentData.put("txnSubType", this.txnSubType);
         contentData.put("bizType", this.bizType);
-        contentData.put("channelType", channelType);
+        contentData.put("channelType", this.channelType);
 
-        contentData.put("merId", this.merId); // 在application.yml 中 application.pay.unionpay中配置
+        contentData.put("merId", this.mchId); // 在application.yml 中 application.pay.union中配置
         contentData.put("accessType", this.accessType);
         contentData.put("orderId", merchantOrder.getAcceptNo());
         contentData.put("txnTime", DateUtil.format(now, "yyyyMMddHHmmss"));
         contentData.put("accType", this.accType);
         contentData.put("txnAmt", String.valueOf(merchantOrder.getAmount()));
         contentData.put("currencyCode", this.currencyCode); // 人民币
-        contentData.put("orderDesc", merchantOrder.getDesc());
+        //contentData.put("orderDesc", merchantOrder.getDesc());
 
         contentData.put("backUrl", this.notifyUrl);
 

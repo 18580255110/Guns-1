@@ -1,5 +1,6 @@
 package com.stylefeng.guns.modular.payMGR;
 
+import com.alibaba.fastjson.JSON;
 import com.stylefeng.guns.modular.payMGR.sdk.AcpService;
 import org.apache.http.client.ResponseHandler;
 import org.slf4j.Logger;
@@ -32,7 +33,11 @@ public class UnionPostRequest extends PostRequest{
     @Override
     public Map<String, String> post() {
 
+        log.info("Union pay request ===> {}", JSON.toJSONString(this.postData));
+
         Map<String, String> rspData = AcpService.post(this.postData, this.url, "UTF-8");  //发送请求报文并接受同步应答（默认连接超时时间30秒，读取返回结果超时时间30秒）;这里调用signData之后，调用submitUrl之前不能对submitFromData中的键值对做任何修改，如果修改会导致验签不通过
+
+        log.info("Union pay response ===> {}", JSON.toJSONString(rspData));
 
         Map<String, String> postResult = new HashMap<>();
         if(!rspData.isEmpty()){
@@ -46,7 +51,7 @@ public class UnionPostRequest extends PostRequest{
                 }else{
                     //其他应答码为失败请排查原因或做失败处理
                     postResult.put("code", "FAILED");
-                    postResult.put("result", rspData.get("tn"));
+                    postResult.put("result", rspData.get("respMsg"));
                 }
             }else{
                 log.error("验证签名失败");
@@ -54,12 +59,13 @@ public class UnionPostRequest extends PostRequest{
                 postResult.put("result", "收到无效的平台响应");
             }
         }else{
+
             //未返回正确的http状态
             log.error("未获取到返回报文或返回http状态码非200");
             postResult.put("code", "FAILED");
             postResult.put("result", "未获取到平台响应");
         }
-        return null;
+        return postResult;
     }
 
     public void pushPostData(Map<String, String> signedPostData) {
