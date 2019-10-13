@@ -219,7 +219,7 @@ public class Class extends Model<Class> {
 
     private transient Integer signQuato;
 
-    private transient Long currentPrice = 0L;
+    private transient Long signPrice = 0L;
 
     public Long getId() {
         return id;
@@ -535,12 +535,12 @@ public class Class extends Model<Class> {
         this.signQuato = signQuato;
     }
 
-    public Long getCurrentPrice() {
-        return currentPrice;
+    public Long getSignPrice() {
+        return signPrice;
     }
 
-    public void setCurrentPrice(Long currentPrice) {
-        this.currentPrice = currentPrice;
+    public void setSignPrice(Long signPrice) {
+        this.signPrice = signPrice;
     }
 
     @Override

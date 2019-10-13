@@ -36,6 +36,9 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
     @ApiModelProperty(name = "signQuato", value = "报名人数", example = "10")
     private Integer signQuato;
 
+    @ApiModelProperty(name = "currentPrice", value = "实际报名价格", example = "10")
+    private Long currentPrice;
+
     @ApiModelProperty(name = "student", value = "学员名称", example = "小明")
     private String student;
 
@@ -79,6 +82,20 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
         BigDecimal bigPrice = new BigDecimal(price);
 
         this.formatPrice = bigPrice.divide(TRANSFORM).setScale(2).toString();
+    }
+
+    public Long getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(Long currentPrice) {
+//        if (null == currentPrice)
+//            this.formatPrice = "0.00";
+//
+//        BigDecimal bigPrice = new BigDecimal(currentPrice);
+//
+//        this.formatPrice = bigPrice.divide(TRANSFORM).setScale(2).toString();
+        this.currentPrice = currentPrice;
     }
 
     public String getStudent() {
@@ -129,6 +146,7 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
         dto.setFormatPrice(dto.getPrice());
         dto.setAmount(dto.getPrice());
         dto.setSignQuato(null == classInfo.getSignQuato() ? 0 : classInfo.getSignQuato());
+        dto.setCurrentPrice(null == classInfo.getSignPrice() ? 0L : classInfo.getSignPrice());
         // 格式化开课时间描述
         formatClassTime(dto);
         // 判断是否能调课

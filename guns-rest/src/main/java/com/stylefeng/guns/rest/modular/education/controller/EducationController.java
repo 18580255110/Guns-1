@@ -114,7 +114,7 @@ public class EducationController extends ApiController {
         queryMap.put("signable", ClassSignableEnum.YES.code);
         List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForSign(queryMap);
 
-        return assembleClassList(classList);
+        return assembleClassList(currToken(), classList);
         /*************************************************************************
          * 原来针对跨报的错误理解代码，暂时不用
          * -----------------------------------------------------------------------
@@ -381,6 +381,7 @@ public class EducationController extends ApiController {
         studentPlanQueryWrapper.eq("class_code", requester.getClassCode());
         studentPlanQueryWrapper.eq("outline_code", requester.getOutlineCode());
         studentPlanQueryWrapper.eq("status", GenericState.Valid.code);
+
         List<ScheduleStudent> studentPlanList = scheduleStudentService.selectList(studentPlanQueryWrapper);
 
         if (studentPlanList.isEmpty() || studentPlanList.size() > 1){
@@ -419,6 +420,10 @@ public class EducationController extends ApiController {
                 // 不是同班型，过滤掉
                 continue;
             }
+            if (classInfo.getEndDate().compareTo(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH)) <= 0){
+                // 已结束的班级，过滤掉
+                continue;
+            }
             int cmpResult = DateUtil.compareDate(now, classInfo.getSignStartDate(), Calendar.DAY_OF_MONTH);
             if ((cmpResult >= 0 && ClassSignableEnum.YES.code != classInfo.getSignable()) || cmpResult < 0){
                 // 班级还未开放报名
@@ -449,6 +454,7 @@ public class EducationController extends ApiController {
         changeClassQuery.put("abilities", String.valueOf(currClass.getAbility()));
         changeClassQuery.put("subjects", course.getSubject());
         changeClassQuery.put("signable", ClassSignableEnum.YES.code);
+        changeClassQuery.put("forceSignEndDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
 
         List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForChange(changeClassQuery);
 
@@ -933,7 +939,7 @@ public class EducationController extends ApiController {
         return PlanOfDayResponserWrapper.me(responserList);
     }
 
-    private Responser assembleClassList(List<Class> classList) {
+    private Responser assembleClassList(String token, List<Class> classList) {
         Set<com.stylefeng.guns.modular.system.model.Class> classSet = new TreeSet<>(new Comparator<Class>() {
             @Override
             public int compare(Class c1, Class c2) {
@@ -945,6 +951,7 @@ public class EducationController extends ApiController {
             int maxCount = classInfo.getQuato();
             int signedCount = classService.queryOrderedCount(classInfo.getCode());
             classInfo.setSignQuato(signedCount > maxCount ? maxCount : signedCount );
+            classInfo.setSignPrice(classInfo.getPrice());
             classSet.add(classInfo);
         }
 
