@@ -71,6 +71,24 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     public List<Class> queryListForSign(Map<String, Object> queryParams) {
         Map<String, Object> arguments = buildQueryArguments(queryParams);
 
+        if (queryParams.containsKey("page")){
+            int page = (Integer) queryParams.get("page");
+            if ( page <= 0 )
+                page = 1;
+
+            int size = 5; // 默认5条每页
+            if (queryParams.containsKey("size")){
+                size = (Integer) queryParams.get("size");
+                if (size <= 0)
+                    size = 5;
+            }
+
+            int offset = 1 == page ? 0 : (page - 1) * size;
+
+            arguments.put("pageRequest", true);
+            arguments.put("offset", offset);
+            arguments.put("size", size);
+        }
         List<Class> resultList = classMapper.queryForList(arguments);
 
         return resultList;

@@ -77,6 +77,7 @@ public class AuthFilter extends OncePerRequestFilter {
             }
 
             String userName = jwtTokenUtil.getUsernameFromToken(authToken);
+            request.setAttribute("CURR_TOKEN", authToken);
             request.setAttribute("USER_NAME", userName);
         } else {
             //header没有带KCEdu字段

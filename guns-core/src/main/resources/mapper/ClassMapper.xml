@@ -224,6 +224,12 @@
         </where>
     </sql>
 
+    <sql id="Page_Sql">
+        <if test="null != pageRequest">
+            limit #{offset}, #{size}
+        </if>
+    </sql>
+
     <!-- 分页查询 -->
     <select id="selectPageList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
         select a.*, IFNULL(b.sign_quato, 0) AS signQuato from (
@@ -241,18 +247,22 @@
     </select>
 
     <select id="queryForList" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select t.* from (
         select a.*, IFNULL(b.sign_quato, 0) AS signQuato from (
         select tcr.subject,
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from tb_class tc, tb_course tcr
         <choose>
             <when test=" classPlanList.size() > 0 ">
                 , tb_schedule_class sc
             </when>
         </choose>
-        <include refid="Where_Sql" />
-        ) a left join (select a.code as class_code, count(a.code) as sign_quato from tb_class a left join tb_student_class b on a.code = b.class_code where b.status = 1 group by a.code) b
+        <include refid="Where_Sql"/>
+        ) a left join (select a.code as class_code, count(a.code) as sign_quato from tb_class a left join
+        tb_student_class b on a.code = b.class_code where b.status = 1 group by a.code) b
         on a.code = b.class_code
+        ) t
+        <include refid="Page_Sql" />
     </select>
 
     <!-- 查询在途订单数量 -->

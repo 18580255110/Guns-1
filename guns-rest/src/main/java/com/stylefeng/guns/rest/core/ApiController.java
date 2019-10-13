@@ -16,11 +16,16 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class ApiController {
     private static final String USER_NAME = "USER_NAME";
+    private static final String CURR_TOKEN = "CURR_TOKEN";
     @Autowired
     private HttpServletRequest currRequest;
 
     @Autowired
     private IMemberService _memberService;
+
+    protected String currToken(){
+        return (String) currRequest.getAttribute(CURR_TOKEN);
+    }
 
     protected Member currMember(){
         String userName = (String) currRequest.getAttribute(USER_NAME);

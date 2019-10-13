@@ -41,6 +41,10 @@ public class ClassQueryRequester extends SimpleRequester {
     private String classroomCode;
     @ApiModelProperty(name = "signType", value = "报名方式: 1 正常报名； 2 跨报", required = false, position = 12, example = "1")
     private Integer signType;
+    @ApiModelProperty(name = "page", value = "页数", required = false, position = 12, example = "1")
+    private Integer page = 1;
+    @ApiModelProperty(name = "size", value = "记录数", required = false, position = 12, example = "1")
+    private Integer size = Integer.MAX_VALUE;
     @ApiModelProperty(name = "status", value = "状态", required = false, position = 13, example = "1")
     private Integer status = GenericState.Valid.code;
 
@@ -146,6 +150,22 @@ public class ClassQueryRequester extends SimpleRequester {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 
     @Override
