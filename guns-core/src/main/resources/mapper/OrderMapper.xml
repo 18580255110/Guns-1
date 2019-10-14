@@ -21,7 +21,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        o.id, o.accept_no, o.accept_date, o.status, o.amount, o.pay_status, o.pay_result, o.pay_date, o.pay_method, o.user_name, o.out_order_no, o.out_sequence
+        o.id, o.accept_no, o.accept_date, o.status, o.amount, o.pay_status, o.pay_result, o.pay_date, o.pay_method, o.user_name, o.out_order_no, o.out_sequence,o.desc
     </sql>
 
     <sql id="Where_Statement">
@@ -71,6 +71,13 @@
             <!-- 支付状态 -->
             <if test="null != expireDate">
                 <![CDATA[ and accept_date < #{expireDate} ]]>
+            </if>
+
+            <if test="orderStatus != 2 ">
+                and o.status = 1
+            </if>
+            <if test="orderStatus == 2">
+                and o.status = 2
             </if>
 
         </where>

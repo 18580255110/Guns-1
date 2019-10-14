@@ -46,6 +46,9 @@
                             @if(shiro.hasPermission("/order/class/export")){
                             <#button name="导出订单" icon="fa-download" clickFun="Order.export()" space="true"/>
                             @}
+                            @if(shiro.hasPermission("/order/class/export")){
+                            <#button name="退费查询" icon="fa-download" clickFun="Order.cancelSearch()" space="true"/>
+                            @}
                         </div>
                         <#table id="OrderTable"/>
                     </div>

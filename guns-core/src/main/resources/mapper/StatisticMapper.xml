@@ -8,13 +8,19 @@
         <result column="class_code" property="classCode" />
         <result column="class_name" property="className" />
         <result column="sign_date" property="signDate" />
+        <result column="desc" property="desc" />
+        <result column="amount" property="amount" />
+        <result column="pay_method" property="payMethod" />
         <result column="member_mobile" property="memberMobile" />
         <result column="order_no" property="orderNo" />
+
     </resultMap>
 
     <select id="statisticStudentSign" resultMap="StudentSignResultMap" parameterType="java.util.HashMap">
         select
-         s.code as student_code, s.name as student_name, c.code as class_code, c.name as class_name, o.accept_date as sign_date, m.mobile_number as member_mobile, o.accept_no as order_no, c.teacher
+         s.code as student_code, s.name as student_name, c.code as class_code, c.name as class_name,
+         o.accept_date as sign_date, o.`desc` ,o.amount,o.pay_method,
+         m.mobile_number as member_mobile, o.accept_no as order_no, c.teacher
         from
         (
         (
