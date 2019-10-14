@@ -130,6 +130,7 @@ Order.search = function () {
     queryData['ability'] = $("#ability").val();
     queryData['cycle'] = $("#cycle").val();
     Order.table.refresh({query: queryData});
+    Order.table.setQueryParams(queryData);
 };
 
 $(function () {
