@@ -107,6 +107,7 @@ AdjustStudent.search = function () {
     queryData['endDate'] = $("#endDate").val();
     queryData['status'] = '1';
     AdjustStudent.table.refresh({query: queryData});
+    AdjustStudent.table.setQueryParams(queryData);
 };
 
 $(function () {
