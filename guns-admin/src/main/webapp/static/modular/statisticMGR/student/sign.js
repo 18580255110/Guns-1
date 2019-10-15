@@ -62,19 +62,32 @@ StudentSign.export = function () {
     ajax.start();
 };
 /**
- * 取消订单
+ * 退费
  */
 StudentSign.cancel = function () {
 
     if (this.check()) {
-        var ajax = new $ax(Feng.ctxPath + "/order/class/doReverse/" + StudentSign.seItem.orderNo, function (data) {
-            Feng.success("操作成功!");
-            StudentSign.table.refresh();
-        }, function (data) {
-            Feng.error("操作失败!" + data.responseJSON.message + "!");
-        });
 
-        ajax.start();
+        var remark = parent.layer.prompt({
+            formType: 0,
+            value: '退费金额:',
+            title: '确定退费吗？'
+        }, function(value,index){
+            if('退费金额(必填):' == value || !value){
+                Feng.alert("请填写实际退费金额")
+                return;
+            }else {
+                var ajax = new $ax(Feng.ctxPath + "/order/class/doReverse/" + StudentSign.seItem.orderNo, function (data) {
+                    Feng.success("操作成功!");
+                    StudentSign.table.refresh();
+                }, function (data) {
+                    Feng.error("操作失败!" + data.responseJSON.message + "!");
+                });
+                ajax.setData({desc:value})
+                ajax.start();
+            }
+            parent.layer.close(index);
+        });
     }
 };
 
