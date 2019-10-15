@@ -71,7 +71,7 @@
                         <div class="col-sm-6">
                             <#input id="student_age" name="年龄" value="" underline="true" readonly="true"/>
                             <#input id="student_genderName" name="性别" value="" underline="true" readonly="true"/>
-                            <#input id="student_remark" name="备注" value="" underline="true"/>
+                            <#input id="student_remark" name="备注" value="" underline="true" readonly="true"/>
                         </div>
                     </div>
                     <fieldset>
@@ -99,6 +99,7 @@
             <fieldset>
                 <form id="confirmForm" class="form-horizontal">
                     <#dictSelector id="payType" name ="payType" code="pay_type" label="缴费方式"  underline="true"  width="75%"/>
+                    <#input id="orderRemark" name ="orderRemark"  name="订单备注" value="无" underline="true"/>
                 </form>
             </fieldset>
         </div>

@@ -28,6 +28,8 @@ public class SignRequest implements Serializable {
 
     private Integer payType;
 
+    private String orderRemark;
+
     public Class getClassInfo() {
         return classInfo;
     }
@@ -60,6 +62,13 @@ public class SignRequest implements Serializable {
         this.payType = payType;
     }
 
+    public String getOrderRemark() {
+        return orderRemark;
+    }
+
+    public void setOrderRemark(String orderRemark) {
+        this.orderRemark = orderRemark;
+    }
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<String, Object>();

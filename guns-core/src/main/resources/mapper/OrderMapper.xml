@@ -17,7 +17,7 @@
         <result column="user_name" property="userName" />
         <result column="out_order_no" property="outOrderNo" />
         <result column="out_sequence" property="outSequence" />
-        <result column="name" property="className" />
+        <result column="className" property="className" />
         <result column="teacher" property="teacherName" />
         <result column="student" property="studentName" />
     </resultMap>
