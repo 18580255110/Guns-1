@@ -89,12 +89,6 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
     }
 
     public void setCurrentPrice(Long currentPrice) {
-//        if (null == currentPrice)
-//            this.formatPrice = "0.00";
-//
-//        BigDecimal bigPrice = new BigDecimal(currentPrice);
-//
-//        this.formatPrice = bigPrice.divide(TRANSFORM).setScale(2).toString();
         this.currentPrice = currentPrice;
     }
 

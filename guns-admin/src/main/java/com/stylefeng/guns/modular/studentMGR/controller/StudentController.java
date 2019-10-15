@@ -1,8 +1,10 @@
 package com.stylefeng.guns.modular.studentMGR.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.stylefeng.guns.common.constant.factory.PageFactory;
+import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.base.controller.BaseController;
 import com.stylefeng.guns.core.base.tips.ErrorTip;
@@ -10,6 +12,7 @@ import com.stylefeng.guns.core.base.tips.SuccessTip;
 import com.stylefeng.guns.core.base.tips.Tip;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.log.LogObjectHolder;
+import com.stylefeng.guns.modular.education.service.IStudentPrivilegeService;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.studentMGR.warpper.StudentWrapper;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +55,9 @@ public class StudentController extends BaseController {
 
     @Autowired
     private IAttachmentService attachmentService;
+
+    @Autowired
+    private IStudentPrivilegeService studentPrivilegeService;
 
     /**
      * 跳转到学生管理首页
@@ -78,7 +85,8 @@ public class StudentController extends BaseController {
         if (map.isEmpty())
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"学员信息"});
 
-        List<Attachment> avatarList = attachmentService.listAttachment(Student.class.getSimpleName(), (String) map.get("code"));
+        String studentCode = (String) map.get("code");
+        List<Attachment> avatarList = attachmentService.listAttachment(Student.class.getSimpleName(), studentCode);
         if (null != avatarList && avatarList.size() > 0){
             map.put("avatar",String.valueOf(avatarList.get(0).getId()));
         }
@@ -88,6 +96,17 @@ public class StudentController extends BaseController {
             map.put("parentPhone",member.getMobileNumber());
         }
         model.addAttribute("item", map);
+
+        // 学员报名权限
+        List<StudentPrivilege> privilegeList = studentPrivilegeService.selectList(new EntityWrapper<StudentPrivilege>(){
+            {
+                eq("student_code", studentCode);
+                eq("status", GenericState.Valid.code);
+                eq("type", 1);
+            }
+        });
+        model.addAttribute("privilegeList", privilegeList);
+
         LogObjectHolder.me().set(map);
         return PREFIX + "student_edit.html";
     }
@@ -176,7 +195,7 @@ public class StudentController extends BaseController {
      */
     @RequestMapping(value = "/update")
     @ResponseBody
-    public Object update(Student student, String masterName, String masterCode,String parentPhone) {
+    public Object update(Student student, String masterName, String masterCode, String parentPhone, String privilegeItems) {
 
         Attachment icon = null;
         List<Attachment> attachmentList = attachmentService.listAttachment(masterName, masterCode);
@@ -204,7 +223,43 @@ public class StudentController extends BaseController {
                 attachmentService.updateAndRemoveOther(icon);
             }catch(Exception e){
                 log.warn("更新图标失败");
+                log.warn("更新图标失败");
             }
+
+        List<StudentPrivilege> studentPrivilegeList = null;
+        try {
+            studentPrivilegeList = JSON.parseArray(privilegeItems, StudentPrivilege.class);
+        }catch(Exception e){}
+        List<StudentPrivilege> existPrivilegeList = studentPrivilegeService.selectList(new EntityWrapper<StudentPrivilege>(){
+            {
+                eq("student_code", student.getCode());
+                eq("status", GenericState.Valid.code);
+                eq("type", 1);
+            }
+        });
+        if (existPrivilegeList.isEmpty()){
+            for(StudentPrivilege studentPrivilege: studentPrivilegeList){
+                studentPrivilege.setStudentName(student.getName());
+                studentPrivilege.setStatus(GenericState.Valid.code);
+                studentPrivilege.setType(1);
+                studentPrivilege.setId(null);
+                studentPrivilegeService.insert(studentPrivilege);
+            }
+        }else if (null != studentPrivilegeList && !(studentPrivilegeList.isEmpty())){
+            Iterator<StudentPrivilege> existIterator = existPrivilegeList.iterator();
+            while(existIterator.hasNext()){
+                StudentPrivilege studentPrivilege = existIterator.next();
+                studentPrivilegeService.deleteById(studentPrivilege.getId());
+            }
+
+            for(StudentPrivilege studentPrivilege : studentPrivilegeList){
+                studentPrivilege.setStudentName(student.getName());
+                studentPrivilege.setStatus(GenericState.Valid.code);
+                studentPrivilege.setType(1);
+                studentPrivilege.setId(null);
+                studentPrivilegeService.insert(studentPrivilege);
+            }
+        }
         return SUCCESS_TIP;
     }
 

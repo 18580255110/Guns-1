@@ -20,4 +20,22 @@ public interface IStudentPrivilegeService extends IService<StudentPrivilege> {
      * @return
      */
     boolean hasPrivilege(Student student, Class classInfo);
+
+    /**
+     * 是否有班级报名权限
+     *
+     * @param studentPrivilege
+     * @return
+     */
+    boolean hasPrivilege(StudentPrivilege studentPrivilege);
+    /**
+     * 授权
+     *
+     * 通过订购的方式不能调用该方法授权
+     *
+     * @param studentCode
+     * @param classCode
+     */
+    void grantSignPrivileges(String studentCode, String classCode);
+
 }

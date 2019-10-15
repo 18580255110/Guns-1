@@ -13,5 +13,10 @@ import java.util.Map;
  * @Version 1.0
  */
 public interface StudentPrivilegeMapper extends BaseMapper<StudentPrivilege> {
-    List<Map<String, Object>> selectStudentPrivilegeCount(Map<String, Object> queryParams);
+    /**
+     *
+     * @param queryParams
+     * @return
+     */
+    List<Map<String, Object>> selectStudentPrivilegeStatistic(Map<String, Object> queryParams);
 }
