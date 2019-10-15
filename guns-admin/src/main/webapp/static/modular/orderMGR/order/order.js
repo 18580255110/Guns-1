@@ -21,10 +21,11 @@ Order.initColumn = function () {
             {title: '教授老师', field: 'teacher', visible: true, align: 'center', valign: 'middle'},
             {title: '开班金额（元）', field: 'oldAmount', visible: true, align: 'center', valign: 'middle'},
             {title: '实缴金额（元）', field: 'amount', visible: true, align: 'center', valign: 'middle'},
+            {title: '备注', field: 'desc', visible: false, align: 'center', valign: 'middle'},
             {title: 'status', field: 'status', visible: false, align: 'center', valign: 'middle'},
             {title: '状态', field: 'statusName', visible: true, align: 'center', valign: 'middle'},
             {title: '支付结果', field: 'payResult', visible: true, align: 'center', valign: 'middle'},
-            {title: '支付渠道', field: 'payMethodName', visible: true, align: 'center', valign: 'middle'},
+            {title: '支付方式', field: 'payMethodName', visible: true, align: 'center', valign: 'middle'},
             {title: '生成时间', field: 'acceptDate', visible: true, align: 'center', valign: 'middle'},
             {title: '支付时间', field: 'payDate', visible: true, align: 'center', valign: 'middle'}
     ];
@@ -130,6 +131,24 @@ Order.search = function () {
     queryData['ability'] = $("#ability").val();
     queryData['cycle'] = $("#cycle").val();
     Order.table.refresh({query: queryData});
+    Order.table.setQueryParams(queryData);
+};
+
+/**
+ * 查询《退费》订单管理列表
+ */
+Order.cancelSearch = function () {
+    var queryData = {};
+    queryData['orderNo'] = $("#condition").val();
+    queryData['teacher'] = $("#teacher").val();
+    queryData['student'] = $("#student").val();
+    queryData['subject'] = $("#subject").val();
+    queryData['ability'] = $("#ability").val();
+    queryData['cycle'] = $("#cycle").val();
+    queryData['orderStatus'] = 2;
+
+    Order.table.refresh({query: queryData});
+    Order.table.setQueryParams(queryData);
 };
 
 $(function () {

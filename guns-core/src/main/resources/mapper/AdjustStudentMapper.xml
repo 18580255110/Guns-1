@@ -24,17 +24,19 @@
     </sql>
 
     <select id="selectApplyMapsPage" resultType="java.util.HashMap" parameterType="java.util.HashMap">
-      SELECT m.name as uname, m.mobile_number as number, s.name as sname,
-        (select c.name from tb_class c where code = a.source_class) as scname,
-        (select c.teacher from tb_class c where code = a.source_class) as steacher,
-        (select c.study_time_desp from tb_class c where code = a.source_class) as sdesp,
-        (select c.name from tb_class c where code = a.target_class) as dcname,
-        (select c.teacher from tb_class c where code = a.target_class) as dteacher,
-        (select c.study_time_desp from tb_class c where code = a.source_class) as ddesp,
-        (select co.outline from tb_course_outline co where code = a.outline_code) as oname,
-        a.*
-      FROM tb_adjust_student a , tb_member m, tb_student s
-      <where>
+        SELECT m.name as uname, m.mobile_number as number, s.name as sname,
+            c.name as scname,
+            c.teacher as steacher,
+            c.study_time_desp as sdesp,
+            c2.name as dcname,
+            c2.teacher as dteacher,
+            c.study_time_desp  as ddesp,
+            (select co.outline from tb_course_outline co where code = a.outline_code) as oname,
+        a.* FROM tb_adjust_student a
+            LEFT JOIN tb_class c ON c.code = a.source_class
+            LEFT JOIN tb_class c2 ON c2.code = a.target_class
+        , tb_member m, tb_student s
+        <where>
           AND a.user_name = m.user_name AND a.student_code = s.code
           <if test="null != student">
               AND (s.code = #{student} OR s.name like CONCAT('%',#{student},'%') )
@@ -61,7 +63,13 @@
               <![CDATA[ and update_time < #{endDate} ]]>
           </if>
 
+          <!-- 班级关键字 -->
+          <if test="null != classInfo and  '' != classInfo ">
+            and  c.name LIKE "%${classInfo}%"
+          </if>
       </where>
+
+        ORDER BY a.create_time DESC
     </select>
 
 </mapper>
