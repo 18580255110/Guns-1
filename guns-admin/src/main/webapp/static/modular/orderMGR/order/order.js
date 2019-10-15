@@ -21,7 +21,7 @@ Order.initColumn = function () {
             {title: '教授老师', field: 'teacher', visible: true, align: 'center', valign: 'middle'},
             {title: '开班金额（元）', field: 'oldAmount', visible: true, align: 'center', valign: 'middle'},
             {title: '实缴金额（元）', field: 'amount', visible: true, align: 'center', valign: 'middle'},
-            {title: '备注', field: 'desc', visible: false, align: 'center', valign: 'middle'},
+            {title: '备注', field: 'desc', visible: true, align: 'center', valign: 'middle'},
             {title: 'status', field: 'status', visible: false, align: 'center', valign: 'middle'},
             {title: '状态', field: 'statusName', visible: true, align: 'center', valign: 'middle'},
             {title: '支付结果', field: 'payResult', visible: true, align: 'center', valign: 'middle'},

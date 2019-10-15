@@ -301,7 +301,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public void doReverse(String orderNo) {
+    public void doReverse(String orderNo,String desc) {
 
         Order order = get(orderNo);
 
@@ -309,7 +309,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"订单"});
 
         order.setStatus(OrderStateEnum.Reverse.code);
-        order.setDesc(DateUtil.getyyMMddHHmmss() + " 撤销订单");
+        order.setDesc(DateUtil.getyyMMddHHmmss() + " -撤销订单:"+desc);
         updateById(order);
 
         List<OrderItem> courseOrderItemList = listItems(orderNo, OrderItemTypeEnum.Course);

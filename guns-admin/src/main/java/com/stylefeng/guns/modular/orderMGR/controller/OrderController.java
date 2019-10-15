@@ -142,12 +142,12 @@ public class OrderController extends BaseController {
      */
     @RequestMapping(value = "/class/doReverse/{orderNo}")
     @ResponseBody
-    public Object reverse(@PathVariable("orderNo") String orderNo) {
+    public Object reverse(@PathVariable("orderNo") String orderNo,@RequestParam("desc") String desc) {
 
         if (null == orderNo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"订单号"});
 
-        orderService.doReverse(orderNo);
+        orderService.doReverse(orderNo,desc);
 
         return SUCCESS_TIP;
     }
