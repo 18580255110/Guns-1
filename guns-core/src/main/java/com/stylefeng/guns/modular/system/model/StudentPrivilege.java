@@ -49,22 +49,25 @@ public class StudentPrivilege extends Model<StudentPrivilege> {
     @TableField("academic_year")
     private Integer academicYear;
 
-    @ApiModelProperty(name = "grade", value = "年级", position = 3, example="3")
+    @ApiModelProperty(name = "subject", value = "科目", position = 3, example="3")
+    private Integer subject;
+
+    @ApiModelProperty(name = "grade", value = "年级", position = 4, example="3")
     private Integer grade;
 
-    @ApiModelProperty(name = "cycle", value = "学期", position = 4, example="1")
+    @ApiModelProperty(name = "cycle", value = "学期", position = 5, example="1")
     private Integer cycle;
 
-    @ApiModelProperty(name = "ability", value = "学员名称", position = 5, example="2")
+    @ApiModelProperty(name = "ability", value = "学员名称", position = 6, example="2")
     private Integer ability;
 
-    @ApiModelProperty(name = "type", value = "类型", position = 6, example="1")
+    @ApiModelProperty(name = "type", value = "类型", position = 7, example="1")
     private Integer type;
 
-    @ApiModelProperty(name = "status", value = "状态", position = 7, example="1")
+    @ApiModelProperty(name = "status", value = "状态", position = 8, example="1")
     private Integer status;
 
-    @ApiModelProperty(name = "comments", value = "备注", position = 8, example="备注")
+    @ApiModelProperty(name = "comments", value = "备注", position = 9, example="备注")
     private String comments;
 
     public Long getId() {
@@ -97,6 +100,14 @@ public class StudentPrivilege extends Model<StudentPrivilege> {
 
     public void setAcademicYear(Integer academicYear) {
         this.academicYear = academicYear;
+    }
+
+    public Integer getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Integer subject) {
+        this.subject = subject;
     }
 
     public Integer getGrade() {
@@ -169,7 +180,7 @@ public class StudentPrivilege extends Model<StudentPrivilege> {
     }
 
     public String getKey() {
-        return "_" + studentCode + "_" + academicYear + "_" + grade + "_" + cycle + "_" + ability + "_";
+        return "_" + studentCode + "_" + academicYear + "_" + subject + "_" + grade + "_" + cycle + "_" + ability + "_";
     }
 
     public StudentPrivilege next() {
@@ -184,7 +195,7 @@ public class StudentPrivilege extends Model<StudentPrivilege> {
     }
 
     class CircularCalculator {
-        private ConcurrentLinkedQueue<Integer> list;
+        private ConcurrentLinkedQueue<Integer> list = new ConcurrentLinkedQueue<Integer>();
         private Iterator<Integer> iterator;
         private Integer academicYear;
 
@@ -199,16 +210,19 @@ public class StudentPrivilege extends Model<StudentPrivilege> {
         }
 
         public void next(int cycle){
-            while(iterator.hasNext()){
-                int val = iterator.next();
+            while(this.iterator.hasNext()){
+                int val = this.iterator.next();
                 if (val != cycle)
                     continue;
 
-                if (!(iterator.hasNext())){
+                if (!(this.iterator.hasNext())){
                     // 最后一个学期了
-                    iterator = list.iterator();
+                    this.iterator = list.iterator();
                     this.academicYear ++;
+                    break;
                 }
+
+                break;
             }
         }
 

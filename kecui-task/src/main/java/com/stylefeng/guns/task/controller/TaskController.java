@@ -3,6 +3,7 @@ package com.stylefeng.guns.task.controller;
 import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
 import com.stylefeng.guns.task.batch.ClassImportTask;
 import com.stylefeng.guns.task.batch.SignImportTask;
+import com.stylefeng.guns.task.education.SignPrivilegeTask;
 import com.stylefeng.guns.task.order.OrderRecycleTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,9 @@ public class TaskController {
 
     @Autowired
     private IOrderService orderService;
+
+    @Autowired
+    private SignPrivilegeTask signPrivilegeTask;
 
     @RequestMapping("/start/class")
     @ResponseBody
@@ -84,6 +88,13 @@ public class TaskController {
     public String orderRecycle(){
         orderRecycleTask.expireClean();
 
+        return "ok";
+    }
+
+    @RequestMapping("/start/private/grant")
+    @ResponseBody
+    public String privilegeGrant () {
+        signPrivilegeTask.grantPrivilege();
         return "ok";
     }
 }

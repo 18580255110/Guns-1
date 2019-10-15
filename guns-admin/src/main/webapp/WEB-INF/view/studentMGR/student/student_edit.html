@@ -24,10 +24,36 @@
                     <#input id="parentPhone" name="家长手机号" value="${item.parentPhone}" underline="true"/>
                 </div>
             </div>
+        </div>
+        <div class="form-horizontal">
+            <fieldset>
+                <div class="row">
+                    <div class="col-sm-12" id="itemsArea">
+                        <input type="hidden" id="itemSize" value="${privilegeList.~size!0}" />
 
+                        @for(item in privilegeList){
+                        <div class="form-group" name="privilegeItem" id="privilegeItem${itemLP.index}">
+                            <div class="col-sm-1 col-sm-offset-1">
+                                <input class="form-control" type="text" name="academicYear" value="${item.academicYear}" style="padding-right: 0px;">
+                            </div>
+
+                            <#dictSelectorTemp elid="name" id="subject" name="学科" code="subject_type" label="学科" value="${item.subject}" selectColWidth="2" placeholder="-- 选择科目 --" />
+                            <#dictSelectorTemp elid="name" id="grade" name="年级" code="school_grade" label="年级"  value="${item.grade}" selectColWidth="2" placeholder="-- 选择年级 --" />
+                            <#dictSelectorTemp elid="name" id="cycle" name="学期" code="cycle" label="学期"  value="${item.cycle}" selectColWidth="2" placeholder="-- 选择学期 --"/>
+                            <#dictSelectorTemp elid="name" id="ability" name="班型" code="ability" label="班型"  value="${item.ability}" selectColWidth="2" placeholder=" -- 选择班型 --"/>
+
+                            <div class="col-sm-1">
+                                <#button btnCss="danger" name="删除" id="cancel" icon="fa-remove" clickFun="StudentInfoDlg.deleteItem(event)"/>
+                            </div>
+                        </div>
+                        @}
+                    </div>
+                </div>
+            </fieldset>
             <div class="row btn-group-m-t">
                 <div class="col-sm-10 col-sm-offset-5">
                     <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="StudentInfoDlg.editSubmit()"/>
+                    <#button btnCss="info" name="增加权限" id="privilege" icon="fa-check" clickFun="StudentInfoDlg.addItem()"/>
                     <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="StudentInfoDlg.close()"/>
                 </div>
             </div>
@@ -35,5 +61,22 @@
 
     </div>
 </div>
+
+<script type="text/template" id="itemTemplate">
+    <div class="form-group" name="privilegeItem" id="privilegeItem">
+        <div class="col-sm-1 col-sm-offset-1">
+            <input class="form-control" type="text" name="academicYear" value="">
+        </div>
+
+        <#dictSelectorTemp elid="name" id="subject" name="学科" code="subject_type" label="学科" selectColWidth="2" placeholder="-- 选择科目 --" />
+        <#dictSelectorTemp elid="name" id="grade" name="年级" code="school_grade" label="年级"  selectColWidth="2" placeholder="-- 选择年级 --" />
+        <#dictSelectorTemp elid="name" id="cycle" name="学期" code="cycle" label="学期"  selectColWidth="2" placeholder="-- 选择学期 --"/>
+        <#dictSelectorTemp elid="name" id="ability" name="班型" code="ability" label="班型"  selectColWidth="2" placeholder=" -- 选择班型 --"/>
+
+        <div class="col-sm-1">
+            <#button btnCss="danger" name="删除" id="cancel" icon="fa-remove" clickFun="StudentInfoDlg.deleteItem(event)"/>
+        </div>
+    </div>
+</script>
 <#script src="/static/modular/studentMGR/student/student_info.js" />
 @}

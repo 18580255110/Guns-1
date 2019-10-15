@@ -3,6 +3,7 @@
  */
 var StudentInfoDlg = {
     studentInfoData : {},
+    itemTemplate: $("#itemTemplate").html(),
     validateFields: {
         code: {
             validators: {
@@ -38,8 +39,54 @@ var StudentInfoDlg = {
                     message: '家长手机号不能为空'
                 }
             }
-        },
+        }
     }
+};
+
+/**
+ * item获取新的id
+ */
+StudentInfoDlg.newId = function () {
+    if(this.count == undefined){
+        this.count = 0;
+    }
+    this.count = this.count + 1;
+    return "privilegeItem" + this.count;
+};
+
+
+/**
+ * 添加条目
+ */
+StudentInfoDlg.addItem = function () {
+    console.log('####');
+    $("#itemsArea").append(this.itemTemplate);
+    $("#privilegeItem").attr("id", this.newId());
+};
+
+/**
+ * 删除item
+ */
+StudentInfoDlg.deleteItem = function (event) {
+    var obj = Feng.eventParseObject(event);
+    obj = obj.is('button') ? obj : obj.parent();
+    obj.parent().parent().remove();
+};
+
+/**
+ * 清除为空的item Dom
+ */
+StudentInfoDlg.clearNullDom = function(){
+    $("[name='privilegeItem']").each(function(){
+        var academicYear = $(this).find("[name='academicYear']").val();
+        var subject = $(this).find("[name='subject']").val();
+        var grade = $(this).find("[name='grade']").val();
+        var cycle = $(this).find("[name='cycle']").val();
+        var ability = $(this).find("[name='ability']").val();
+        if(academicYear == '' || subject == '' || grade == '' || cycle == '' || ability == ''){
+            $(this).remove();
+        }
+    });
 };
 
 /**
@@ -96,6 +143,25 @@ StudentInfoDlg.collectData = function() {
     .set('userName')
     .set('parentPhone')
     ;
+
+    var privilegeList = new Array();
+
+    $("[name='privilegeItem']").each(function(){
+        var academicYear = $(this).find("[name='academicYear']").val();
+        var subject = $(this).find("[name='subject']").val();
+        var grade = $(this).find("[name='grade']").val();
+        var cycle = $(this).find("[name='cycle']").val();
+        var ability = $(this).find("[name='ability']").val();
+        privilegeList.push({
+            studentCode: $('#code').val(),
+            academicYear: academicYear,
+            subject: subject,
+            grade : grade,
+            cycle: cycle,
+            ability: ability
+        });
+    });
+    this.studentInfoData.privilegeItems = JSON.stringify(privilegeList);
 }
 
 /**
