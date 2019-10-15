@@ -17,6 +17,9 @@
         <result column="user_name" property="userName" />
         <result column="out_order_no" property="outOrderNo" />
         <result column="out_sequence" property="outSequence" />
+        <result column="name" property="className" />
+        <result column="teacher" property="teacherName" />
+        <result column="student" property="studentName" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
@@ -88,27 +91,19 @@
         <include refid="Base_Column_List" />
         from
         (
-        <if test="null != teacher || null != student || null != subject || null != ability || null != cycle">
+          (
             (
-            (
-        </if>
-        <if test="null != subject || null != ability || null != cycle">
-            (
-        </if>
-        <if test="null != subject">
-            (
-        </if>
-        tb_order o
-        <if test="null != teacher || null != student || null != subject || null != ability || null != cycle">
-            join tb_order_item oi on oi.order_no = o.accept_no )
-            join tb_course_cart cc on cc.code = oi.course_cart_code )
-        </if>
-        <if test="null != subject || null != ability || null != cycle">
-            join tb_class c on oi.item_object_code = c.code )
-        </if>
-        <if test="null != subject">
-            join tb_course cr on c.course_code = cr.code )
-        </if>
+              (
+                (
+                  tb_order o
+                  join tb_order_item oi on oi.order_no = o.accept_no
+                )
+              join tb_course_cart cc on cc.code = oi.course_cart_code
+              )
+            join tb_class c on oi.item_object_code = c.code
+            )
+          join tb_course cr on c.course_code = cr.code
+          )
         )
         <include refid="Where_Statement" />
         ORDER  BY  accept_date DESC

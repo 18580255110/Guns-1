@@ -1,0 +1,39 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>学生管理管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#NameCon id="condition" name="关键字" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="status" name="当前状态" >
+                                    <option value="">全部</option>
+                                    <option value="1">启用</option>
+                                    <option value="0">禁用</option>
+                                </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#button name="搜索" icon="fa-search" clickFun="Student.search()"/>
+                            </div>
+                        </div>
+                        <div class="hidden-xs" id="StudentTableToolbar" role="group">
+                            @if(shiro.hasPermission("/student/update")){
+                            <#button name="修改" icon="fa-edit" clickFun="Student.openStudentDetail()" space="true"/>
+                            @}
+                        </div>
+                        <#table id="StudentTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<#script src="/static/modular/studentMGR/student/student.js" />
+@}

@@ -1,0 +1,66 @@
+@layout("/common/_container.html"){
+<div class="row">
+    <div class="col-sm-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>班级管理</h5>
+            </div>
+            <div class="ibox-content">
+                <div class="row row-lg">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <#dictSelectorCondition id="grade" name="年级" code="school_grade" placeholder="-- 选择年级 --" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#dictSelectorCondition id="subject" name="学科" code="subject_type" placeholder="-- 选择学科 --" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#dictSelectorCondition id="ability" name="班次" code="ability" placeholder="-- 选择班次 --" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#dictSelectorCondition id="cycle" name="学期" code="cycle" placeholder="-- 选择学期 --" />
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="signState" name="报名状态" >
+                                    <option value="">全部</option>
+                                    <option value="1" selected="selected">可以报名</option>
+                                    <option value="2">即将报名</option>
+                                    <option value="3">报名已结束</option>
+                                    <option value="4">报名已禁止</option>
+                                </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#SelectCon id="examState" name="是否测试" >
+                                    <option value="">全部</option>
+                                    <option value="1" selected="selected">需要测试</option>
+                                    <option value="0" >不需要测试</option>
+                                </#SelectCon>
+                            </div>
+                            <div class="col-sm-3">
+                                <#NameCon id="teacherQueryString" name="授课老师" />
+                            </div>
+                            <div class="col-sm-6">
+                                <#TimeCon id="studyDate" name="上课日期" />
+                            </div>
+                            <div class="col-sm-6">
+                                <#TimeCon id="signDate" name="报名日期" />
+                            </div>
+                            <div class="col-sm-2" style="float: right;">
+                                <#button name="搜 索" icon="fa-search" clickFun="Class.search()"/>
+                                <#button name="重 置" icon="fa-search" clickFun="Class.search()"/>
+                                @if(shiro.hasPermission("/classAuthority/add")){
+                                <#button name="关联学生" icon="fa-plus" clickFun="ClassAuthorityInfoDlg.openAddClassAuthorityStudent()"/>
+                                @}
+                            </div>
+                        </div>
+                        <#table id="ClassTable"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<#script src="/static/modular/classMGR/class/class.js" />
+<#script src="/static/modular/classAuthorityMGR/classAuthority_info.js"/>
+@}

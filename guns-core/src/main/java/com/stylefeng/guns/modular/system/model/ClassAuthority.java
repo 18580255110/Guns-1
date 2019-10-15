@@ -21,6 +21,11 @@ import java.io.Serializable;
 public class ClassAuthority extends Model<ClassAuthority> {
 
     /**
+     *
+     */
+    private static final long serialVersionUID = -9206575107743312407L;
+
+    /**
      * 标示
      */
     @TableId(value = "id", type = IdType.AUTO)

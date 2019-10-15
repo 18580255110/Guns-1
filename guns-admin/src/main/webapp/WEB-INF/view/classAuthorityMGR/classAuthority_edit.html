@@ -1,0 +1,30 @@
+@layout("/common/_container.html"){
+<div class="ibox float-e-margins">
+    <div class="ibox-content">
+        <div class="form-horizontal">
+
+            <div class="row">
+                <div class="col-sm-6 b-r">
+                            <#input id="id" name="主键" value="${item.id}" underline="true"/>
+                            <#input id="classCode" name="班级编码" value="${item.classCode}" underline="true"/>
+                            <#input id="className" name="班级名称" value="${item.className}" />
+                </div>
+
+                <div class="col-sm-6">
+                            <#input id="studentCode" name="学生编码" value="${item.studentCode}" underline="true"/>
+                            <#input id="studentName" name="学生名称" value="${item.studentName}" />
+                </div>
+            </div>
+
+            <div class="row btn-group-m-t">
+                <div class="col-sm-10">
+                    <#button btnCss="info" name="提交" id="ensure" icon="fa-check" clickFun="ClassAuthorityInfoDlg.editSubmit()"/>
+                    <#button btnCss="danger" name="取消" id="cancel" icon="fa-eraser" clickFun="ClassAuthorityInfoDlg.close()"/>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="${ctxPath}/static/modular/classAuthorityMGR/classAuthority_info.js"></script>
+@}

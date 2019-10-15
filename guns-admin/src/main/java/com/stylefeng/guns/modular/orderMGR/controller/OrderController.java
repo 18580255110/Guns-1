@@ -80,6 +80,9 @@ public class OrderController extends BaseController {
             add("序号");
             add("订单号");
             add("总金额");
+            add("学生姓名");
+            add("所报班级");
+            add("授课老师");
             add("会员");
             add("会员联系电话");
             add("支付渠道");
@@ -328,6 +331,9 @@ public class OrderController extends BaseController {
             addCell(valueRow, valueIndex++, valueStyle);
             addCell(valueRow, order.get("acceptNo"), valueStyle);
             addCell(valueRow, amount, valueStyle);
+            addCell(valueRow, order.get("studentName"), valueStyle);
+            addCell(valueRow, order.get("className"), valueStyle);
+            addCell(valueRow, order.get("teacherName"), valueStyle);
             addCell(valueRow, order.get("userName"), valueStyle);
             addCell(valueRow, "", valueStyle);
             addCell(valueRow, payChannel, valueStyle);

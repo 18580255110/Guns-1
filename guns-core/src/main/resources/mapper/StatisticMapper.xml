@@ -7,6 +7,7 @@
         <result column="student_name" property="studentName" />
         <result column="class_code" property="classCode" />
         <result column="class_name" property="className" />
+        <result column="teacher_name" property="teacherName" />
         <result column="sign_date" property="signDate" />
         <result column="desc" property="desc" />
         <result column="amount" property="amount" />
