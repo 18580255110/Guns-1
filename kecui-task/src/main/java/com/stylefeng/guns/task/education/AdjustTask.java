@@ -42,7 +42,7 @@ public class AdjustTask {
         List<AdjustStudent> adjustList = adjustStudentService.selectList(queryWrapper);
 
 
-        log.info("Got <{}> sms sequence need to send!", adjustList.size());
+        log.info("Got <{}> adjust apply need to handle!", adjustList.size());
         for(AdjustStudent adjustApply : adjustList){
             AdjustStudentApproveStateEnum action = AdjustStudentApproveStateEnum.Refuse;
             String remark = "";
