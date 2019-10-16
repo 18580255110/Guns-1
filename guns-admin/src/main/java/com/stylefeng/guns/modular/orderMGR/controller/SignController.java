@@ -235,6 +235,7 @@ public class SignController extends BaseController {
             orderAddList.add(orderItem);
 
             Map<String, Object> extendInfo = new HashMap<>();
+            extendInfo.put("orderDesc",request.getOrderRemark());
             Order signOrder = orderService.order(currMember, orderAddList, PayMethodEnum.classic, extendInfo);
             orderService.completePay(signOrder.getAcceptNo());
         }

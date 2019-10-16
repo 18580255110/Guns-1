@@ -202,6 +202,7 @@ SignWizard.clearData = function() {
  */
 SignWizard.collectData = function() {
     this.Wizard.postData.payType = $('#payType').val();
+    this.Wizard.postData.orderRemark = $('#orderRemark').val();
     this.Wizard.postData.classInfo = {
         code : $('#classCode').val()
     };

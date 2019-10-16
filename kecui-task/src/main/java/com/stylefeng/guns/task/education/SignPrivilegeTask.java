@@ -37,7 +37,7 @@ public class SignPrivilegeTask {
 
     private Map<String, Long> privilegeCache = new HashMap<String, Long>();
 
-//    @Scheduled(fixedDelay = 60000)
+   @Scheduled(fixedDelay = 30000)
     public void grantPrivilege(){
         log.info("Grant privilege begin ... ");
         Administrator administrator = new Administrator();
@@ -47,7 +47,7 @@ public class SignPrivilegeTask {
 
         log.info("Update privilege cache ... ");
         Map<String, Object> queryParams = new HashMap<>();
-        queryParams.put("studentCode", "XY19042800008874");
+        // queryParams.put("studentCode", "XY19042800008874");
         List<Map<String, Object>> resultList = studentPrivilegeMapper.selectStudentPrivilegeStatistic(queryParams);
 
         for (Map<String, Object> result : resultList) {

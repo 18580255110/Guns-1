@@ -453,7 +453,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setPayStatus(PayStateEnum.NoPay.code);
         order.setPayMethod(payMethod.code);
         order.setUserName(member.getUserName());
-        order.setDesc("订购课程");
+        if(extraPostData.containsKey("orderDesc")){
+            order.setDesc((String) extraPostData.get("orderDesc"));
+        }else{
+            order.setDesc("订购课程");
+        }
 
         order.setStatus(OrderStateEnum.Valid.code);
 
