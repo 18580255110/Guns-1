@@ -69,7 +69,7 @@ public class GlobalExceptionHandler extends BaseControllerExceptionHandler {
         String message = messageSource.getMessage("exception." + e.getMessageCode(), e.getMessageArgs(), Locale.CHINA);
         responser.setMessage(message);
 
-        log.error(message);
+        log.error(message, e);
 
         return responser;
     }
