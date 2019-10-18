@@ -46,6 +46,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -254,6 +256,15 @@ public class EducationController extends ApiController {
         int maxCount = classInfo.getQuato();
 
         classInfo.setSignQuato(signedCount > maxCount ? maxCount : signedCount);
+
+        int maxSchedule = classInfo.getPeriod();
+        Map<String, Object> planQueryMap = new HashMap<String, Object>();
+        planQueryMap.put("beginDate", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1));
+        planQueryMap.put("status", GenericState.Valid.code);
+        planQueryMap.put("classCode", classInfo.getCode());
+        List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
+        BigDecimal signPrice = (new BigDecimal(remainClassPlanList.size()).multiply(new BigDecimal(classInfo.getPrice()).divide(new BigDecimal(maxSchedule)))).setScale(0, RoundingMode.HALF_UP);
+        classInfo.setSignPrice(signPrice.longValue());
 
         Map<String, Object> queryMap = new HashMap<String, Object>();
         queryMap.put("classCode", classInfo.getCode());
@@ -982,7 +993,16 @@ public class EducationController extends ApiController {
             int maxCount = classInfo.getQuato();
             int signedCount = classService.queryOrderedCount(classInfo.getCode());
             classInfo.setSignQuato(signedCount > maxCount ? maxCount : signedCount );
-            classInfo.setSignPrice(classInfo.getPrice());
+
+            int maxSchedule = classInfo.getPeriod();
+            Map<String, Object> planQueryMap = new HashMap<String, Object>();
+            planQueryMap.put("beginDate", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1));
+            planQueryMap.put("status", GenericState.Valid.code);
+            planQueryMap.put("classCode", classInfo.getCode());
+
+            List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
+            BigDecimal signPrice = (new BigDecimal(remainClassPlanList.size()).multiply(new BigDecimal(classInfo.getPrice()).divide(new BigDecimal(maxSchedule)))).setScale(0, RoundingMode.HALF_UP);
+            classInfo.setSignPrice(signPrice.longValue());
             classSet.add(classInfo);
         }
 

@@ -174,11 +174,11 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
      * @param dto
      */
     private static void judgementChange(ClassResponser dto) {
-        Date beginDate = dto.getBeginDate();
+        Date endDate = dto.getEndDate();
         Date now = new Date();
 
         dto.setCanChange(false);
-        if (DateUtil.compareDate(now, beginDate, Calendar.DAY_OF_MONTH) < 0)
+        if (DateUtil.compareDate(now, endDate, Calendar.DAY_OF_MONTH) < 0) // 在班级结束前都可以转班
             dto.setCanChange(true);
     }
 

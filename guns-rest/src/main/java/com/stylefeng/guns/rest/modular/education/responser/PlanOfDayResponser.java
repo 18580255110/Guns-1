@@ -12,10 +12,20 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(value = "PlanOfDayResponser", description = "单天课程表")
 public class PlanOfDayResponser {
+    @ApiModelProperty(name = "outlineCode", value = "课时编码")
+    String outlineCode;
     @ApiModelProperty(name = "outline", value = "课时")
     String outline;
     @ApiModelProperty(name = "classInfo", value = "班级")
     ClassResponser classInfo;
+
+    public String getOutlineCode() {
+        return outlineCode;
+    }
+
+    public void setOutlineCode(String outlineCode) {
+        this.outlineCode = outlineCode;
+    }
 
     public String getOutline() {
         return outline;
@@ -36,6 +46,7 @@ public class PlanOfDayResponser {
     public static PlanOfDayResponser me(ClassResponser classInfo, CourseOutline outline) {
         PlanOfDayResponser responser = new PlanOfDayResponser();
         responser.setClassInfo(classInfo);
+        responser.setOutlineCode(outline.getCode());
         responser.setOutline(outline.getOutline());
         return responser;
     }

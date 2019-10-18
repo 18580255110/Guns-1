@@ -73,6 +73,16 @@ public interface IMemberService extends IService<Member> {
     Map<String, Set<Class>> findMyClasses(String userName, String student);
 
     /**
+     * 查询我的班级信息
+     *
+     * @param userName
+     * @param student
+     * @param showHis 是否显示已完结的班级信息
+     * @return
+     */
+    Map<String, Set<Class>> findMyClasses(String userName, String student, boolean showHis);
+
+    /**
      * 判断用户报名类型
      *
      * @param member
