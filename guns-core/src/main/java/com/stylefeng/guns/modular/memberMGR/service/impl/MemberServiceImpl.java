@@ -255,11 +255,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             String studentCode = currStudent.getCode();
             queryWrapper.eq("student_code", studentCode);
             queryWrapper.eq("status", GenericState.Valid.code);
-            if (!showHis){
-                queryWrapper.gt("forceSignEndDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
-            }
 
             List<StudentClass> studentClassList = studentClassMapper.selectList(queryWrapper);
+            
             for(StudentClass studentClass : studentClassList){
                 Class classInfo = classService.get(studentClass.getClassCode());
                 if (null == classInfo)
