@@ -22,8 +22,7 @@ public class BeginExamineRequester extends SimpleRequester {
     @ApiModelProperty(name = "paperCode", value = "试卷编码", required = true, example = "SJ000001")
     @NotBlank(message = "试卷编码不能为空")
     private String paperCode;
-    @ApiModelProperty(name = "applyId", value = "应用ID", required = true, example = "1")
-    @NotNull(message = "applyId not empty")
+    @ApiModelProperty(name = "applyId", value = "应用ID", required = false, example = "1")
     private Long applyId;
 
     public String getStudent() {
