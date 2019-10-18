@@ -39,7 +39,7 @@ import java.util.*;
  */
 @Service
 public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements IClassService {
-    private static final int[] WeekMapping = new int[]{0, 2, 3, 4, 5, 6, 7, 1};
+    private static final int[] WeekMapping = new int[]{0, 1, 2, 3, 4, 5, 6, 7};
 
     @Autowired
     private ClassMapper classMapper;
