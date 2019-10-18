@@ -49,7 +49,7 @@
             </if>
 
             <if test="null != teacherCode">
-                and cls teacher_code = #{teacherCode}
+                and cls.teacher_code = #{teacherCode}
             </if>
 
             <if test="null != beginDate">
