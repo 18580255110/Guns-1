@@ -1,6 +1,7 @@
 package com.stylefeng.guns.modular.education.service.impl;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
@@ -10,10 +11,13 @@ import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.dao.StudentPrivilegeMapper;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
+import com.sun.tools.javah.Gen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Description //TODO
@@ -64,7 +68,11 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
 
     @Override
     public boolean hasPrivilege(StudentPrivilege studentPrivilege) {
-        return 0 < selectCount(new EntityWrapper<StudentPrivilege>(){
+        return 0 < selectCount(getQueryWrapper(studentPrivilege));
+    }
+
+    private Wrapper<StudentPrivilege> getQueryWrapper(StudentPrivilege studentPrivilege) {
+        return new EntityWrapper<StudentPrivilege>(){
             {
                 eq("student_code", studentPrivilege.getStudentCode());
                 eq("academic_year", studentPrivilege.getAcademicYear());
@@ -75,7 +83,7 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
                 eq("type", 1);
                 eq("status", GenericState.Valid.code);
             }
-        });
+        };
     }
 
     @Override
@@ -103,10 +111,40 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
             studentPrivilege.setGrade(course.getGrade());
             studentPrivilege.setAbility(classInfo.getAbility());
             studentPrivilege.setType(1);
-            studentPrivilege.setStatus(GenericState.Valid.code);
             studentPrivilege.setComments(classInfo.getName());
 
-            insert(studentPrivilege);
+            studentPrivilege.setStatus(GenericState.Invalid.code);
+            List<StudentPrivilege> studentPrivilegeList = selectList(getQueryWrapper(studentPrivilege));
+
+            if (null == studentPrivilegeList || studentPrivilegeList.isEmpty()){
+                studentPrivilege.setStatus(GenericState.Valid.code);
+                insert(studentPrivilege);
+            }else{
+                studentPrivilege = studentPrivilegeList.get(0);
+                studentPrivilege.setStatus(GenericState.Valid.code);
+                updateById(studentPrivilege);
+            }
+        }
+    }
+
+    @Override
+    public void grantSignPrivileges(StudentPrivilege studentPrivilege) {
+        log.info("Grant sign privilege student = {}, class = {}", studentPrivilege.getStudentCode(), studentPrivilege);
+
+        boolean hasPrivilege = hasPrivilege(studentPrivilege);
+
+        if (!hasPrivilege){
+            studentPrivilege.setStatus(GenericState.Invalid.code);
+            List<StudentPrivilege> existInvalidStudentPrivilegeList = selectList(getQueryWrapper(studentPrivilege));
+
+            if (null == existInvalidStudentPrivilegeList || existInvalidStudentPrivilegeList.isEmpty()){
+                studentPrivilege.setStatus(GenericState.Valid.code);
+                insert(studentPrivilege);
+            }else{
+                studentPrivilege = existInvalidStudentPrivilegeList.get(0);
+                studentPrivilege.setStatus(GenericState.Valid.code);
+                updateById(studentPrivilege);
+            }
         }
     }
 }

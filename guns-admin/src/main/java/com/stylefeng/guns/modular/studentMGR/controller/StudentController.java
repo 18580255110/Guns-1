@@ -243,7 +243,7 @@ public class StudentController extends BaseController {
                 studentPrivilege.setStatus(GenericState.Valid.code);
                 studentPrivilege.setType(1);
                 studentPrivilege.setId(null);
-                studentPrivilegeService.insert(studentPrivilege);
+                studentPrivilegeService.grantSignPrivileges(studentPrivilege);
             }
         }else if (null != studentPrivilegeList && !(studentPrivilegeList.isEmpty())){
             Iterator<StudentPrivilege> existIterator = existPrivilegeList.iterator();
@@ -257,7 +257,8 @@ public class StudentController extends BaseController {
                 studentPrivilege.setStatus(GenericState.Valid.code);
                 studentPrivilege.setType(1);
                 studentPrivilege.setId(null);
-                studentPrivilegeService.insert(studentPrivilege);
+
+                studentPrivilegeService.grantSignPrivileges(studentPrivilege);
             }
         }
         return SUCCESS_TIP;

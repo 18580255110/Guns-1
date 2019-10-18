@@ -12,6 +12,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -47,7 +48,7 @@ public class SignPrivilegeTask {
 
         log.info("Update privilege cache ... ");
         Map<String, Object> queryParams = new HashMap<>();
-        // queryParams.put("studentCode", "XY19042800008874");
+        // queryParams.put("studentCode", "XY19042700008145");
         List<Map<String, Object>> resultList = studentPrivilegeMapper.selectStudentPrivilegeStatistic(queryParams);
 
         for (Map<String, Object> result : resultList) {
@@ -103,7 +104,8 @@ public class SignPrivilegeTask {
 
         if (!studentPrivilegeService.hasPrivilege(nextStudentPrivilege)) {
             log.info("Not found next privilege , need add");
-            studentPrivilegeMapper.insert(nextStudentPrivilege);
+            studentPrivilegeService.grantSignPrivileges(nextStudentPrivilege);
+            //studentPrivilegeMapper.insert(nextStudentPrivilege);
         }
 
         log.info("Grant next cycle privilege complete! student = {}, year = {}, grade = {}, cycle = {}, ability = {}", nextStudentPrivilege.getStudentCode(), nextStudentPrivilege.getAcademicYear(), nextStudentPrivilege.getGrade(), nextStudentPrivilege.getCycle(), nextStudentPrivilege.getAbility());
@@ -123,7 +125,8 @@ public class SignPrivilegeTask {
 
         if (! studentPrivilegeService.hasPrivilege(studentPrivilege) ) {
             log.info("Not found current privilege, need add");
-            studentPrivilegeMapper.insert(studentPrivilege);
+            studentPrivilegeService.grantSignPrivileges(studentPrivilege);
+//            studentPrivilegeMapper.insert(studentPrivilege);
         }
 
         log.info("Grant current cycle privilege complete! student = {}, year = {}, grade = {}, cycle = {}, ability = {}", studentPrivilege.getStudentCode(), studentPrivilege.getAcademicYear(), studentPrivilege.getGrade(), studentPrivilege.getCycle(), studentPrivilege.getAbility());
