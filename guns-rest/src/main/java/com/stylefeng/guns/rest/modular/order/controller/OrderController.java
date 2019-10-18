@@ -34,10 +34,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 订单
@@ -236,7 +233,7 @@ public class OrderController extends ApiController {
 
         List<Order> orderList = orderService.selectList(queryWrapper);
 
-        List<ClassOrderResponser> classOrderList = new ArrayList<ClassOrderResponser>();
+        Set<ClassOrderResponser> classOrderSet = new TreeSet<ClassOrderResponser>();
         for(Order order : orderList){
             List<OrderItem> orderItemList = orderService.listItems(order.getAcceptNo(), OrderItemTypeEnum.Course);
 
@@ -265,11 +262,11 @@ public class OrderController extends ApiController {
                 }
 
                 Class classInfo = classService.get(orgClassCode);
-                classOrderList.add(ClassOrderResponser.me(order, ClassResponser.me(classInfo)));
+                classOrderSet.add(ClassOrderResponser.me(order, ClassResponser.me(classInfo)));
             }
         }
 
-        return OrderListResponser.me(classOrderList);
+        return OrderListResponser.me(classOrderSet);
     }
 
     @ApiOperation(value="订单取消", httpMethod = "POST", response = SimpleResponser.class)

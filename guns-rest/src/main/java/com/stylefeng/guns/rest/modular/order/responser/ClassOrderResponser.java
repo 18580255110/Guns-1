@@ -15,7 +15,7 @@ import java.util.List;
  * @Version 1.0
  */
 @ApiModel(value = "ClassOrderResponser", description = "班级订单信息")
-public class ClassOrderResponser {
+public class ClassOrderResponser implements Comparable<ClassOrderResponser> {
 
     @ApiModelProperty(name = "order", value = "订单信息")
     private Order order;
@@ -43,5 +43,17 @@ public class ClassOrderResponser {
         response.setOrder(order);
         response.setClassInfo(classInfo);
         return response;
+    }
+
+    @Override
+    public int compareTo(ClassOrderResponser target) {
+        if (null == target)
+            return 1;
+
+        if (null == this.order || null == target.getOrder())
+            return 1;
+
+        int cmpvalue = 0 - (this.order.getAcceptDate().compareTo(target.getOrder().getAcceptDate()));
+        return cmpvalue;
     }
 }
