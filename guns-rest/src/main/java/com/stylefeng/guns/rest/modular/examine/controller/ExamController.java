@@ -219,7 +219,9 @@ public class ExamController extends ApiController {
 
         ExaminePaper paper = examineService.getExaminePaper(requester.getPaperCode());
 
-        ExamineApply apply = examineApplyService.selectById(requester.getApplyId());
+        ExamineApply apply = null;
+        if (null != requester.getApplyId())
+             apply = examineApplyService.selectById(requester.getApplyId());
 
         Map<String, Collection<Question>> beginResult = examineService.doBeginExamine(student, paper, apply);
 

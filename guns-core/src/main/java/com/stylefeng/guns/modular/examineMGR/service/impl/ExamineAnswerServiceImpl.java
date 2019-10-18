@@ -5,9 +5,13 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.stylefeng.guns.common.constant.factory.PageFactory;
+import com.stylefeng.guns.common.constant.state.GenericState;
+import com.stylefeng.guns.common.exception.ServiceException;
+import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.examineMGR.service.IExamineAnswerDetailService;
 import com.stylefeng.guns.modular.examineMGR.service.IExamineAnswerService;
 import com.stylefeng.guns.modular.system.dao.ExamineAnswerMapper;
+import com.stylefeng.guns.modular.system.dao.ExamineApplyMapper;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.DateUtil;
@@ -30,6 +34,9 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
     private ExamineAnswerMapper examineAnswerMapper;
 
     @Autowired
+    private ExamineApplyMapper examineApplyMapper;
+
+    @Autowired
     private IExamineAnswerDetailService examineAnswerDetailService;
 
     @Override
@@ -37,7 +44,7 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
 
         Wrapper<ExamineAnswer> queryWrapper = new EntityWrapper<ExamineAnswer>();
         queryWrapper.eq("student_code", student.getCode());
-        queryWrapper.lt("paper_code", apply.getPaperCode());
+        queryWrapper.lt("paper_code", examinePaper.getCode());
         queryWrapper.notIn("status", new Integer[]{3, 4, -1});
         queryWrapper.orderBy("id", false);
         ExamineAnswer answerPaper = selectOne(queryWrapper);
@@ -45,6 +52,24 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
         if (null == answerPaper) {
             answerPaper = new ExamineAnswer();
             Date now = new Date();
+
+            if (null == apply) {
+                List<ExamineApply> examineApplieList = examineApplyMapper.selectList(new EntityWrapper<ExamineApply>() {
+                    {
+                        eq("paper_code", examinePaper.getCode());
+                        eq("status", GenericState.Valid.code);
+
+                        orderBy("exam_time", true);
+                    }
+                });
+
+                if (null == examineApplieList || examineApplieList.isEmpty()){
+                    throw new ServiceException(MessageConstant.MessageCode.EXAMINE_BEGIN_FAILED);
+                }
+
+                apply = examineApplieList.get(0);
+            }
+
 
             answerPaper.setCode(CodeKit.generateAnswerPaper());
             answerPaper.setPaperCode(examinePaper.getCode());

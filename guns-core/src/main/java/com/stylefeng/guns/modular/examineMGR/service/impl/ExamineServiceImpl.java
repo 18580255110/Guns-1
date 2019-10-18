@@ -117,7 +117,7 @@ public class ExamineServiceImpl implements IExamineService {
         queryWrapper.eq("student_code", student.getCode());
         queryWrapper.ge("create_date", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, -7));
         queryWrapper.lt("create_date", new Date());
-        queryWrapper.lt("paper_code", apply.getPaperCode());
+        queryWrapper.lt("paper_code", examinePaper.getCode());
         queryWrapper.in("status", new Integer[]{3, 4});
         int examineCount = examineAnswerService.selectCount(queryWrapper);
         if (examineCount > 0){
