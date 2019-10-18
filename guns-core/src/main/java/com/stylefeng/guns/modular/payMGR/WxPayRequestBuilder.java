@@ -219,4 +219,34 @@ public class WxPayRequestBuilder extends PayRequestBuilder {
         log.debug("sign ===> {}", sign);
         return sign;
     }
+
+    public static void main(String[] args){
+        Date now = new Date();
+        Map<String, Object> postData = new HashMap<String, Object>();
+        postData.put("appid", "dfewrwerewrwe");
+        postData.put("mch_id", "fdfweeeeeeeeeee");
+        postData.put("device_info", "eeeeeeeeeeee");
+        postData.put("nonce_str", "nonce_str");
+        postData.put("body", "");
+        postData.put("detail", "");
+        postData.put("out_trade_no", "merchant_order_no");
+        postData.put("fee_type", "CNY");
+        postData.put("total_fee", 200);
+        postData.put("spbill_create_ip", "39.98.48.194");
+        postData.put("time_start", DateUtil.format(now, "yyyyMMddHHmmss"));
+        postData.put("time_expire", DateUtil.format(DateUtil.add(now, Calendar.HOUR, 1), "yyyyMMddHHmmss"));
+        postData.put("notify_url", "");
+        postData.put("sign_type", "MD5");
+
+        XStream xStream = new XStream();
+        xStream.alias("xml", Map.class);
+        xStream.registerConverter(new MapEntryConvert());
+
+        System.out.println(xStream.toXML(postData));
+
+        //WxPayRequestBuilder builder = new WxPayRequestBuilder();
+        //System.out.println("Sing = " + builder.signPost(postData));
+
+
+    }
 }

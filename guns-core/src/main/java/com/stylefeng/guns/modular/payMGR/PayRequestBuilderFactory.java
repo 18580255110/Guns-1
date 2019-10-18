@@ -1,5 +1,6 @@
 package com.stylefeng.guns.modular.payMGR;
 
+import com.alibaba.fastjson.JSON;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.system.model.PayMethodEnum;
@@ -50,11 +51,12 @@ public class PayRequestBuilderFactory {
     }
 
     private PayRequestBuilder createUnionPayRequestBuilder() {
+        log.info("Union payment builder, {}", JSON.toJSONString(unionProperties));
         return new UnionPayRequestBuilder(unionProperties);
     }
 
     private PayRequestBuilder createWeixinPayRequestBuilder() {
-        log.info("Weixin payment builder");
+        log.info("Weixin payment builder, {}", JSON.toJSONString(weixinProperties));
         return new WxPayRequestBuilder(weixinProperties);
     }
 }

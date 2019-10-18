@@ -158,6 +158,7 @@ public class PayProperties {
         private String appSecret;
 
         private String deviceId;
+        private String createHost;
 
         private String orderUrl;
         private String notifyUrl;
@@ -208,6 +209,14 @@ public class PayProperties {
 
         public void setDeviceId(String deviceId) {
             this.deviceId = deviceId;
+        }
+
+        public String getCreateHost() {
+            return createHost;
+        }
+
+        public void setCreateHost(String createHost) {
+            this.createHost = createHost;
         }
 
         public String getOrderUrl() {
