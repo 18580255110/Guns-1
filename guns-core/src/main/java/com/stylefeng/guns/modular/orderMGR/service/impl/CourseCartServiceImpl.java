@@ -134,6 +134,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             int classGrade = classInfo.getGrade();
 
             if (studentGrade != classGrade){
+                log.info("class grade = {}, student grade = {}", classGrade, studentGrade);
                 throw new ServiceException(MessageConstant.MessageCode.GRADE_NOT_MATCH);
             }
 
@@ -194,9 +195,10 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
                     queryWrapper.eq("status", ExamineAnswerStateEnum.Finish.code);
                     int passCount = examineAnswerService.selectCount(queryWrapper);
 
-                    if (0 >= passCount)
+                    if (0 >= passCount) {
+                        log.info("paper = {}, student = {}, passScore = {}", examineApply.getPaperCode(), student.getCode(), examineApply.getPassScore());
                         throw new ServiceException(MessageConstant.MessageCode.ORDER_NEED_EXAMINE);
-                    else{
+                    }else{
                         // 如果出现了没有权限但是测试达标的情况， 添加用户班型权限
                         hasPrivilege = true;
                     }
