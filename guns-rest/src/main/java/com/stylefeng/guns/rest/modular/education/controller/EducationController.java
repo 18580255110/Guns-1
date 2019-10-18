@@ -46,6 +46,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -254,6 +256,17 @@ public class EducationController extends ApiController {
         int maxCount = classInfo.getQuato();
 
         classInfo.setSignQuato(signedCount > maxCount ? maxCount : signedCount);
+
+        int maxSchedule = classInfo.getPeriod();
+        Map<String, Object> planQueryMap = new HashMap<String, Object>();
+        planQueryMap.put("beginDate", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1));
+        planQueryMap.put("status", GenericState.Valid.code);
+        planQueryMap.put("classCode", classInfo.getCode());
+        List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
+        BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
+        BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
+        BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
+        classInfo.setSignPrice(signPrice.longValue());
 
         Map<String, Object> queryMap = new HashMap<String, Object>();
         queryMap.put("classCode", classInfo.getCode());
@@ -802,7 +815,12 @@ public class EducationController extends ApiController {
 
     @ApiOperation(value="教师课程表", httpMethod = "POST", response = ClassPlanListResponser.class)
     @RequestMapping("/course/plan/list4teacher")
-    public Responser teacherPlanList(){
+    public Responser teacherPlanList(
+            @ApiParam(required = true, value = "课程表查询")
+            @RequestBody
+            @Valid
+            QueryPlanListRequester requester
+    ){
 
         Member member = currMember();
 
@@ -814,6 +832,12 @@ public class EducationController extends ApiController {
             queryMap.put("endDate", now);
             queryMap.put("teacherCode", member.getUserName());
             queryMap.put("status", GenericState.Valid.code);
+
+        if (ToolUtil.isNotEmpty(requester.getMonth())){
+            Date queryDate = DateUtil.parse(requester.getMonth(), "yyyyMM");
+            queryMap.put("beginDate", DateUtil.format(queryDate, "yyyy-MM-dd"));
+            queryMap.put("endDate", DateUtil.format(DateUtil.add(queryDate, Calendar.MONTH, 1), "yyyy-MM-dd"));
+        }
 
             List<ClassPlan> planList = scheduleClassService.selectPlanList(queryMap);
 
@@ -839,6 +863,12 @@ public class EducationController extends ApiController {
             queryMap.put("endDate", now);
             queryMap.put("teacherCode", member.getUserName());
             queryMap.put("status", GenericState.Valid.code);
+
+            if (ToolUtil.isNotEmpty(requester.getMonth())){
+                Date queryDate = DateUtil.parse(requester.getMonth(), "yyyyMM");
+                queryMap.put("beginDate", DateUtil.format(queryDate, "yyyy-MM-dd"));
+                queryMap.put("endDate", DateUtil.format(DateUtil.add(queryDate, Calendar.MONTH, 1), "yyyy-MM-dd"));
+            }
 
             List<ClassPlan> planList = scheduleClassService.selectPlanList(queryMap);
 
@@ -879,22 +909,6 @@ public class EducationController extends ApiController {
         }
     }
 
-    @ApiOperation(value="教师单天课程表", httpMethod = "POST", response = PlanOfDayResponserWrapper.class)
-    @RequestMapping(value = "/course/plan/day4teacher", method = RequestMethod.POST)
-    public Responser queryClassPlanOfDay(
-            @ApiParam(required = true, value = "单天课程表查询")
-            @RequestBody
-            @Valid
-            QueryPlanOfDayRequester requester, HttpServletRequest request
-    ){
-        Member member = currMember();
-
-        List<PlanOfDayResponser> responserList = new ArrayList<PlanOfDayResponser>();
-
-
-        return PlanOfDayResponserWrapper.me(responserList);
-    }
-
     @ApiOperation(value="单天课程表", httpMethod = "POST", response = PlanOfDayResponserWrapper.class)
     @RequestMapping(value = "/course/plan/day", method = RequestMethod.POST)
     public Responser queryPlanOfDay(
@@ -905,35 +919,65 @@ public class EducationController extends ApiController {
     ){
         Member member = currMember();
 
-        List<Student> studentList = studentService.listStudents(member.getUserName());
-
-        if (studentList.isEmpty()){
-            log.warn("Member {} have not student");
-            throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"学生"});
-        }
-
-        List<ScheduleStudent> planList = new ArrayList<ScheduleStudent>();
-        for (Student student : studentList){
-            planList.addAll(studentService.listCoursePlan(student.getCode(), requester.getDay(), new Integer[]{1}));
-        }
-
         List<PlanOfDayResponser> responserList = new ArrayList<PlanOfDayResponser>();
-        for(ScheduleStudent plan : planList){
-            com.stylefeng.guns.modular.system.model.Class classInfo = classService.get(plan.getClassCode());
-            if (null == classInfo) {
-                log.warn("Class info is null");
-                continue;
+
+        if (member.isTeacher()){
+            Map<String, Object> queryMap = new HashMap<String, Object>();
+            Date queryDate = requester.getDay();
+            queryMap.put("beginDate", DateUtil.format(queryDate, "yyyy-MM-dd"));
+            queryMap.put("endDate", DateUtil.format(DateUtil.add(queryDate, Calendar.DAY_OF_MONTH, 1), "yyyy-MM-dd"));
+            queryMap.put("status", GenericState.Valid.code);
+            queryMap.put("teacherCode", member.getUserName());
+
+            List<ClassPlan> classPlanList = scheduleClassService.selectPlanList(queryMap);
+
+            for (ClassPlan plan : classPlanList) {
+                com.stylefeng.guns.modular.system.model.Class classInfo = classService.get(plan.getClassCode());
+                if (null == classInfo) {
+                    log.warn("Class info is null");
+                    continue;
+                }
+
+                CourseOutline outline = courseOutlineService.get(plan.getOutlineCode());
+                if (null == outline) {
+                    log.warn("Class info is null");
+                    continue;
+                }
+
+                ClassResponser classResponser = ClassResponser.me(classInfo);
+                responserList.add(PlanOfDayResponser.me(classResponser, outline));
+            }
+        }else {
+
+            List<Student> studentList = studentService.listStudents(member.getUserName());
+
+            if (studentList.isEmpty()) {
+                log.warn("Member {} have not student");
+                throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"学生"});
             }
 
-            CourseOutline outline = courseOutlineService.get(plan.getOutlineCode());
-            if (null == outline) {
-                log.warn("Class info is null");
-                continue;
+            List<ScheduleStudent> planList = new ArrayList<ScheduleStudent>();
+            for (Student student : studentList) {
+                planList.addAll(studentService.listCoursePlan(student.getCode(), requester.getDay(), new Integer[]{1}));
             }
 
-            ClassResponser classResponser = ClassResponser.me(classInfo);
-            classResponser.setStudent(plan.getStudentName());
-            responserList.add(PlanOfDayResponser.me(classResponser, outline));
+            for (ScheduleStudent plan : planList) {
+                com.stylefeng.guns.modular.system.model.Class classInfo = classService.get(plan.getClassCode());
+                if (null == classInfo) {
+                    log.warn("Class info is null");
+                    continue;
+                }
+
+                CourseOutline outline = courseOutlineService.get(plan.getOutlineCode());
+                if (null == outline) {
+                    log.warn("Class info is null");
+                    continue;
+                }
+
+                ClassResponser classResponser = ClassResponser.me(classInfo);
+                classResponser.setStudent(plan.getStudentName());
+                responserList.add(PlanOfDayResponser.me(classResponser, outline));
+            }
         }
 
         return PlanOfDayResponserWrapper.me(responserList);
@@ -951,7 +995,18 @@ public class EducationController extends ApiController {
             int maxCount = classInfo.getQuato();
             int signedCount = classService.queryOrderedCount(classInfo.getCode());
             classInfo.setSignQuato(signedCount > maxCount ? maxCount : signedCount );
-            classInfo.setSignPrice(classInfo.getPrice());
+
+            int maxSchedule = classInfo.getPeriod();
+            Map<String, Object> planQueryMap = new HashMap<String, Object>();
+            planQueryMap.put("beginDate", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1));
+            planQueryMap.put("status", GenericState.Valid.code);
+            planQueryMap.put("classCode", classInfo.getCode());
+
+            List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
+            BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
+            BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
+            BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
+            classInfo.setSignPrice(signPrice.longValue());
             classSet.add(classInfo);
         }
 

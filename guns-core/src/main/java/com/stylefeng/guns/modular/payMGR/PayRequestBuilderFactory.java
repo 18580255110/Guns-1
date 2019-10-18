@@ -1,8 +1,11 @@
 package com.stylefeng.guns.modular.payMGR;
 
+import com.alibaba.fastjson.JSON;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.system.model.PayMethodEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 
@@ -13,6 +16,7 @@ import java.util.Properties;
  * @Version 1.0
  */
 public class PayRequestBuilderFactory {
+    private static final Logger log = LoggerFactory.getLogger(PayRequestBuilderFactory.class);
 
     private Properties weixinProperties;
 
@@ -47,10 +51,12 @@ public class PayRequestBuilderFactory {
     }
 
     private PayRequestBuilder createUnionPayRequestBuilder() {
+        log.info("Union payment builder, {}", JSON.toJSONString(unionProperties));
         return new UnionPayRequestBuilder(unionProperties);
     }
 
     private PayRequestBuilder createWeixinPayRequestBuilder() {
+        log.info("Weixin payment builder, {}", JSON.toJSONString(weixinProperties));
         return new WxPayRequestBuilder(weixinProperties);
     }
 }

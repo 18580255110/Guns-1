@@ -49,10 +49,10 @@ public class MyController extends ApiController {
 
     @ApiOperation(value = "我的班级列表", httpMethod = "POST", response = MyClassListResponser.class)
     @RequestMapping(value = "/class/list", method = RequestMethod.POST)
-    public Responser listMyClass(String student) {
+    public Responser listMyClass(String student, boolean showHis) {
         Member member = currMember();
 
-        Map<String, Set<Class>> myClasses = memberService.findMyClasses(member.getUserName(), student);
+        Map<String, Set<Class>> myClasses = memberService.findMyClasses(member.getUserName(), student, showHis);
 
         List<ClassResponser> classList = new ArrayList<ClassResponser>();
 

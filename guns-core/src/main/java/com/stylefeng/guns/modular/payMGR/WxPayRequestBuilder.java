@@ -1,5 +1,6 @@
 package com.stylefeng.guns.modular.payMGR;
 
+import com.alibaba.fastjson.JSON;
 import com.stylefeng.guns.modular.system.model.Order;
 import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.MD5Util;
@@ -49,6 +50,11 @@ public class WxPayRequestBuilder extends PayRequestBuilder {
      * 设备号
      */
     private String deviceId;
+
+    /**
+     * 支付下单服务器IP
+     */
+    private String createHost;
 
     /**
      * 通知URL
@@ -133,6 +139,14 @@ public class WxPayRequestBuilder extends PayRequestBuilder {
         this.appSecret = appSecret;
     }
 
+    public String getCreateHost() {
+        return createHost;
+    }
+
+    public void setCreateHost(String createHost) {
+        this.createHost = createHost;
+    }
+
     public String getNotifyUrl() {
         return notifyUrl;
     }
@@ -158,7 +172,7 @@ public class WxPayRequestBuilder extends PayRequestBuilder {
         postData.put("out_trade_no", merchantOrder.getAcceptNo());
         postData.put("fee_type", "CNY");
         postData.put("total_fee", merchantOrder.getAmount());
-        postData.put("spbill_create_ip", "39.98.48.194");
+        postData.put("spbill_create_ip", createHost);
         postData.put("time_start", DateUtil.format(now, "yyyyMMddHHmmss"));
         postData.put("time_expire", DateUtil.format(DateUtil.add(now, Calendar.MINUTE, 5), "yyyyMMddHHmmss"));
         postData.put("notify_url", notifyUrl);
@@ -179,6 +193,8 @@ public class WxPayRequestBuilder extends PayRequestBuilder {
     private String signPost(String appSecret, Map<String, Object> postData) {
 
         Set<String> postKeySet = new TreeSet<String>();
+
+        log.info("Payment post data = " + JSON.toJSONString(postData));
         Iterator<String> postKeyIter = postData.keySet().iterator();
         while(postKeyIter.hasNext()){
             postKeySet.add(postKeyIter.next());
@@ -221,16 +237,16 @@ public class WxPayRequestBuilder extends PayRequestBuilder {
         postData.put("time_expire", DateUtil.format(DateUtil.add(now, Calendar.HOUR, 1), "yyyyMMddHHmmss"));
         postData.put("notify_url", "");
         postData.put("sign_type", "MD5");
-        /*
+
         XStream xStream = new XStream();
         xStream.alias("xml", Map.class);
-        xStream.registerConverter(new WxPayRequestBuilder.MapEntryConvert());
+        xStream.registerConverter(new MapEntryConvert());
 
         System.out.println(xStream.toXML(postData));
 
-        WxPayRequestBuilder builder = new WxPayRequestBuilder();
-        System.out.println("Sing = " + builder.signPost(postData));
-        */
+        //WxPayRequestBuilder builder = new WxPayRequestBuilder();
+        //System.out.println("Sing = " + builder.signPost(postData));
+
 
     }
 }

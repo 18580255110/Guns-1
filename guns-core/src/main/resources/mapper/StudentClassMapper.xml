@@ -80,7 +80,7 @@
         tb_student ss
         )
         <if test="null == outlineCode">
-            join (select * from tb_student_class sc where and class_code = #{classCode} and status = 1) rel on rel.student_code = ss.code
+            join (select * from tb_student_class sc where class_code = #{classCode} and status = 1) rel on rel.student_code = ss.code
         </if>
         )
         <if test="null != outlineCode">

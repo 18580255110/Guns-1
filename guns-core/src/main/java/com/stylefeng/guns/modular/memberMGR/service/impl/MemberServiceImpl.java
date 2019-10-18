@@ -13,6 +13,8 @@ import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.dao.*;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.*;
+import com.stylefeng.guns.util.DateUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -221,6 +223,11 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
     @Override
     public Map<String, Set<Class>> findMyClasses(String userName, String student) {
+        return findMyClasses(userName, student, true);
+    }
+
+    @Override
+    public Map<String, Set<Class>> findMyClasses(String userName, String student, boolean showHis) {
         if (null == userName)
             return new HashMap<>();
 
@@ -231,7 +238,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
 
         List<Student> studentList = new ArrayList<Student>();
         if (null == student){
-             studentList.addAll(studentService.listStudents(userName));
+            studentList.addAll(studentService.listStudents(userName));
         }else{
             Student existStudent = studentService.get(student);
             if (null != existStudent && existStudent.isValid()){
@@ -248,10 +255,20 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
             String studentCode = currStudent.getCode();
             queryWrapper.eq("student_code", studentCode);
             queryWrapper.eq("status", GenericState.Valid.code);
+            if (!showHis){
+                queryWrapper.gt("forceSignEndDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
+            }
 
             List<StudentClass> studentClassList = studentClassMapper.selectList(queryWrapper);
             for(StudentClass studentClass : studentClassList){
-                classSet.add(classService.get(studentClass.getClassCode()));
+                Class classInfo = classService.get(studentClass.getClassCode());
+                if (null == classInfo)
+                    continue;
+
+                if (!showHis && classInfo.getEndDate().compareTo(new Date()) <= 0)
+                    continue;
+
+                classSet.add(classInfo);
             }
             resultMap.put(studentCode, classSet);
         }
