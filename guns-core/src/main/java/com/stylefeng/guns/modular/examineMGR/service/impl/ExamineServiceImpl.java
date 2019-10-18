@@ -169,7 +169,6 @@ public class ExamineServiceImpl implements IExamineService {
 
         Wrapper<ExamineAnswer> examineAnswerWrapper = new EntityWrapper<>();
         examineAnswerWrapper.eq("student_code", student);
-//        examineAnswerWrapper.ne("status", -1);
         examineAnswerWrapper.eq("status", 4);
         List<Map<String, Object>> resultList = examineAnswerService.selectMaps(examineAnswerWrapper);
 
@@ -188,11 +187,19 @@ public class ExamineServiceImpl implements IExamineService {
             List<Map<String, Object>> examineApplyList = examineApplyService.listPaperUse(paper.getCode());
             StringBuffer abilityBuff = new StringBuffer();
             int score = (Integer)result.get("score");
+            List<Integer> existsAbility = new ArrayList<Integer>();
+
             for(Map<String, Object> apply : examineApplyList){
                 int passScore = Integer.parseInt((String)apply.get("passScore"));
 
-                if (score >= passScore)
-                    abilityBuff.append(ConstantFactory.me().getAbilityName((Integer) apply.get("ability"))).append(",");
+                if (score >= passScore) {
+                    Integer ability = (Integer) apply.get("ability");
+                    if (existsAbility.contains(ability))
+                        continue;
+
+                    existsAbility.add(ability);
+                    abilityBuff.append(ConstantFactory.me().getAbilityName(ability)).append(",");
+                }
             }
             result.put("ability", abilityBuff.length() == 0 ? "很抱歉，没有合适的班型" : abilityBuff.toString());
             examineAnswerPaperList.add(result);
