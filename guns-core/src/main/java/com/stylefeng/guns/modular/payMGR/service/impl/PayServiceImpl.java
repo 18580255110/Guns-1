@@ -92,7 +92,7 @@ public class PayServiceImpl implements IPayService {
 //                return null;
 //            }
 //        });
-
+        log.info("Payment result = "+ JSON.toJSONString(postResult));
         String prepayId = null;
         String message = null;
         if ("SUCCESS".equals(postResult.get("code"))){
