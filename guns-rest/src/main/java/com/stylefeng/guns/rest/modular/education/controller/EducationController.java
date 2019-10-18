@@ -896,22 +896,6 @@ public class EducationController extends ApiController {
         }
     }
 
-    @ApiOperation(value="教师单天课程表", httpMethod = "POST", response = PlanOfDayResponserWrapper.class)
-    @RequestMapping(value = "/course/plan/day4teacher", method = RequestMethod.POST)
-    public Responser queryClassPlanOfDay(
-            @ApiParam(required = true, value = "单天课程表查询")
-            @RequestBody
-            @Valid
-            QueryPlanOfDayRequester requester, HttpServletRequest request
-    ){
-        Member member = currMember();
-
-        List<PlanOfDayResponser> responserList = new ArrayList<PlanOfDayResponser>();
-
-
-        return PlanOfDayResponserWrapper.me(responserList);
-    }
-
     @ApiOperation(value="单天课程表", httpMethod = "POST", response = PlanOfDayResponserWrapper.class)
     @RequestMapping(value = "/course/plan/day", method = RequestMethod.POST)
     public Responser queryPlanOfDay(
@@ -922,35 +906,65 @@ public class EducationController extends ApiController {
     ){
         Member member = currMember();
 
-        List<Student> studentList = studentService.listStudents(member.getUserName());
-
-        if (studentList.isEmpty()){
-            log.warn("Member {} have not student");
-            throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"学生"});
-        }
-
-        List<ScheduleStudent> planList = new ArrayList<ScheduleStudent>();
-        for (Student student : studentList){
-            planList.addAll(studentService.listCoursePlan(student.getCode(), requester.getDay(), new Integer[]{1}));
-        }
-
         List<PlanOfDayResponser> responserList = new ArrayList<PlanOfDayResponser>();
-        for(ScheduleStudent plan : planList){
-            com.stylefeng.guns.modular.system.model.Class classInfo = classService.get(plan.getClassCode());
-            if (null == classInfo) {
-                log.warn("Class info is null");
-                continue;
+
+        if (member.isTeacher()){
+            Map<String, Object> queryMap = new HashMap<String, Object>();
+            Date queryDate = requester.getDay();
+            queryMap.put("beginDate", DateUtil.format(queryDate, "yyyy-MM-dd"));
+            queryMap.put("endDate", DateUtil.format(DateUtil.add(queryDate, Calendar.DAY_OF_MONTH, 1), "yyyy-MM-dd"));
+            queryMap.put("status", GenericState.Valid.code);
+            queryMap.put("teacherCode", member.getUserName());
+
+            List<ClassPlan> classPlanList = scheduleClassService.selectPlanList(queryMap);
+
+            for (ClassPlan plan : classPlanList) {
+                com.stylefeng.guns.modular.system.model.Class classInfo = classService.get(plan.getClassCode());
+                if (null == classInfo) {
+                    log.warn("Class info is null");
+                    continue;
+                }
+
+                CourseOutline outline = courseOutlineService.get(plan.getOutlineCode());
+                if (null == outline) {
+                    log.warn("Class info is null");
+                    continue;
+                }
+
+                ClassResponser classResponser = ClassResponser.me(classInfo);
+                responserList.add(PlanOfDayResponser.me(classResponser, outline));
+            }
+        }else {
+
+            List<Student> studentList = studentService.listStudents(member.getUserName());
+
+            if (studentList.isEmpty()) {
+                log.warn("Member {} have not student");
+                throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"学生"});
             }
 
-            CourseOutline outline = courseOutlineService.get(plan.getOutlineCode());
-            if (null == outline) {
-                log.warn("Class info is null");
-                continue;
+            List<ScheduleStudent> planList = new ArrayList<ScheduleStudent>();
+            for (Student student : studentList) {
+                planList.addAll(studentService.listCoursePlan(student.getCode(), requester.getDay(), new Integer[]{1}));
             }
 
-            ClassResponser classResponser = ClassResponser.me(classInfo);
-            classResponser.setStudent(plan.getStudentName());
-            responserList.add(PlanOfDayResponser.me(classResponser, outline));
+            for (ScheduleStudent plan : planList) {
+                com.stylefeng.guns.modular.system.model.Class classInfo = classService.get(plan.getClassCode());
+                if (null == classInfo) {
+                    log.warn("Class info is null");
+                    continue;
+                }
+
+                CourseOutline outline = courseOutlineService.get(plan.getOutlineCode());
+                if (null == outline) {
+                    log.warn("Class info is null");
+                    continue;
+                }
+
+                ClassResponser classResponser = ClassResponser.me(classInfo);
+                classResponser.setStudent(plan.getStudentName());
+                responserList.add(PlanOfDayResponser.me(classResponser, outline));
+            }
         }
 
         return PlanOfDayResponserWrapper.me(responserList);
