@@ -9,6 +9,7 @@ import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
+import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
@@ -32,6 +33,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -400,7 +403,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @return
      */
     private long calcCourse(OrderItem orderItem) {
-        return orderItem.getItemAmount();
+        long classPrice = orderItem.getItemAmount();
+
+        Class classInfo = classService.get(orderItem.getItemObjectCode());
+        if (null == classInfo)
+            return classPrice;
+
+        int maxSchedule = classInfo.getPeriod();
+        Map<String, Object> planQueryMap = new HashMap<String, Object>();
+        planQueryMap.put("beginDate", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1));
+        planQueryMap.put("status", GenericState.Valid.code);
+        planQueryMap.put("classCode", classInfo.getCode());
+
+        List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
+        BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
+        BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
+        BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
+
+        return signPrice.longValue();
     }
 
     private List<OrderItem> buildOrderItem(OrderAddList addList, Map<String, Object> extraPostData) {
