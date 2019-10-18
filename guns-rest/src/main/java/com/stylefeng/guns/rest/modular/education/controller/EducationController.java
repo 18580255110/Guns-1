@@ -802,7 +802,12 @@ public class EducationController extends ApiController {
 
     @ApiOperation(value="教师课程表", httpMethod = "POST", response = ClassPlanListResponser.class)
     @RequestMapping("/course/plan/list4teacher")
-    public Responser teacherPlanList(){
+    public Responser teacherPlanList(
+            @ApiParam(required = true, value = "课程表查询")
+            @RequestBody
+            @Valid
+            QueryPlanListRequester requester
+    ){
 
         Member member = currMember();
 
@@ -814,6 +819,12 @@ public class EducationController extends ApiController {
             queryMap.put("endDate", now);
             queryMap.put("teacherCode", member.getUserName());
             queryMap.put("status", GenericState.Valid.code);
+
+        if (ToolUtil.isNotEmpty(requester.getMonth())){
+            Date queryDate = DateUtil.parse(requester.getMonth(), "yyyyMM");
+            queryMap.put("beginDate", DateUtil.format(queryDate, "yyyy-MM-dd"));
+            queryMap.put("endDate", DateUtil.format(DateUtil.add(queryDate, Calendar.MONTH, 1), "yyyy-MM-dd"));
+        }
 
             List<ClassPlan> planList = scheduleClassService.selectPlanList(queryMap);
 
@@ -839,6 +850,12 @@ public class EducationController extends ApiController {
             queryMap.put("endDate", now);
             queryMap.put("teacherCode", member.getUserName());
             queryMap.put("status", GenericState.Valid.code);
+
+            if (ToolUtil.isNotEmpty(requester.getMonth())){
+                Date queryDate = DateUtil.parse(requester.getMonth(), "yyyyMM");
+                queryMap.put("beginDate", DateUtil.format(queryDate, "yyyy-MM-dd"));
+                queryMap.put("endDate", DateUtil.format(DateUtil.add(queryDate, Calendar.MONTH, 1), "yyyy-MM-dd"));
+            }
 
             List<ClassPlan> planList = scheduleClassService.selectPlanList(queryMap);
 

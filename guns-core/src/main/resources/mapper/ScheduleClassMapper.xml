@@ -48,6 +48,10 @@
                 and a.class_code = #{classCode}
             </if>
 
+            <if test="null != teacherCode">
+                and cls teacher_code = #{teacherCode}
+            </if>
+
             <if test="null != beginDate">
                 and a.study_date &gt;= #{beginDate}
             </if>
