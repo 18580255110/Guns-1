@@ -263,7 +263,9 @@ public class EducationController extends ApiController {
         planQueryMap.put("status", GenericState.Valid.code);
         planQueryMap.put("classCode", classInfo.getCode());
         List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
-        BigDecimal signPrice = (new BigDecimal(remainClassPlanList.size()).multiply(new BigDecimal(classInfo.getPrice()).divide(new BigDecimal(maxSchedule)))).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
+        BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
+        BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
         classInfo.setSignPrice(signPrice.longValue());
 
         Map<String, Object> queryMap = new HashMap<String, Object>();
@@ -1001,7 +1003,9 @@ public class EducationController extends ApiController {
             planQueryMap.put("classCode", classInfo.getCode());
 
             List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
-            BigDecimal signPrice = (new BigDecimal(remainClassPlanList.size()).multiply(new BigDecimal(classInfo.getPrice()).divide(new BigDecimal(maxSchedule)))).setScale(0, RoundingMode.HALF_UP);
+            BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
+            BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
+            BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
             classInfo.setSignPrice(signPrice.longValue());
             classSet.add(classInfo);
         }
