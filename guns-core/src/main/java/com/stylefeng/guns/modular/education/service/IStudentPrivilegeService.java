@@ -40,8 +40,15 @@ public interface IStudentPrivilegeService extends IService<StudentPrivilege> {
 
     /**
      * 授权
-     * 
+     *
      * @param studentPrivilege
      */
     void grantSignPrivileges(StudentPrivilege studentPrivilege);
+
+    /**
+     * 授权
+     * @param studentCode
+     * @param classCode
+     */
+    void grantNextSignPrivileges(String studentCode, String classCode);
 }

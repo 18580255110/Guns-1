@@ -180,7 +180,11 @@
 
             <!-- 转班时间 -->
             <if test="null != changeDate">
-                and tc.cross_end_date &lt; #{changeDate} and tc.end_date &gt; #{changeDate}
+                <![CDATA[
+                and (
+                  (tc.crossable = 1 and tc.cross_end_date < #{changeDate} and tc.end_date > #{changeDate}) or tc.end_date > #{changeDate}
+                )
+                ]]>
             </if>
 
             <!-- 跨报时间 -->

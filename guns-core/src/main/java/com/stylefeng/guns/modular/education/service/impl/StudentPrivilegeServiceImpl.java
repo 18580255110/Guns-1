@@ -146,4 +146,47 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
             }
         }
     }
+
+    @Override
+    public void grantNextSignPrivileges(String studentCode, String classCode) {
+        Student student = studentService.get(studentCode);
+        log.info("Grant sign privilege student = {}, class = {}", studentCode, classCode);
+        if (null == student)
+            return;
+        Class classInfo = classService.get(classCode);
+        if (null == classInfo)
+            return ;
+
+        Course course = courseService.get(classInfo.getCourseCode());
+        if (null == course)
+            return;
+
+        StudentPrivilege studentPrivilege = new StudentPrivilege();
+        studentPrivilege.setStudentCode(studentCode);
+        studentPrivilege.setStudentName(student.getName());
+        studentPrivilege.setAcademicYear(classInfo.getAcademicYear());
+        studentPrivilege.setCycle(classInfo.getCycle());
+        studentPrivilege.setGrade(course.getGrade());
+        studentPrivilege.setAbility(classInfo.getAbility());
+        studentPrivilege.setType(1);
+        studentPrivilege.setComments(classInfo.getName());
+
+        StudentPrivilege nextStudentPrivilege = studentPrivilege.next();
+
+        boolean hasPrivilege = hasPrivilege(nextStudentPrivilege);
+
+        if (!hasPrivilege){
+            nextStudentPrivilege.setStatus(GenericState.Invalid.code);
+            List<StudentPrivilege> studentPrivilegeList = selectList(getQueryWrapper(nextStudentPrivilege));
+
+            if (null == studentPrivilegeList || studentPrivilegeList.isEmpty()){
+                nextStudentPrivilege.setStatus(GenericState.Valid.code);
+                insert(nextStudentPrivilege);
+            }else{
+                nextStudentPrivilege = studentPrivilegeList.get(0);
+                nextStudentPrivilege.setStatus(GenericState.Valid.code);
+                updateById(nextStudentPrivilege);
+            }
+        }
+    }
 }

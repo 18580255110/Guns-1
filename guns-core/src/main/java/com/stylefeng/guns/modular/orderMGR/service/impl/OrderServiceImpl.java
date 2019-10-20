@@ -13,6 +13,7 @@ import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
+import com.stylefeng.guns.modular.education.service.IStudentPrivilegeService;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.orderMGR.OrderAddList;
 import com.stylefeng.guns.modular.orderMGR.service.ICourseCartService;
@@ -71,6 +72,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Autowired
     private IStudentClassService studentClassService;
+
+    @Autowired
+    private IStudentPrivilegeService studentPrivilegeService;
 
     @Autowired
     private IMemberService memberService;
@@ -213,6 +217,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 scheduleStudent.setStatus(GenericState.Valid.code);
 
                 scheduleStudentService.insert(scheduleStudent);
+            }
+
+            try {
+                studentPrivilegeService.grantNextSignPrivileges(studentClass.getStudentCode(), studentClass.getClassCode());
+            }catch(Exception e){
+                log.error("Grant next privilege， student = {}, class = {}", studentClass.getStudentCode(), studentClass.getClassCode());
             }
         }
     }
