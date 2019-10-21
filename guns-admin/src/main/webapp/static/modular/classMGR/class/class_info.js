@@ -171,6 +171,7 @@ ClassInfoDlg.collectData = function() {
         .set('teacherSecond')
         .set('classRoomCode')
         .set('classRoom')
+        .set('academicYear')
         .set('studyTimeDesp');
 
     this.classInfoData['price'] = submitPrice;
