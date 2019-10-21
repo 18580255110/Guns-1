@@ -148,6 +148,9 @@ public class ExamController extends ApiController {
         Collection<Map<String, Object>> examineAnswerPaperList = examineService.findExamineAnswerPaperList(student.getCode());
         List<String> answeredPaperList = new ArrayList<String>();
         for(Map<String, Object> examineAnswerPaper : examineAnswerPaperList){
+            if (answeredPaperList.contains((String) examineAnswerPaper.get("paperCode")))
+                continue;
+
             answeredPaperList.add((String) examineAnswerPaper.get("paperCode"));
             paperResponseList.add(ExamineAnswerPaperResponse.me(examineAnswerPaper));
         }
