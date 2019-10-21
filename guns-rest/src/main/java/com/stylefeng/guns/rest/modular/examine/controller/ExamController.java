@@ -146,9 +146,9 @@ public class ExamController extends ApiController {
         Set<ExamineAnswerPaperResponse> paperResponseList = new HashSet<>();
         // 查找学员的试卷列表
         Collection<Map<String, Object>> examineAnswerPaperList = examineService.findExamineAnswerPaperList(student.getCode());
-        List<String> classCodeList = new ArrayList<String>();
+        List<String> answeredPaperList = new ArrayList<String>();
         for(Map<String, Object> examineAnswerPaper : examineAnswerPaperList){
-            classCodeList.add((String) examineAnswerPaper.get("paperCode"));
+            answeredPaperList.add((String) examineAnswerPaper.get("paperCode"));
             paperResponseList.add(ExamineAnswerPaperResponse.me(examineAnswerPaper));
         }
 
@@ -175,6 +175,9 @@ public class ExamController extends ApiController {
             });
 
             if (null == paperApplyList || paperApplyList.isEmpty())
+                continue;
+
+            if (answeredPaperList.contains(paper.getCode()))
                 continue;
 
             Map<String, Object> examineAnswerPaper = new HashMap<String, Object>();

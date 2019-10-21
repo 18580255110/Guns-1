@@ -391,7 +391,7 @@ public class EducationController extends ApiController {
         // 当前报班信息
         Wrapper<ScheduleStudent> studentPlanQueryWrapper = new EntityWrapper<>();
         studentPlanQueryWrapper.eq("student_code", requester.getStudent());
-        studentPlanQueryWrapper.eq("class_code", requester.getClassCode());
+        //studentPlanQueryWrapper.eq("class_code", requester.getClassCode());
         studentPlanQueryWrapper.eq("outline_code", requester.getOutlineCode());
         studentPlanQueryWrapper.eq("status", GenericState.Valid.code);
 

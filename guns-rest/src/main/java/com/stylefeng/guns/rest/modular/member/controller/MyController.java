@@ -72,6 +72,7 @@ public class MyController extends ApiController {
                                 eq("status", GenericState.Valid.code);
                                 eq("work_status", AdjustStudentApproveStateEnum.Appove.code);
                                 eq("type", AdjustStudentTypeEnum.Adjust.code);
+                                eq("student_code", studentCode);
                                 eq("source_class", classInfo.getCode());
                             }
                         })
