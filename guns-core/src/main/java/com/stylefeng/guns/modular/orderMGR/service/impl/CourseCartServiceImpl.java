@@ -9,7 +9,9 @@ import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.classMGR.service.IClassAuthorityService;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.classMGR.service.ICourseService;
+import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.education.CourseMethodEnum;
+import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
 import com.stylefeng.guns.modular.education.service.IStudentPrivilegeService;
 import com.stylefeng.guns.modular.examineMGR.service.IExamineAnswerService;
@@ -24,11 +26,15 @@ import com.stylefeng.guns.modular.system.dao.CourseCartMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.util.CodeKit;
+import com.stylefeng.guns.util.DateUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 /**
@@ -58,6 +64,9 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
     @Autowired
     private IStudentClassService studentClassService;
+
+    @Autowired
+    private IScheduleClassService scheduleClassService;
 
     @Autowired
     private IStudentService studentService;
@@ -174,13 +183,22 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             // 班型报名权限
             boolean hasPrivilege = studentPrivilegeService.hasPrivilege(student, classInfo);
 
-            if (!hasPrivilege){
-                // 没有报名权限
+            if(!hasPrivilege){
+                log.warn("Student {} not current privilege, class = {}", student.getCode(), classInfo.getCode());
+                // 判断是否有上级班型权限
+                hasPrivilege = studentPrivilegeService.hasAdvancePrivilege(student, classInfo);
+            }
 
-                // 检查是否没有做入学测试
-                // 入学测试校验
-                // 正常情况下不会出现没有权限但是测试达标的数据， 因为入学测试需要弹出提示让用户做题，所以保留
-                if (!skipTest && ClassExaminableEnum.YES.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
+            if (!hasPrivilege){
+                log.warn("Student {} not class privilege, class = {}", student.getCode(), classInfo.getCode());
+                // 没有报名权限
+                if(ClassExaminableEnum.NO.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
+                    // 班级不需要入学测试
+                    hasPrivilege = true;
+                } else if (!skipTest){
+                    // 检查是否没有做入学测试
+                    // 入学测试校验
+                    // 正常情况下不会出现没有权限但是测试达标的数据， 因为入学测试需要弹出提示让用户做题，所以保留
                     Map<String, Object> queryParams = new HashMap<String, Object>();
                     queryParams.put("classCode", classInfo.getCode());
                     ExamineApply examineApply = examineService.findExamineApply(queryParams);
@@ -338,7 +356,19 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         courseCart.setAssister(classInfo.getTeacherSecond());
 
         courseCart.setStatus(CourseCartStateEnum.Valid.code);
-        courseCart.setAmount(classInfo.getPrice());
+
+        int maxSchedule = classInfo.getPeriod();
+        Map<String, Object> planQueryMap = new HashMap<String, Object>();
+        planQueryMap.put("beginDate", DateUtils.truncate(DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1), Calendar.DAY_OF_MONTH));
+        planQueryMap.put("status", GenericState.Valid.code);
+        planQueryMap.put("classCode", classInfo.getCode());
+
+        List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
+        BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
+        BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
+        BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
+        courseCart.setAmount(signPrice.longValue());
+
         insert(courseCart);
 
         return courseCartCode;

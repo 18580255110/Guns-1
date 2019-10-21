@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description //TODO
@@ -27,6 +29,27 @@ import java.util.List;
 @Service
 public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMapper, StudentPrivilege> implements IStudentPrivilegeService {
     private static final Logger log = LoggerFactory.getLogger(ScheduleStudentServiceImpl.class);
+
+    private static final Integer[] SIX  = new Integer[]{9, 8, 6, 5, 3, 4, 11, 10};
+    private static final Integer[] FIVE  = new Integer[]{2, 1};
+    private static final Integer[] Four  = new Integer[]{2, 1};
+    private static final Integer[] Seven  = new Integer[]{9, 8, 7};
+
+    private static final Map<Integer, Integer> AbilityWeight = new HashMap<Integer, Integer>(){
+        {
+            put(2, 90); // 尖子
+            put(9, 90); // 尖端
+            put(8, 80); // 实验
+            put(6, 80); // 真题C
+            put(1, 80); // 提高
+            put(7, 70); // 同步
+            put(5, 60); // 真题B
+            put(3, 60); // 真题
+            put(4, 50); // 真题A
+            put(11, 40); // 复习B
+            put(10, 30); // 复习A
+        }
+    };
 
     @Autowired
     private ICourseService courseService;
@@ -188,5 +211,65 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
                 updateById(nextStudentPrivilege);
             }
         }
+    }
+
+    @Override
+    public boolean hasAdvancePrivilege(Student student, Class classInfo) {
+
+        if(null == student)
+            return false;
+
+        if (null == classInfo)
+            return false;
+
+        Course courseInfo = courseService.get(classInfo.getCourseCode());
+
+        if (null == courseInfo)
+            return false;
+
+        int currWeight = AbilityWeight.get(classInfo.getAbility());
+        boolean hasAdvPrivilege = false;
+
+        switch(classInfo.getGrade()){
+            case 4:
+                // 四年级
+                hasAdvPrivilege = hasAdvancePrivilege(currWeight, Four, student, classInfo);
+                break;
+            case 5:
+                hasAdvPrivilege = hasAdvancePrivilege(currWeight, FIVE, student, classInfo);
+                break;
+            case 6:
+                hasAdvPrivilege = hasAdvancePrivilege(currWeight, SIX, student, classInfo);
+                break;
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+                hasAdvPrivilege = hasAdvancePrivilege(currWeight, Seven, student, classInfo);
+                break;
+        }
+        return hasAdvPrivilege;
+    }
+
+    private boolean hasAdvancePrivilege(int currWeight, Integer[] abilityArray, Student student, Class classInfo) {
+        boolean hasAdvPrivilege = false;
+
+        for(Integer ability : abilityArray){
+            int abilityWeight = AbilityWeight.get(ability);
+            if (abilityWeight < currWeight)
+                continue;
+
+            classInfo.setAbility(ability);
+            if (hasPrivilege(student, classInfo)) {
+                hasAdvPrivilege = true;
+            }
+
+            if (hasAdvPrivilege)
+                break;
+        }
+
+        return hasAdvPrivilege;
     }
 }

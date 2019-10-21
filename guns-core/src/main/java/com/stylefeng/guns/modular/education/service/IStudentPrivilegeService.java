@@ -51,4 +51,12 @@ public interface IStudentPrivilegeService extends IService<StudentPrivilege> {
      * @param classCode
      */
     void grantNextSignPrivileges(String studentCode, String classCode);
+
+    /**
+     * 判断是否有上级班型权限
+     *
+     * @param student
+     * @param classInfo
+     */
+    boolean hasAdvancePrivilege(Student student, Class classInfo);
 }

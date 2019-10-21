@@ -42,6 +42,15 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
     @ApiModelProperty(name = "student", value = "学员名称", example = "小明")
     private String student;
 
+    @ApiModelProperty(name = "adjustCount", value = "调课次数", example = "1")
+    private Integer adjustCount;
+
+    @ApiModelProperty(name = "remainAdjustCount", value = "剩余调课次数", example = "1")
+    private Integer remainAdjustCount;
+
+    @ApiModelProperty(name = "changeCount", value = "转班次数", example = "2")
+    private Integer changeCount;
+
     @ApiModelProperty(name = "canAdjust", value = "能否调课", example = "false")
     boolean canAdjust;
 
@@ -100,6 +109,31 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
         this.student = student;
     }
 
+    public Integer getAdjustCount() {
+        return adjustCount;
+    }
+
+    public void setAdjustCount(Integer adjustCount) {
+        this.adjustCount = adjustCount;
+        this.remainAdjustCount = 4 - this.adjustCount < 0 ? 0 : 4 - this.adjustCount;
+    }
+
+    public Integer getRemainAdjustCount() {
+        return remainAdjustCount;
+    }
+
+    public void setRemainAdjustCount(Integer remainAdjustCount) {
+        this.remainAdjustCount = remainAdjustCount;
+    }
+
+    public Integer getChangeCount() {
+        return changeCount;
+    }
+
+    public void setChangeCount(Integer changeCount) {
+        this.changeCount = changeCount;
+    }
+
     public boolean isCanAdjust() {
         return canAdjust;
     }
@@ -143,11 +177,6 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
         dto.setCurrentPrice(null == classInfo.getSignPrice() ? 0L : classInfo.getSignPrice());
         // 格式化开课时间描述
         formatClassTime(dto);
-        // 判断是否能调课
-        judgementAdjust(dto);
-        // 判断是否能转班
-        judgementChange(dto);
-
         return dto;
     }
 
@@ -193,11 +222,19 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
         Date now = new Date();
 
         dto.setCanAdjust(false);
-        if (DateUtil.compareDate(now, endDate, Calendar.DAY_OF_MONTH) < 0)
+
+        if (dto.getAdjustCount() > 0 && DateUtil.compareDate(now, endDate, Calendar.DAY_OF_MONTH) < 0)
             dto.setCanAdjust(true);
     }
 
     private static void formatClassTime(ClassResponser dto) {
         dto.setClassTimeDesp(dto.getStudyTimeDesp());
+    }
+
+    public void judgement() {
+        // 判断是否能调课
+        judgementAdjust(this);
+        // 判断是否能转班
+        judgementChange(this);
     }
 }

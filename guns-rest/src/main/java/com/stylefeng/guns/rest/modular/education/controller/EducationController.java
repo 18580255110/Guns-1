@@ -998,7 +998,7 @@ public class EducationController extends ApiController {
 
             int maxSchedule = classInfo.getPeriod();
             Map<String, Object> planQueryMap = new HashMap<String, Object>();
-            planQueryMap.put("beginDate", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1));
+            planQueryMap.put("beginDate", DateUtils.truncate(DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1), Calendar.DAY_OF_MONTH));
             planQueryMap.put("status", GenericState.Valid.code);
             planQueryMap.put("classCode", classInfo.getCode());
 

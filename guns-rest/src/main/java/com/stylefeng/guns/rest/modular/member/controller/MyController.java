@@ -1,13 +1,14 @@
 package com.stylefeng.guns.rest.modular.member.controller;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.stylefeng.guns.common.constant.state.GenericState;
+import com.stylefeng.guns.modular.adjustMGR.service.IAdjustStudentService;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.memberMGR.service.IScoreService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
+import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
-import com.stylefeng.guns.modular.system.model.Member;
-import com.stylefeng.guns.modular.system.model.Score;
-import com.stylefeng.guns.modular.system.model.Student;
 import com.stylefeng.guns.rest.core.ApiController;
 import com.stylefeng.guns.rest.core.Responser;
 import com.stylefeng.guns.rest.modular.education.responser.ClassResponser;
@@ -47,6 +48,9 @@ public class MyController extends ApiController {
     @Autowired
     private IScoreService scoreService;
 
+    @Autowired
+    private IAdjustStudentService adjustStudentService;
+
     @ApiOperation(value = "我的班级列表", httpMethod = "POST", response = MyClassListResponser.class)
     @RequestMapping(value = "/class/list", method = RequestMethod.POST)
     public Responser listMyClass(String student, boolean showHis) {
@@ -62,6 +66,29 @@ public class MyController extends ApiController {
 
             for (Class classInfo : myClasses.get(studentCode)) {
                 ClassResponser classResponser = ClassResponser.me(classInfo);
+                classResponser.setAdjustCount(
+                        adjustStudentService.selectCount(new EntityWrapper<AdjustStudent>(){
+                            {
+                                eq("status", GenericState.Valid.code);
+                                eq("work_status", AdjustStudentApproveStateEnum.Appove.code);
+                                eq("type", AdjustStudentTypeEnum.Adjust.code);
+                                eq("source_class", classInfo.getCode());
+                            }
+                        })
+                );
+                classResponser.judgement();
+
+//                classResponser.setChangeCount(
+//                        adjustStudentService.selectCount(new EntityWrapper<AdjustStudent>(){
+//                            {
+//                                eq("status", GenericState.Valid.code);
+//                                eq("work_status", AdjustStudentApproveStateEnum.Appove.code);
+//                                eq("type", AdjustStudentTypeEnum.Change.code);
+//                                eq("source_class", classInfo.getCode());
+//                            }
+//                        })
+//                );
+
                 classResponser.setStudent(studentCode);
                 classList.add(classResponser);
             }
