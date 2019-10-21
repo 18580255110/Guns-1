@@ -13,7 +13,7 @@ import java.util.Map;
  * @Version 1.0
  */
 @ApiModel(value = "ExamineAnswerPaperResponse", description = "试卷")
-public class ExamineAnswerPaperResponse implements Serializable {
+public class ExamineAnswerPaperResponse implements Comparable<ExamineAnswerPaperResponse>, Serializable {
     @ApiModelProperty(name = "paperCode", value = "试卷编码", example = "SJ000001")
     private String paperCode;
     @ApiModelProperty(name = "className", value = "班级描述", example = "重庆2018寒假班小学三年级语文")
@@ -28,6 +28,8 @@ public class ExamineAnswerPaperResponse implements Serializable {
     private String answerResponse;
     @ApiModelProperty(name = "canTest", value = "能否开始诊断", example = "true")
     private boolean canTest;
+    @ApiModelProperty(name = "sort", value = "排序号", example = "3")
+    private int sort;
 
     public String getPaperCode() {
         return paperCode;
@@ -85,7 +87,15 @@ public class ExamineAnswerPaperResponse implements Serializable {
         this.canTest = canTest;
     }
 
-    public static ExamineAnswerPaperResponse me(Map<String, Object> examineAnswerPaper) {
+    public int getSort() {
+        return sort;
+    }
+
+    public void setSort(int sort) {
+        this.sort = sort;
+    }
+
+    public static ExamineAnswerPaperResponse me(Map<String, Object> examineAnswerPaper, int sort) {
 
         ExamineAnswerPaperResponse response = new ExamineAnswerPaperResponse();
 
@@ -95,7 +105,16 @@ public class ExamineAnswerPaperResponse implements Serializable {
         response.setAnswerResponse(String.valueOf(examineAnswerPaper.get("score")));
         response.setStatus((Integer)examineAnswerPaper.get("status"));
         response.setExamTime((Integer)examineAnswerPaper.get("examTime"));
+        response.setSort(sort);
 
         return response;
+    }
+
+    @Override
+    public int compareTo(ExamineAnswerPaperResponse target) {
+        if (null == target)
+            return 0;
+
+        return this.sort < target.getSort() ? 1 : this.sort > target.getSort() ? -1 : 0;
     }
 }

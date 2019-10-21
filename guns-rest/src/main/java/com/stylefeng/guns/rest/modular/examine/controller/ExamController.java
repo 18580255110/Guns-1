@@ -17,10 +17,8 @@ import com.stylefeng.guns.rest.core.Responser;
 import com.stylefeng.guns.rest.core.SimpleResponser;
 import com.stylefeng.guns.rest.modular.examine.requester.*;
 import com.stylefeng.guns.rest.modular.examine.responser.*;
-import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.ToolUtil;
 import io.swagger.annotations.*;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -143,7 +141,7 @@ public class ExamController extends ApiController {
         if (!isMemberStudent)
             throw new ServiceException(MessageConstant.MessageCode.SYS_DATA_ILLEGAL, new String[]{"没有该学员信息"});
 
-        Set<ExamineAnswerPaperResponse> paperResponseList = new HashSet<>();
+        Set<ExamineAnswerPaperResponse> paperResponseList = new TreeSet<>();
         // 查找学员的试卷列表
         Collection<Map<String, Object>> examineAnswerPaperList = examineService.findExamineAnswerPaperList(student.getCode());
         List<String> answeredPaperList = new ArrayList<String>();
@@ -151,6 +149,7 @@ public class ExamController extends ApiController {
 
             String paperCode = (String) examineAnswerPaper.get("paperCode");
             ExaminePaper paper = examinePaperService.get(paperCode);
+
             if (null == paper || GenericState.Invalid.code == paper.getStatus())
                 continue;
 
@@ -158,7 +157,7 @@ public class ExamController extends ApiController {
                 continue;
 
             answeredPaperList.add((String) examineAnswerPaper.get("paperCode"));
-            paperResponseList.add(ExamineAnswerPaperResponse.me(examineAnswerPaper));
+            paperResponseList.add(ExamineAnswerPaperResponse.me(examineAnswerPaper, Integer.parseInt(paper.getGrades())));
         }
 
         // 查找符合当前学员和的试卷
@@ -211,7 +210,7 @@ public class ExamController extends ApiController {
             examineAnswerPaper.put("className", classNameBuffer.toString());
             examineAnswerPaper.put("ability", "很抱歉，没有合适的班型");
 
-            paperResponseList.add(ExamineAnswerPaperResponse.me(examineAnswerPaper));
+            paperResponseList.add(ExamineAnswerPaperResponse.me(examineAnswerPaper, Integer.parseInt(paper.getGrades())));
         }
 
         return ExamineAnswerPaperListResponse.me(paperResponseList);
