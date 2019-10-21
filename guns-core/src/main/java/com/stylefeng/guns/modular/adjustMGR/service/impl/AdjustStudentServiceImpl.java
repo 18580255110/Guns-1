@@ -310,6 +310,9 @@ public class AdjustStudentServiceImpl extends ServiceImpl<AdjustStudentMapper, A
 
             studentClassInfo = studentClassService.selectOne(relWrapper);
 
+            if (null == studentClassInfo || null == studentClassInfo.getStatus())
+                break;
+
             if (GenericState.Valid.code != studentClassInfo.getStatus()){
                 excludeIds.add(outStudentClassInfo.getId());
                 outStudentClassInfo = studentClassInfo;
