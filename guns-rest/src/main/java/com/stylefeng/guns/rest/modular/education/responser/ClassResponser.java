@@ -223,7 +223,7 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
 
         dto.setCanAdjust(false);
 
-        if (dto.getAdjustCount() > 0 && DateUtil.compareDate(now, endDate, Calendar.DAY_OF_MONTH) < 0)
+        if (dto.getAdjustCount() < 4 && DateUtil.compareDate(now, endDate, Calendar.DAY_OF_MONTH) < 0)
             dto.setCanAdjust(true);
     }
 
