@@ -55,4 +55,11 @@ public interface ICourseCartService extends IService<CourseCart> {
      * @param classInfo
      */
     void doAutoPreSign(Class classInfo);
+
+    /**
+     * 移除购课单
+     *
+     * @param courseCartCode
+     */
+    void remove(String courseCartCode);
 }

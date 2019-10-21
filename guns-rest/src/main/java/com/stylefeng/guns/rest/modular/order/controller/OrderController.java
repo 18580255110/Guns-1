@@ -121,10 +121,13 @@ public class OrderController extends ApiController {
     )
     public Responser removeCart(
             @NotBlank(message = "班级不能为空")
-            @RequestParam(name = "classCode", required = true)
+            @RequestParam(name = "classCode", required = false)
             String classCode,
             @RequestParam(name = "student", required = false)
-            String student){
+            String student,
+            @RequestParam(name = "courseCartCode", required = true)
+            String courseCartCode
+            ){
 
         Member member = currMember();
 
@@ -141,7 +144,8 @@ public class OrderController extends ApiController {
         if (null == classInfo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"选课信息"});
 
-        courseCartService.remove(member, existStudent, classInfo);
+        //courseCartService.remove(member, existStudent, classInfo);
+        courseCartService.remove(courseCartCode);
 
         return SimpleResponser.success();
     }

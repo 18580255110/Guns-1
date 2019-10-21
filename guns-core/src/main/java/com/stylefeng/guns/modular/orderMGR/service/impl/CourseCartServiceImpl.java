@@ -325,6 +325,22 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         }
     }
 
+    @Override
+    public void remove(String courseCartCode) {
+        if (null == courseCartCode)
+            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
+
+        CourseCart existSelected = selectOne(new EntityWrapper<CourseCart>()
+                .eq("code", courseCartCode)
+        );
+
+        if (null == existSelected)
+            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"选课信息"});
+
+        existSelected.setStatus(CourseCartStateEnum.Invalid.code);
+        updateById(existSelected);
+    }
+
     private String select(Member member, Student student, Class classInfo, Map<String, Object> extraParams) {
 
         // 查询班级剩余报名额度
