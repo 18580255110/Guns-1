@@ -281,19 +281,25 @@ $(function () {
             }
         },
         onFinished: function(){
+
             SignWizard.clearData();
             SignWizard.collectData();
 
-            //提交信息
-            var ajax = new $ax(SignWizard.Wizard.postUrl['order'], function(data){
-                Feng.success("保存成功!");
-                SignWizard.close();
-            },function(data){
-                Feng.error("保存失败!" + data.responseJSON.message + "!");
-            });
-            ajax.setContentType("application/json");
-            ajax.setData(JSON.stringify(SignWizard.Wizard.postData));
-            ajax.start();
+            var operation = function(){
+                console.log(SignWizard.Wizard.postData);
+                //提交信息
+                var ajax = new $ax(SignWizard.Wizard.postUrl['order'], function(data){
+                    Feng.success("保存成功!");
+                    SignWizard.close();
+                },function(data){
+                    Feng.error("保存失败!" + data.responseJSON.message + "!");
+                });
+                ajax.setContentType("application/json");
+                ajax.setData(JSON.stringify(SignWizard.Wizard.postData));
+                ajax.start();
+            };
+
+            Feng.confirm("请核对报名信息" ,operation);
         }
     });
 
