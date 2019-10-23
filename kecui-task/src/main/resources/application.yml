@@ -1,4 +1,15 @@
 application:
+  task:
+    adjust: true
+    sms-sender: true
+    pay-mock: true
+    order-recycle: true
+    examine-auto-check: true
+    import-class: true
+    import-sign: true
+    import-score: true
+    sign-prepare: true
+    sign-privilege: true
   adjust:
     auto:
       enable: true

@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
@@ -17,12 +16,13 @@ import java.util.Map;
 /**
  * 过期订单清理任务
  *
+ * 在 GunsTaskApplication 中创建Bean
+ *
  * @Description //TODO
  * @Author 罗华
  * @Date 2019/7/4 16:26
  * @Version 1.0
  */
-@Component
 public class OrderRecycleTask {
 
     private final static Logger log = LoggerFactory.getLogger(OrderRecycleTask.class);

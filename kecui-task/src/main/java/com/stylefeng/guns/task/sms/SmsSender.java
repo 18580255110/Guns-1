@@ -16,6 +16,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.*;
 
 /**
+ * 短信发送
+ *
+ * 在 GunsTaskApplication 中创建Bean
+ *
  * @Description //TODO
  * @Author 罗华
  * @Date 2018/11/12 17:10

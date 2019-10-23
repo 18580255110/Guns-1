@@ -14,7 +14,9 @@ import java.util.List;
 
 
 /**
- * 号卷
+ * 自动号卷
+ *
+ * 在 GunsTaskApplication 中创建Bean
  *
  * @Description //TODO
  * @Author 罗华

@@ -3,8 +3,6 @@ package com.stylefeng.guns.task.batch;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.stylefeng.guns.common.constant.state.GenericState;
-import com.stylefeng.guns.common.exception.ServiceException;
-import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.batchMGR.service.IBatchProcessDetailService;
 import com.stylefeng.guns.modular.batchMGR.service.IBatchProcessService;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
@@ -26,6 +24,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 批量开班
+ *
+ * 在 GunsTaskApplication 中创建Bean
+ *
  * @Description //TODO
  * @Author 罗华
  * @Date 2019/3/28 01:08

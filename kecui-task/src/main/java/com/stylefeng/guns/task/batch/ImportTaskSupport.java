@@ -1,7 +1,5 @@
 package com.stylefeng.guns.task.batch;
 
-import com.stylefeng.guns.util.DateUtil;
-import com.stylefeng.guns.util.RegexUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -17,7 +15,6 @@ import java.util.regex.Pattern;
  * @Version 1.0
  */
 public abstract class ImportTaskSupport {
-
 
     protected String getMappingCode(String[] datas, int index) {
         if (0 > index || index >= datas.length)
