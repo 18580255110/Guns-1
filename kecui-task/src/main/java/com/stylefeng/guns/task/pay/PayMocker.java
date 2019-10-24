@@ -14,6 +14,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.List;
 
 /**
+ * 模拟缴费（不启用）
+ *
+ * 在 GunsTaskApplication 中创建Bean
+ *
  * @Description //TODO
  * @Author 罗华
  * @Date 2019/1/1 10:38

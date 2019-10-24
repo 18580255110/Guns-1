@@ -176,6 +176,7 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
         log.info("Grant sign privilege student = {}, class = {}", studentCode, classCode);
         if (null == student)
             return;
+
         Class classInfo = classService.get(classCode);
         if (null == classInfo)
             return ;
@@ -190,6 +191,7 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
         studentPrivilege.setAcademicYear(classInfo.getAcademicYear());
         studentPrivilege.setCycle(classInfo.getCycle());
         studentPrivilege.setGrade(course.getGrade());
+        studentPrivilege.setSubject(Integer.parseInt(course.getSubject()));
         studentPrivilege.setAbility(classInfo.getAbility());
         studentPrivilege.setType(1);
         studentPrivilege.setComments(classInfo.getName());

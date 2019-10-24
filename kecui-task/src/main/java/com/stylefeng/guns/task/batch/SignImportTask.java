@@ -16,7 +16,6 @@ import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.jcajce.provider.symmetric.AES;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,8 @@ import java.util.Map;
 
 /**
  * 批量报名
+ *
+ * 在 GunsTaskApplication 中创建Bean
  *
  * @Description //TODO
  * @Author 罗华

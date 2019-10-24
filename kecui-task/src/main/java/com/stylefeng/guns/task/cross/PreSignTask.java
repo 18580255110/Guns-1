@@ -2,19 +2,14 @@ package com.stylefeng.guns.task.cross;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.stylefeng.guns.GunsTaskApplication;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.orderMGR.service.ICourseCartService;
-import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
 import com.stylefeng.guns.modular.system.model.Class;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
-import org.bouncycastle.jcajce.provider.symmetric.AES;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
@@ -22,12 +17,13 @@ import java.util.List;
 /**
  * 预报
  *
+ * 在 GunsTaskApplication 中创建Bean
+ *
  * @Description //TODO
  * @Author 罗华
  * @Date 2019/4/11 02:15
  * @Version 1.0
  */
-@Component
 public class PreSignTask {
     private final static Logger log = LoggerFactory.getLogger(PreSignTask.class);
 

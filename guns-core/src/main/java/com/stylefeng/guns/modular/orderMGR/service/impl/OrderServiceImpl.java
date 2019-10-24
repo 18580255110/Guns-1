@@ -222,7 +222,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             try {
                 studentPrivilegeService.grantNextSignPrivileges(studentClass.getStudentCode(), studentClass.getClassCode());
             }catch(Exception e){
-                log.error("Grant next privilege， student = {}, class = {}", studentClass.getStudentCode(), studentClass.getClassCode());
+                log.error("Grant next privilege， student = {}, class = {}", studentClass.getStudentCode(), studentClass.getClassCode(), e);
             }
         }
     }

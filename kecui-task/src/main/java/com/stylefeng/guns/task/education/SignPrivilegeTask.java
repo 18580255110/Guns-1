@@ -1,6 +1,5 @@
 package com.stylefeng.guns.task.education;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.core.admin.Administrator;
 import com.stylefeng.guns.modular.education.service.IStudentPrivilegeService;
@@ -13,17 +12,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
+ * 权限生成
+ *
+ * 在 GunsTaskApplication 中创建Bean
+ *
  * @Description //TODO
  * @Author 罗华
  * @Date 2019/10/8 11:52
  * @Version 1.0
  */
-@Component
 public class SignPrivilegeTask {
     private static final Logger log = LoggerFactory.getLogger(SignPrivilegeTask.class);
 

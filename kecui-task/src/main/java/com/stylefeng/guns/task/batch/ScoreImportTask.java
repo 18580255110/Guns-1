@@ -7,26 +7,26 @@ import com.stylefeng.guns.modular.batchMGR.service.IBatchProcessDetailService;
 import com.stylefeng.guns.modular.batchMGR.service.IBatchProcessService;
 import com.stylefeng.guns.modular.memberMGR.service.IScoreService;
 import com.stylefeng.guns.modular.system.model.*;
-import com.stylefeng.guns.task.education.ExamineCheckTask;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
 /**
+ * 批量成绩导入
+ *
+ * 在 GunsTaskApplication 中创建Bean
+ *
  * @Description //TODO
  * @Author 罗华
  * @Date 2019/3/25 22:00
  * @Version 1.0
  */
-@Component
 public class ScoreImportTask extends ImportTaskSupport {
     private static final Logger log = LoggerFactory.getLogger(ScoreImportTask.class);
     private static final int MIN_COLUMN_SIZE = 8;

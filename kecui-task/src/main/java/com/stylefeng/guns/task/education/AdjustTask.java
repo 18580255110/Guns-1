@@ -16,6 +16,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.List;
 
 /**
+ * 自动调课、转班
+ *
+ * 在 GunsTaskApplication 中创建Bean
+ *
  * @Description //TODO
  * @Author 罗华
  * @Date 2019/2/1 10:50
