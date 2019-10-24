@@ -20,6 +20,8 @@ public class QueryPlanListRequester extends SimpleRequester {
     private String classCode;
     @ApiModelProperty(name = "month", value = "月份", required = false, position = 2, example = "201901")
     private String month;
+    @ApiModelProperty(name = "target", value = "目标类型: 1 学生 99 老师", required = false, position = 3, example = "1")
+    private Integer target;
 
     public String getStudent() {
         return student;
@@ -43,6 +45,14 @@ public class QueryPlanListRequester extends SimpleRequester {
 
     public void setMonth(String month) {
         this.month = month;
+    }
+
+    public Integer getTarget() {
+        return target;
+    }
+
+    public void setTarget(Integer target) {
+        this.target = target;
     }
 
     @Override

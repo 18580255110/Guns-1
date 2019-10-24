@@ -853,8 +853,15 @@ public class EducationController extends ApiController {
             QueryPlanListRequester requester){
 
         Member member = currMember();
+        Integer target = requester.getTarget();
+        boolean isTeacher = false;
+        if (null == target){
+            isTeacher = member.isTeacher();
+        }else{
+            isTeacher = 99 == target;
+        }
 
-        if (member.isTeacher()){
+        if (isTeacher){
             // 老师用户, 展示老师的课程表
             Date now = new Date();
 
