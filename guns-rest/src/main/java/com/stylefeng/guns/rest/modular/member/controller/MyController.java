@@ -90,7 +90,9 @@ public class MyController extends ApiController {
 //                        })
 //                );
 
+                Student currStudent = studentService.get(studentCode);
                 classResponser.setStudent(studentCode);
+                classResponser.setStudentName(currStudent.getName());
                 classList.add(classResponser);
             }
         }

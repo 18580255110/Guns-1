@@ -2,7 +2,6 @@ package com.stylefeng.guns.rest.modular.education.responser;
 
 import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.system.model.Class;
-import com.stylefeng.guns.modular.system.model.ScheduleClass;
 import com.stylefeng.guns.util.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -39,8 +38,11 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
     @ApiModelProperty(name = "currentPrice", value = "实际报名价格", example = "10")
     private Long currentPrice;
 
-    @ApiModelProperty(name = "student", value = "学员名称", example = "小明")
+    @ApiModelProperty(name = "student", value = "学员编码", example = "XY00000000001")
     private String student;
+
+    @ApiModelProperty(name = "studentName", value = "学员名称", example = "小明")
+    private String studentName;
 
     @ApiModelProperty(name = "adjustCount", value = "调课次数", example = "1")
     private Integer adjustCount;
@@ -107,6 +109,14 @@ public class ClassResponser extends com.stylefeng.guns.modular.system.model.Clas
 
     public void setStudent(String student) {
         this.student = student;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
     }
 
     public Integer getAdjustCount() {

@@ -24,6 +24,7 @@ public class GunsTaskApplication {
     private final static Logger logger = LoggerFactory.getLogger(GunsTaskApplication.class);
 
     @Bean
+    @ConditionalOnProperty(prefix = "application.task.import-score", name = "enable", havingValue = "true")
     public ScoreImportTask createScoreImportWorker(){
         return new ScoreImportTask();
     }

@@ -3,6 +3,7 @@ package com.stylefeng.guns.task.controller;
 import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
 import com.stylefeng.guns.task.batch.ClassImportTask;
 import com.stylefeng.guns.task.batch.SignImportTask;
+import com.stylefeng.guns.task.cross.PreSignTask;
 import com.stylefeng.guns.task.education.SignPrivilegeTask;
 import com.stylefeng.guns.task.order.OrderRecycleTask;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +24,40 @@ import java.util.concurrent.Executors;
 @Controller
 @RequestMapping("/console")
 public class TaskController {
-    @Autowired
+    @Autowired(required = false)
     private ClassImportTask classImportTask;
 
-    @Autowired
+    @Autowired(required = false)
     private SignImportTask signImportTask;
 
-    @Autowired
+    @Autowired(required = false)
     private OrderRecycleTask orderRecycleTask;
 
-    @Autowired
+    @Autowired(required = false)
     private IOrderService orderService;
 
-    @Autowired
+    @Autowired(required = false)
     private SignPrivilegeTask signPrivilegeTask;
+
+    @Autowired(required = false)
+    private PreSignTask preSignTask;
+
+    @RequestMapping("/start/preSign")
+    @ResponseBody
+    public String startPreSign(){
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                preSignTask.presign();
+            }
+        });
+
+        executorService.shutdown();
+
+        return "ok";
+    }
 
     @RequestMapping("/start/class")
     @ResponseBody

@@ -16,8 +16,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -33,7 +31,6 @@ import java.util.regex.Pattern;
  * @Date 2019/3/28 01:08
  * @Version 1.0
  */
-@Component
 public class ClassImportTask extends ImportTaskSupport{
     private static final Logger log = LoggerFactory.getLogger(ClassImportTask.class);
     private static final int MIN_COLUMN_SIZE = 17;
