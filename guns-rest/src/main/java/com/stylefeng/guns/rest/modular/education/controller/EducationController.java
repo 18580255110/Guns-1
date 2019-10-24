@@ -16,12 +16,14 @@ import com.stylefeng.guns.modular.contentMGR.service.IContentService;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
+import com.stylefeng.guns.modular.education.service.IStudentPrivilegeService;
 import com.stylefeng.guns.modular.education.transfer.StudentClassInfo;
 import com.stylefeng.guns.modular.education.transfer.StudentPlan;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
+import com.stylefeng.guns.modular.system.service.IDictService;
 import com.stylefeng.guns.modular.teacherMGR.service.TeacherService;
 import com.stylefeng.guns.rest.core.ApiController;
 import com.stylefeng.guns.rest.core.Responser;
@@ -94,6 +96,12 @@ public class EducationController extends ApiController {
 
     @Autowired
     private IContentService contentService;
+
+    @Autowired
+    private IStudentPrivilegeService studentPrivilegeService;
+
+    @Autowired
+    private IDictService dictService;
 
     @Value("${application.education.adjust.maxTimes:4}")
     private int maxAdjustTimes = 4;
@@ -591,54 +599,84 @@ public class EducationController extends ApiController {
 
     @RequestMapping(value = "/class/list4cross", method = RequestMethod.POST)
     @ApiOperation(value="可跨报班级列表", httpMethod = "POST", response = ClassCrossListResponse.class)
-    public Responser listClass4CrossNew(){
+    public Responser listClass4CrossNew(
+            @RequestBody
+            @Valid
+            CrossQueryRequester requester
+    ){
 
         Member member = currMember();
 
-        List<Student> studentList = studentService.listStudents(member.getUserName());
+        Student student = studentService.get(requester.getStudent());
+
+        if (null == student || GenericState.Valid.code != student.getStatus())
+            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
+
+        Date now = new Date();
+
+        Date halfDate = DateUtil.parse(DateUtil.getYear(now) + "-06-01", "yyyy-MM-dd");
+
+        Date beginDate = null;
+        Date endDate = null;
+        if (now.compareTo(halfDate) > 0) {
+            //下半年
+            endDate = DateUtil.parse(DateUtil.getYear(now) + "-10-01", "yyyy-MM-dd");
+            beginDate = DateUtil.parse(DateUtil.getYear(now) + "-04-01", "yyyy-MM-dd");
+        }else{
+            //上半年
+            beginDate = DateUtil.parse(DateUtil.getYear(DateUtil.add(now, Calendar.YEAR, -1)) + "-10-01", "yyyy-MM-dd");
+            endDate = DateUtil.parse(DateUtil.getYear(now) + "-04-01", "yyyy-MM-dd");
+        }
+        // 查找本期跨报开始、结束日期
+        EntityWrapper<Class> classQuery = new EntityWrapper<Class>();
+        classQuery.gt("begin_date", endDate);
+
+        List<Class> classInfoList = classService.selectList(classQuery);
+        Date crossStartDate = null;
+        Date crossEndDate = null;
+        for(Class classInfo : classInfoList){
+            if (null == crossStartDate){
+                crossStartDate = classInfo.getCrossStartDate();
+            }
+            if (null == crossEndDate) {
+                crossEndDate = classInfo.getCrossEndDate();
+            }
+
+            if (null!= crossStartDate && crossStartDate.after(classInfo.getCrossStartDate())){
+                crossStartDate = classInfo.getCrossStartDate();
+            }
+
+            if (null != crossEndDate && crossEndDate.before(classInfo.getCrossEndDate())){
+                crossEndDate = classInfo.getCrossEndDate();
+            }
+        }
+
+        if (now.before(crossStartDate)){
+            // 跨报未开始
+            Content content = contentService.get("CT00000000000011");
+            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{content.getContent()});
+        }
+
+        if (now.after(crossEndDate)){
+            //跨报已结束
+            Content content = contentService.get("CT00000000000012");
+            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{content.getContent()});
+        }
+
         Set<Class> classSignSet = new HashSet<>();
         Set<Class> classChangeSet = new HashSet<>();
         Map<String, Collection<Class>> mapping = new HashMap<String, Collection<Class>>();
         Map<String, String> studentMapping = new HashMap<String, String>();
-        for(Student student : studentList) {
-            List<StudentClass> studentClassInfoList = studentClassService.selectCurrentClassInfo(student);
-            if (null == studentClassInfoList || studentClassInfoList.isEmpty()){
-                // 老学员新报
-                classSignSet.addAll(listClass4CrossWithSign(student));
-            }else{
-                for(StudentClass studentClass : studentClassInfoList) {
-                    String currClassCode = studentClass.getClassCode();
-                    Class classInfo = classService.get(currClassCode);
-                    classChangeSet.add(classInfo);
-                    mapping.put(currClassCode, listClass4CrossWithChange(studentClass.getClassCode()));
-                    studentMapping.put(currClassCode, studentClass.getStudentCode());
-                }
-            }
-        }
 
-        if (classSignSet.isEmpty() && classChangeSet.isEmpty()){
-
-        }
-
-        Date startTime = DateUtil.parse("2019-04-30 23:59:59", "yyyy-MM-dd HH:mm:ss");
-        if (startTime.compareTo(new Date()) <= 0){
-            classSignSet.clear();
-            classChangeSet.clear();
-
-            Content content = contentService.get("CT00000000000002");
-            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{content.getContent()});
-        }
-
-        return ClassCrossListResponse.me(classSignSet, classChangeSet, mapping, studentMapping);
-    }
-
-    private Collection<? extends Class> listClass4CrossWithSign(Student student) {
         // 用户历史报班列表
         Map<String, Object> historyQueryMap = new HashMap<>();
-        historyQueryMap.put("studyFinished", true);
+        historyQueryMap.put("beginSignDate", beginDate);
+        historyQueryMap.put("endSignDate", endDate);
+        historyQueryMap.put("studentCode", student.getCode());
+
         List<com.stylefeng.guns.modular.system.model.Class> hisClassList = studentClassService.selectMemberHistorySignedClass(student, historyQueryMap);
 
-        // 只春、秋学期才能支持续保、跨报
+        // 只春、暑、秋、寒 学期才能支持续保、跨报
         Iterator<Class> hisClassIterator = hisClassList.iterator();
         Set<Integer> subjects = new HashSet<>();
         Set<Integer> abilities = new HashSet<>();
@@ -651,6 +689,8 @@ public class EducationController extends ApiController {
             switch(cycle){
                 case 1:
                 case 2:
+                case 3:
+                case 4:
                     subjects.add(Integer.parseInt(hisCourseInfo.getSubject()));
                     abilities.add(hisClassInfo.getAbility());
                     moneies.add(hisClassInfo.getPrice());
@@ -661,11 +701,44 @@ public class EducationController extends ApiController {
             }
         }
 
-        Set<Class> classSet = new HashSet<>();
-        if (hisClassList.isEmpty()){
-            // 没有订购过课程的用户，直接返回
-            return classSet;
+        if (!(hisClassList.isEmpty())){
+            // 老学员
+            classSignSet.addAll(listClass4CrossWithSign(student));
+        }else{
+            // 没有报名上学期的学员
+            //跨报进行
+            Content content = contentService.get("CT00000000000010");
+            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{content.getContent()});
         }
+
+//        List<StudentClass> studentClassInfoList = studentClassService.selectCurrentClassInfo(student);
+//        if (null == studentClassInfoList || studentClassInfoList.isEmpty()){
+        // 老学员新报
+
+//        }else{
+//            for(StudentClass studentClass : studentClassInfoList) {
+//                String currClassCode = studentClass.getClassCode();
+//                Class classInfo = classService.get(currClassCode);
+//                classChangeSet.add(classInfo);
+//                mapping.put(currClassCode, listClass4CrossWithChange(studentClass.getClassCode()));
+//                studentMapping.put(currClassCode, studentClass.getStudentCode());
+//            }
+//        }
+
+
+//        Date startTime = DateUtil.parse("2019-04-30 23:59:59", "yyyy-MM-dd HH:mm:ss");
+//        if (startTime.compareTo(new Date()) <= 0){
+//            classSignSet.clear();
+//            classChangeSet.clear();
+//
+//            Content content = contentService.get("CT00000000000002");
+//            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{content.getContent()});
+//        }
+
+        return ClassCrossListResponse.me(classSignSet, classChangeSet, mapping, studentMapping);
+    }
+
+    private Collection<? extends Class> listClass4CrossWithSign(Student student) {
 
         // 老用户可以享受优先报名资格
         Map<String, Object> changeClassQuery = new HashMap<String, Object>();

@@ -116,7 +116,7 @@
         (
         tb_student_class sc join tb_student s on sc.student_code = s.code and (sc.status = 1 or sc.status = 2)
         )
-        join tb_member m on m.user_name = s.user_name
+        join (select * from tb_order where accept_no = sc.order_no) o on o.accept_no = sc.order_no
         )
         join tb_class c on c.code = sc.class_code
         )
