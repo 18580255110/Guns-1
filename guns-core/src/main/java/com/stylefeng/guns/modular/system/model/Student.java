@@ -85,6 +85,8 @@ public class Student extends Model<Student> {
     @ApiModelProperty(name = "status", value = "状态", position = 8, example="1")
     private Integer status;
 
+    @ApiModelProperty(hidden = true)
+    private String remark;
 
     public Long getId() {
         return id;
@@ -192,6 +194,14 @@ public class Student extends Model<Student> {
         this.status = status;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     @Override
     protected Serializable pkVal() {
         return this.id;
@@ -211,6 +221,7 @@ public class Student extends Model<Student> {
         ", targetSchool=" + targetSchool +
         ", userName=" + userName +
         ", status=" + status +
+        ", remark=" + remark +
         "}";
     }
 

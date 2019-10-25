@@ -16,10 +16,9 @@ application:
       device-id: kc00000001
       order-url: https://api.mch.weixin.qq.com/pay/unifiedorder
       notify-url: http://api.kecui.com.cn/pay/weixin/notify
-    unionpay:
-      certId: 1
-      merId: 802500082990505
-      order-url: https://gateway.test.95516.com/gateway/api/appTransReq.do
+    union:
+      mchId: 802500082990505
+      order-url: https://gateway.95516.com/gateway/api/appTransReq.do
       notify-url: http://api.kecui.com.cn/pay/union/notify
   message:
     captch.template: SMS_163431486

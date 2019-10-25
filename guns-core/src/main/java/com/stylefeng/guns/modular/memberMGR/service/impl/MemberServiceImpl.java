@@ -10,11 +10,11 @@ import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.member.MemberStateEnum;
 import com.stylefeng.guns.modular.memberMGR.service.IMemberService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
-import com.stylefeng.guns.modular.system.dao.*;
+import com.stylefeng.guns.modular.system.dao.MemberAuthMapper;
+import com.stylefeng.guns.modular.system.dao.MemberMapper;
+import com.stylefeng.guns.modular.system.dao.StudentClassMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.*;
-import com.stylefeng.guns.util.DateUtil;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -218,7 +218,13 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
     public Member get(String userName) {
         if (null == userName)
             return null;
-        return selectOne(new EntityWrapper<Member>().eq("user_name", userName));
+
+        return selectOne(new EntityWrapper<Member>(){
+            {
+                eq("user_name", userName);
+                eq("status", GenericState.Valid.code);
+            }
+        });
     }
 
     @Override
