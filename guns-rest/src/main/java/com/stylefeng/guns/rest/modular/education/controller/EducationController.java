@@ -470,6 +470,7 @@ public class EducationController extends ApiController {
 
         Map<String, Object> changeClassQuery = new HashMap<String, Object>();
         changeClassQuery.put("classCycles", String.valueOf(currClass.getCycle()));
+        changeClassQuery.put("academicYear", currClass.getAcademicYear());
         changeClassQuery.put("grades", String.valueOf(currClass.getGrade()));
         changeClassQuery.put("abilities", String.valueOf(currClass.getAbility()));
         changeClassQuery.put("subjects", course.getSubject());

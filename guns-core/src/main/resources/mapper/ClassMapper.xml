@@ -235,6 +235,10 @@
                 and tc.begin_date > #{beginDate}
                 ]]>
             </if>
+            <!-- 学年 -->
+            <if test="null != academicYear">
+                and tc.academic_year = #{academicYear}
+            </if>
         </where>
     </sql>
 
