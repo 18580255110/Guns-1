@@ -1,15 +1,15 @@
 application:
   task:
-    adjust.enable: false
-    sms-sender.enable: false
+    adjust.enable: true
+    sms-sender.enable: true
     pay-mock.enable: false
-    order-recycle.enable: false
-    examine-auto-check.enable: false
-    import-class.enable: false
-    import-sign.enable: false
-    import-score.enable: false
+    order-recycle.enable: true
+    examine-auto-check.enable: true
+    import-class.enable: true
+    import-sign.enable: true
+    import-score.enable: true
     sign-prepare.enable: false
-    sign-privilege.enable: false
+    sign-privilege.enable: true
   adjust:
     auto:
       enable: true
@@ -99,7 +99,7 @@ spring:
   profiles: produce
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    jdbcUrl: jdbc:mysql://172.26.140.96:33009/kcdb?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false
+    jdbcUrl: jdbc:mysql://172.26.140.96:33009/kcdb?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
     username: kcapp
     password: h,M)Hww0,.rz
     db-name: kcdb #用来搜集数据库的所有表

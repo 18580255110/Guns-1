@@ -15,7 +15,7 @@ cd ../guns-core
 call mvn clean source:jar install -Dmaven.test.skip=true
 cd %CURR_DIR%
 
-REM package api
+REM package task
 call mvn clean package -Dmaven.test.skip=true
 
 :Done
