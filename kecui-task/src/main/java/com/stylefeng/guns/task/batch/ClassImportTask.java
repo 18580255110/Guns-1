@@ -49,7 +49,7 @@ public class ClassImportTask extends ImportTaskSupport{
 
     @Scheduled(fixedDelay = 60000)
     public void handleClassImport(){
-        log.info("<<< Examine check begin ");
+        log.info("<<< Class import begin ");
         //
         Wrapper<BatchProcess> queryWrapper = new EntityWrapper<BatchProcess>();
         queryWrapper.eq("status", GenericState.Valid.code);

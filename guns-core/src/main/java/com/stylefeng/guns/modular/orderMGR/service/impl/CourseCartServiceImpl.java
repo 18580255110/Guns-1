@@ -233,8 +233,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             // 2019-09-30 调整逻辑
             //if (!skipTest && !zoneStudent && !hasPrivilege)
             //    classService.checkJoinState(classInfo, member, student);
-            if (!skipTest)
-                classService.checkJoinState(classInfo, type);
+            classService.checkJoinState(classInfo, type);
         }
 
         // 加入选课单
@@ -294,13 +293,21 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
     @Override
     public void doAutoPreSign(Class classInfo) {
 
-        Class sourceClass = classService.get(classInfo.getPresignSourceClassCode());
-
-        if (null == sourceClass)
+        if (null == classInfo || null == classInfo.getPresignSourceClassCode()) {
+            log.warn("Source class is null");
             return;
+        }
+        String sourceCode = classInfo.getPresignSourceClassCode();
+
+        Class sourceClass = classService.get(sourceCode);
+
+        if (null == sourceClass) {
+            log.warn("Source class is null");
+            return;
+        }
 
         Wrapper<StudentClass> queryWrapper = new EntityWrapper<StudentClass>();
-        queryWrapper.eq("class_code", sourceClass.getCode());
+        queryWrapper.eq("class_code", sourceCode);
         queryWrapper.eq("status", GenericState.Valid.code);
 
         List<StudentClass> signedList = studentClassService.selectList(queryWrapper);
@@ -312,6 +319,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             try {
                 // 使用新的报名接口 20190930
                 String courseCartCode = doJoin(member, student, classInfo, true, SignChannel.Admin, SignType.Inherit);
+
                 OrderItem orderItem = new OrderItem();
                 orderItem.setCourseCartCode(courseCartCode);
                 orderItem.setItemObject(OrderItemTypeEnum.Course.code);
@@ -321,9 +329,12 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
                 orderAddList.add(orderItem);
 
                 Map<String, Object> extendInfo = new HashMap<>();
+                extendInfo.put("orderDesc", "["+studentClass.getClassCode() + "]原班续报");
                 orderService.order(member, orderAddList, PayMethodEnum.weixin, extendInfo);
             }catch(Exception e){
                 log.error("报名失败, 学员-{}, 班级-{}, 用户-{} ", student.getCode(), classInfo.getCode(), member.getUserName());
+                student.setRemark("续报班级[" + classInfo.getCode() + "] 失败， 原因: " + e.getMessage());
+                studentService.updateById(student);
                 log.error(e.getMessage(), e);
             }
         }
@@ -335,7 +346,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
 
         CourseCart existSelected = selectOne(new EntityWrapper<CourseCart>()
-                .eq("code", courseCartCode)
+                        .eq("code", courseCartCode)
         );
 
         if (null == existSelected)

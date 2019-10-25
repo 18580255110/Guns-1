@@ -11,8 +11,10 @@ import com.stylefeng.guns.modular.education.service.IStudentClassService;
 import com.stylefeng.guns.modular.studentMGR.service.IStudentService;
 import com.stylefeng.guns.modular.system.dao.ScheduleStudentMapper;
 import com.stylefeng.guns.modular.system.dao.StudentMapper;
-import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
+import com.stylefeng.guns.modular.system.model.ScheduleStudent;
+import com.stylefeng.guns.modular.system.model.Student;
+import com.stylefeng.guns.modular.system.model.StudentClass;
 import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.PathUtil;
@@ -22,9 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.sql.*;
 import java.util.*;
-import java.util.Date;
 
 /**
  * <p>
@@ -142,7 +142,12 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
         if (null == code)
             return null;
 
-        return selectOne(new EntityWrapper<Student>().eq("code", code));
+        return selectOne(new EntityWrapper<Student>() {
+            {
+                eq("code", code);
+                eq("status", GenericState.Valid.code);
+            }
+        });
     }
 
     @Override
