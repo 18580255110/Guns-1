@@ -195,7 +195,10 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
                 if(ClassExaminableEnum.NO.equals(ClassExaminableEnum.instanceOf(classInfo.getExaminable()))){
                     // 班级不需要入学测试
                     hasPrivilege = true;
-                } else if (!skipTest){
+                } else if (skipTest){
+                    // 跨报
+                    hasPrivilege = true;
+                } else {
                     // 检查是否没有做入学测试
                     // 入学测试校验
                     // 正常情况下不会出现没有权限但是测试达标的数据， 因为入学测试需要弹出提示让用户做题，所以保留
@@ -230,7 +233,8 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             // 2019-09-30 调整逻辑
             //if (!skipTest && !zoneStudent && !hasPrivilege)
             //    classService.checkJoinState(classInfo, member, student);
-            classService.checkJoinState(classInfo, type);
+            if (!skipTest)
+                classService.checkJoinState(classInfo, type);
         }
 
         // 加入选课单

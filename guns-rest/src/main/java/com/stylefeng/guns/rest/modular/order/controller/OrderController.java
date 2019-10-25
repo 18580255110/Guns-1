@@ -95,7 +95,7 @@ public class OrderController extends ApiController {
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
 
         if (null == from)
-            from = 1; // 正常下单
+            from = 11; // 正常下单
 
         Student existStudent = findStudent(member.getUserName(), student);
 
@@ -107,7 +107,7 @@ public class OrderController extends ApiController {
         if (null == classInfo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"班级 <" + classCode + ">"});
 
-        courseCartService.doJoin(member, existStudent, classInfo, 2 == from ? true : false, SignChannel.App, SignType.Normal);
+        courseCartService.doJoin(member, existStudent, classInfo, 13 == from ? true : false, SignChannel.App, SignType.Normal);
 
         return SimpleResponser.success();
     }
