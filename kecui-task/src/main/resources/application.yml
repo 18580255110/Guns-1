@@ -8,7 +8,7 @@ application:
     import-class.enable: true
     import-sign.enable: true
     import-score.enable: true
-    sign-prepare.enable: false
+    sign-prepare.enable: true
     sign-privilege.enable: true
   adjust:
     auto:
