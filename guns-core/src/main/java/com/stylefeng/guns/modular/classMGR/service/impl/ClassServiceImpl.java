@@ -402,8 +402,6 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     @Override
     public List<Class> queryListForCross(Map<String, Object> queryParams) {
         Map<String, Object> arguments = buildQueryArguments(queryParams);
-        // 跨报只能发生在跨报期间内的
-        arguments.put("crossDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
 
         List<Class> resultList = classMapper.queryForList(arguments);
 

@@ -3,6 +3,7 @@ package com.stylefeng.guns.modular.education.service.impl;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.stylefeng.guns.common.constant.factory.ConstantFactory;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
@@ -12,17 +13,15 @@ import com.stylefeng.guns.modular.education.service.IStudentClassService;
 import com.stylefeng.guns.modular.education.transfer.StudentClassInfo;
 import com.stylefeng.guns.modular.system.dao.StudentClassMapper;
 import com.stylefeng.guns.modular.system.model.Class;
-import com.stylefeng.guns.modular.system.model.Member;
 import com.stylefeng.guns.modular.system.model.Student;
 import com.stylefeng.guns.modular.system.model.StudentClass;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Description //TODO
@@ -79,11 +78,10 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
 
     @Override
     public List<Class> selectMemberHistorySignedClass(Student student, Map<String, Object> historyQueryMap) {
+        Map<String, Object> arguments = buildQueryArguments(historyQueryMap);
+        arguments.put("student", student.getCode());
 
-//        historyQueryMap.put("member", member.getUserName());
-        historyQueryMap.put("student", student.getCode());
-
-        return studentClassMapper.selectMemberSignedClass(historyQueryMap);
+        return studentClassMapper.selectMemberSignedClass(arguments);
     }
 
     @Override
@@ -135,5 +133,136 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
 
             scheduleStudentService.doReverse(studentClass.getStudentCode(), studentClass.getClassCode());
         }
+    }
+
+
+    private Map<String, Object> buildQueryArguments(Map<String, Object> queryParams) {
+        Iterator<String> queryKeyIter = queryParams.keySet().iterator();
+        Map<String, Object> arguments = new HashMap<String, Object>();
+
+        List<String> subjectList = new ArrayList<String>();
+        arguments.put("subjectList", subjectList);
+        List<Integer> cycleList = new ArrayList<Integer>();
+        arguments.put("cycleList", cycleList);
+        List<Integer> abilityList = new ArrayList<Integer>();
+        arguments.put("abilityList", abilityList);
+        List<Integer> methodList = new ArrayList<Integer>();
+        arguments.put("methodList", methodList);
+        List<Integer> weekList = new ArrayList<Integer>();
+        arguments.put("weekList", weekList);
+        List<Integer> gradeList = new ArrayList<Integer>();
+        arguments.put("gradeList", gradeList);
+        List<String> teacherList = new ArrayList<String>();
+        arguments.put("teacherList", teacherList);
+        List<String> payStateList = new ArrayList<String>();
+        arguments.put("payStateList", payStateList);
+
+        Map<String , Object> subjectMap = ConstantFactory.me().getdictsMap("subject_type");
+
+        while(queryKeyIter.hasNext()){
+            String key = queryKeyIter.next();
+            Object value = queryParams.get(key);
+
+            if (null == value)
+                continue;
+
+            if (String.class.equals(value.getClass())){
+                if (StringUtils.isEmpty((String) value))
+                    continue;
+            }
+            arguments.put(key, queryParams.get(key));
+
+            if ("subjects".equals(key)){
+                StringTokenizer tokenizer = new StringTokenizer((String)queryParams.get(key), ",");
+                while(tokenizer.hasMoreTokens()){
+                    String subject = tokenizer.nextToken();
+                    String subjectValue = subject;
+                    try {
+                        Integer.parseInt(subject);
+                    }catch(Exception e){
+                        subjectValue = String.valueOf(subjectMap.get(subject));
+                        try {
+                            Integer.parseInt(subjectValue);
+                        }catch(Exception ee){
+                            subjectValue = null;
+                        }
+                    }
+
+                    if (null != subjectValue)
+                        subjectList.add(subjectValue);
+                }
+                arguments.put("subjectList", subjectList);
+                arguments.remove(key);
+            }
+
+            if ("classCycles".equals(key)){
+                StringTokenizer tokenizer = new StringTokenizer((String)queryParams.get(key), ",");
+                while(tokenizer.hasMoreTokens()){
+                    try {
+                        cycleList.add(Integer.parseInt(tokenizer.nextToken()));
+                    }catch(Exception e){}
+                }
+                arguments.put("cycleList", cycleList);
+                arguments.remove(key);
+            }
+
+            if ("abilities".equals(key)){
+                StringTokenizer tokenizer = new StringTokenizer((String)queryParams.get(key), ",");
+                while(tokenizer.hasMoreTokens()){
+                    try {
+                        abilityList.add(Integer.parseInt(tokenizer.nextToken()));
+                    }catch(Exception e){}
+                }
+                arguments.put("abilityList", abilityList);
+                arguments.remove(key);
+            }
+
+            if ("methods".equals(key)){
+                StringTokenizer tokenizer = new StringTokenizer((String)queryParams.get(key), ",");
+                while(tokenizer.hasMoreTokens()){
+                    try {
+                        methodList.add(Integer.parseInt(tokenizer.nextToken()));
+                    }catch(Exception e){}
+                }
+                arguments.put("methodList", methodList);
+                arguments.remove(key);
+            }
+
+            if ("grades".equals(key)){
+                StringTokenizer tokenizer = new StringTokenizer((String)queryParams.get(key), ",");
+                while(tokenizer.hasMoreTokens()){
+                    try {
+                        gradeList.add(Integer.parseInt(tokenizer.nextToken()));
+                    }catch(Exception e){}
+                }
+                arguments.put("gradeList", gradeList);
+                arguments.remove(key);
+            }
+
+            if ("teachers".equals(key)){
+                StringTokenizer tokenizer = new StringTokenizer((String)queryParams.get(key), ",");
+                while(tokenizer.hasMoreTokens()){
+                    try {
+                        teacherList.add(tokenizer.nextToken());
+                    }catch(Exception e){}
+                }
+                arguments.put("teacherList", teacherList);
+                arguments.remove(key);
+            }
+
+
+            if ("payStates".equals(key)){
+                StringTokenizer tokenizer = new StringTokenizer((String)queryParams.get(key), ",");
+                while(tokenizer.hasMoreTokens()){
+                    try {
+                        payStateList.add(tokenizer.nextToken());
+                    }catch(Exception e){}
+                }
+                arguments.put("payStateList", payStateList);
+                arguments.remove(key);
+            }
+        }
+
+        return arguments;
     }
 }

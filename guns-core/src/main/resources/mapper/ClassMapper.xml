@@ -210,6 +210,11 @@
                 and tc.signable = #{signable}
             </if>
 
+            <!-- 是否开放跨报 -->
+            <if test="null != crossable">
+                and tc.crossable = #{crossable}
+            </if>
+
             <!-- 最小金额 -->
             <if test="null != minPrice">
                 and tc.price &gt;= #{minPrice}
@@ -224,7 +229,12 @@
             <if test="null != examinable">
                 and tc.examinable = #{examinable}
             </if>
-
+            <!-- 第一节课时间 -->
+            <if test="null != beginDate">
+                <![CDATA[
+                and tc.begin_date > #{beginDate}
+                ]]>
+            </if>
         </where>
     </sql>
 

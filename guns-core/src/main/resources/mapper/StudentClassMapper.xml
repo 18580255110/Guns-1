@@ -116,21 +116,32 @@
         (
         tb_student_class sc join tb_student s on sc.student_code = s.code and (sc.status = 1 or sc.status = 2)
         )
-        join (select * from tb_order where accept_no = sc.order_no) o on o.accept_no = sc.order_no
+        join tb_order o on o.accept_no = sc.order_no
         )
         join tb_class c on c.code = sc.class_code
         )
         <where>
-            <!-- 班级 -->
-            <if test="null != member">
-              and m.user_name = #{member}
-            </if>
             <!-- 学员 -->
             <if test="null != student">
                 and s.code = #{student}
             </if>
-            <if test="null != studyFinished">
-                and c.end_date &lt; date_format(now(), '%Y-%m-%d')
+            <if test="null != beginSignDate">
+                <![CDATA[
+                and o.accept_date >= #{beginSignDate}
+                ]]>
+            </if>
+            <if test="null != endSignDate">
+                <![CDATA[
+                and o.accept_date < #{endSignDate}
+                ]]>
+            </if>
+            <!-- 支付状态 -->
+            <if test="payStateList.size() > 0">
+                and (
+                <foreach collection="payStateList" item="payState" open="" separator=" or " close="">
+                    o.pay_status = #{payState}
+                </foreach>
+                )
             </if>
         </where>
     </select>
