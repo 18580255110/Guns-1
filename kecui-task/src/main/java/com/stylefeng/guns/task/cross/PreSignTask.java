@@ -35,9 +35,9 @@ public class PreSignTask {
     private ICourseCartService courseCartService;
 
     /**
-     * 每天凌晨1点执行
+     * 每天没1点执行
      */
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 0 1-22 * * ?")
     public void presign(){
         Wrapper<Class> queryWrapper = new EntityWrapper<Class>();
         Date now = new Date();
@@ -55,13 +55,13 @@ public class PreSignTask {
             log.info("班级{} 开始预报, 原班级 {}", classInfo.getCode(), classInfo.getPresignSourceClassCode());
             try {
                 courseCartService.doAutoPreSign(classInfo);
+
+                classInfo.setPresignStatus(GenericState.Valid.code);
+                classService.updateById(classInfo);
+                log.info("班级{}预报完毕", classInfo.getCode());
             }catch(Exception e){
                 log.error("班级{}预报失败", classInfo.getCode(), e);
             }
-
-            log.info("班级{}预报完毕", classInfo.getCode());
-            classInfo.setPresignStatus(GenericState.Valid.code);
-            classService.updateById(classInfo);
         }
     }
 }

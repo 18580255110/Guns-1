@@ -297,6 +297,12 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             log.warn("Source class is null");
             return;
         }
+
+        if (99 == classInfo.getCycle()) {
+            log.warn("Source class can not presign");
+            return;
+        }
+
         String sourceCode = classInfo.getPresignSourceClassCode();
 
         Class sourceClass = classService.get(sourceCode);
