@@ -48,6 +48,8 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
             put(4, 50); // 真题A
             put(11, 40); // 复习B
             put(10, 30); // 复习A
+            put(12, 0); // 活动
+            put(99, 0); // 其他
         }
     };
 

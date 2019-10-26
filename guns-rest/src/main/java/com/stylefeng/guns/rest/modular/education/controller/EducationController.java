@@ -728,6 +728,8 @@ public class EducationController extends ApiController {
 
         // 老用户可以享受优先报名资格
         Map<String, Object> crossClassQuery = new HashMap<String, Object>();
+        crossClassQuery.put("studentCode", student.getCode()); // 查询跨报必须要传
+        crossClassQuery.put("noSigned", true);
         crossClassQuery.put("signable", ClassSignableEnum.YES.code);
         crossClassQuery.put("crossable", ClassSignableEnum.YES.code);
         crossClassQuery.put("crossDate", DateUtil.format(new Date(), "yyyy-MM-dd"));

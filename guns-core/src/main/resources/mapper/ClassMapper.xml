@@ -239,6 +239,10 @@
             <if test="null != academicYear">
                 and tc.academic_year = #{academicYear}
             </if>
+            <!-- noSigned -->
+            <if test="null != noSigned">
+                and not EXISTS (select 1 from tb_student_class where class_code = tc.code and student_code = #{studentCode} and status = 1)
+            </if>
         </where>
     </sql>
 

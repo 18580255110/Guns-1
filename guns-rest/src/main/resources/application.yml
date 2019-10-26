@@ -14,6 +14,7 @@ application:
       app-name: 科萃教育
       app-secret: eae820aa9d2d01c79bd2432854417b3b
       device-id: kc00000001
+      create-host: 39.98.49.194
       order-url: https://api.mch.weixin.qq.com/pay/unifiedorder
       notify-url: http://api.kecui.com.cn/pay/weixin/notify
     union:
