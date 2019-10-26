@@ -158,7 +158,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
         }catch(Exception e){}
 
         Integer crossSignBeginTime = 9;
-        Integer crossSignEndTime = 18;
+        Integer crossSignEndTime = 22;
         try {
             crossSignBeginTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
                 {
