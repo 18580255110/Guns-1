@@ -30,10 +30,10 @@ import java.util.Map;
 public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMapper, StudentPrivilege> implements IStudentPrivilegeService {
     private static final Logger log = LoggerFactory.getLogger(ScheduleStudentServiceImpl.class);
 
-    private static final Integer[] SIX  = new Integer[]{9, 8, 6, 5, 3, 4, 11, 10};
-    private static final Integer[] FIVE  = new Integer[]{2, 1};
-    private static final Integer[] Four  = new Integer[]{2, 1};
-    private static final Integer[] Seven  = new Integer[]{9, 8, 7};
+    private static final Integer[] SIX  = new Integer[]{9, 8, 6, 5, 3, 4, 11, 10, 12, 99};
+    private static final Integer[] FIVE  = new Integer[]{2, 1, 12, 99};
+    private static final Integer[] Four  = new Integer[]{2, 1, 12, 99};
+    private static final Integer[] Seven  = new Integer[]{9, 8, 7, 12, 99};
 
     private static final Map<Integer, Integer> AbilityWeight = new HashMap<Integer, Integer>(){
         {
