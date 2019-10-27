@@ -6,17 +6,13 @@ import com.stylefeng.guns.modular.system.model.Dict;
 import com.stylefeng.guns.modular.system.service.IDictService;
 import com.stylefeng.guns.rest.core.Responser;
 import com.stylefeng.guns.rest.core.SimpleResponser;
-import com.stylefeng.guns.rest.modular.system.responser.AttachmentUploadResponse;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @Description //TODO
@@ -30,15 +26,19 @@ import java.util.List;
 public class UpdateController {
 
     private static final int default_version = 0;
+
     @Autowired
     private IDictService dictService;
+
+    @Value("${application.app.version.key:'app_version'}")
+    private String appVersionKey = "app_version";
 
     @RequestMapping(value = "/forcheck", method = RequestMethod.POST)
     @ApiOperation(value = "获取版本号", response = SimpleResponser.class)
     public Responser checkUpdator(){
 
         Wrapper<Dict> queryWrapper = new EntityWrapper<Dict>();
-        queryWrapper.eq("code", "app_version");
+        queryWrapper.eq("code", "app_version_test");
         Dict dict = dictService.selectOne(queryWrapper);
 
         int version = default_version;
