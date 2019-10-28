@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @Description //TODO
  * @Author 罗华
@@ -43,20 +45,25 @@ public class UpdateController {
         Wrapper<Dict> queryWrapper = new EntityWrapper<Dict>();
         queryWrapper.eq("code", appVersionKey);
         log.info("App version key = " + appVersionKey);
-        Dict dict = dictService.selectOne(queryWrapper);
+        List<Dict> dictList = dictService.selectByCode(appVersionKey);
 
         int version = default_version;
 
-        if (null != dict){
-            Wrapper<Dict> wrapper = new EntityWrapper<>();
-            wrapper = wrapper.eq("pid", dict.getId());
-            Dict versionDict = dictService.selectOne(wrapper);
-
-            if (null != versionDict)
-                try {
-                    version = Integer.parseInt(versionDict.getCode());
-                }catch(Exception e){}
+        if (null == dictList || dictList.isEmpty()){
+            SimpleResponser response = SimpleResponser.success();
+            response.setMessage(String.valueOf(version));
+            return response;
         }
+
+        Wrapper<Dict> wrapper = new EntityWrapper<>();
+        wrapper = wrapper.eq("pid", dictList.get(0).getId());
+        Dict versionDict = dictService.selectOne(wrapper);
+
+        if (null != versionDict)
+            try {
+                version = Integer.parseInt(versionDict.getCode());
+            }catch(Exception e){}
+
         SimpleResponser response = SimpleResponser.success();
         response.setMessage(String.valueOf(version));
         return response;
