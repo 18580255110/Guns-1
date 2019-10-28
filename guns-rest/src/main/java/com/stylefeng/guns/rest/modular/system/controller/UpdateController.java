@@ -38,7 +38,7 @@ public class UpdateController {
     public Responser checkUpdator(){
 
         Wrapper<Dict> queryWrapper = new EntityWrapper<Dict>();
-        queryWrapper.eq("code", "app_version_test");
+        queryWrapper.eq("code", appVersionKey);
         Dict dict = dictService.selectOne(queryWrapper);
 
         int version = default_version;
