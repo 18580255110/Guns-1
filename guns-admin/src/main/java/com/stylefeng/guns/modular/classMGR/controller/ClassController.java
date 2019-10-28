@@ -407,13 +407,14 @@ public class ClassController extends BaseController {
         Date endDate = DateUtils.addMonths(beginDate, 12);
 
         Map<String, Object> queryMap = new HashMap<String, Object>();
-        queryMap.put("beginDate", beginDate);
-        queryMap.put("endDate", endDate);
+//        queryMap.put("beginDate", beginDate);
+//        queryMap.put("endDate", endDate);
         queryMap.put("status", GenericState.Valid.code);
+        queryMap.put("classCode", classCode);
 
         List<ClassPlan> planList = scheduleClassService.selectPlanList(queryMap);
 
-        List<ClassPlan> classPlanList = new ArrayList<ClassPlan>();
+       /* List<ClassPlan> classPlanList = new ArrayList<ClassPlan>();
 
         if (null != classCode) {
             // 加载可以编辑的排班计划
@@ -425,10 +426,11 @@ public class ClassController extends BaseController {
                     planListIter.remove();
                 }
             }
-        }
+        }*/
 
         //classPlanInfo.put("allClassPlanList", planList);
-        classPlanInfo.put("classPlanList", classPlanList);
+//        classPlanInfo.put("classPlanList", classPlanList);
+        classPlanInfo.put("classPlanList", planList);
         return classPlanInfo;
     }
 
