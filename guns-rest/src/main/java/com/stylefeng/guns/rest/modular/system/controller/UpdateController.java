@@ -8,6 +8,8 @@ import com.stylefeng.guns.rest.core.Responser;
 import com.stylefeng.guns.rest.core.SimpleResponser;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/update")
 public class UpdateController {
+    private static final Logger log = LoggerFactory.getLogger(AttachmentController.class);
 
     private static final int default_version = 0;
 
@@ -39,6 +42,7 @@ public class UpdateController {
 
         Wrapper<Dict> queryWrapper = new EntityWrapper<Dict>();
         queryWrapper.eq("code", appVersionKey);
+        log.info("App version key = " + appVersionKey);
         Dict dict = dictService.selectOne(queryWrapper);
 
         int version = default_version;
