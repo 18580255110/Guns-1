@@ -37,7 +37,7 @@ public class PreSignTask {
     /**
      * 每天没1点执行
      */
-    @Scheduled(cron = "0 0 1-22 * * ?")
+    @Scheduled(cron = "0 0 10-18 * * ?")
     public void presign(){
         Wrapper<Class> queryWrapper = new EntityWrapper<Class>();
         Date now = new Date();
