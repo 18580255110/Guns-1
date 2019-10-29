@@ -320,7 +320,17 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
         for(StudentClass studentClass : signedList){
             Student student = studentService.get(studentClass.getStudentCode());
+
+            if (null == student) {
+                log.warn("Illegal student {}", studentClass.getStudentCode());
+                continue;
+            }
+
             Member member = memberService.get(student.getUserName());
+            if (null == member) {
+                log.warn("Illegal member {}", student.getUserName());
+                continue;
+            }
 
             try {
                 // 使用新的报名接口 20190930
