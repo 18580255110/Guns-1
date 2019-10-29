@@ -444,6 +444,12 @@ public class EducationController extends ApiController {
                 // 已结束的班级，过滤掉
                 continue;
             }
+
+            if (1 == classInfo.getCrossable() && now.before(classInfo.getCrossStartDate())){
+                // 跨报班级，未开始跨报
+                continue;
+            }
+
             int cmpResult = DateUtil.compareDate(now, classInfo.getSignStartDate(), Calendar.DAY_OF_MONTH);
             if ((cmpResult >= 0 && ClassSignableEnum.YES.code != classInfo.getSignable()) || cmpResult < 0){
                 // 班级还未开放报名
@@ -492,6 +498,12 @@ public class EducationController extends ApiController {
 
             if (classInfo.getCode().equals(currClass.getCode())){
                 // 过滤掉自己
+                continue;
+            }
+
+            Date now = new Date();
+            if (1 == classInfo.getCrossable() && now.before(classInfo.getCrossStartDate())){
+                // 跨报班级，未开始跨报
                 continue;
             }
 
