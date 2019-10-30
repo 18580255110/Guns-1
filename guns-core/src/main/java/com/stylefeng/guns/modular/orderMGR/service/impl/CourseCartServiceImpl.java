@@ -332,6 +332,16 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
                 continue;
             }
 
+            Map<String, Object> orderQueryMap = new HashMap<>();
+            orderQueryMap.put("student", student.getCode());
+            orderQueryMap.put("classCode", classInfo.getCode());
+            List<Map<String, Object>> orderList = orderService.queryForList(orderQueryMap);
+
+            if (orderList.size() > 0){
+                log.warn("Student <{}> is ordered!", student.getCode());
+                continue;
+            }
+
             try {
                 // 使用新的报名接口 20190930
                 String courseCartCode = doJoin(member, student, classInfo, true, SignChannel.Admin, SignType.Inherit);
