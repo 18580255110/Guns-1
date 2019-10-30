@@ -46,6 +46,7 @@ public class PreSignTask {
         queryWrapper.eq("crossable", GenericState.Valid.code);
         queryWrapper.eq("presign_status", GenericState.Invalid.code);
         queryWrapper.le("presign_start_date", DateUtil.format(now, "yyyy-MM-dd"));
+        queryWrapper.gt("presign_end_date", DateUtil.format(now, "yyyy-MM-dd"));
 
         List<Class> presignClassQueue = classService.selectList(queryWrapper);
 
