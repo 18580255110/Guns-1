@@ -236,6 +236,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             classService.checkJoinState(classInfo, type);
         }
 
+        extraParams.put("signType", type);
         // 加入选课单
         return select(member, student, classInfo, extraParams);
     }
@@ -397,7 +398,14 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         int spareCount = classService.queryOrderedCount(classInfo.getCode());
         log.info("class <{}> signed count = {}", classInfo.getCode(), spareCount);
 
-        if (classInfo.getQuato() <= spareCount){
+
+        SignType signType = SignType.Normal;
+
+        if (extraParams.containsKey("signType")){
+            signType = (SignType) extraParams.get("signType");
+        }
+        if (!(SignType.Inherit.equals(signType)) && classInfo.getQuato() <= spareCount){
+            // 非续报，且班级已经满员
             throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_CAPACITY);
         }
 
