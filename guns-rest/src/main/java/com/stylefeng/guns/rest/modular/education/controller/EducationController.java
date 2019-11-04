@@ -483,7 +483,15 @@ public class EducationController extends ApiController {
         changeClassQuery.put("signable", ClassSignableEnum.YES.code);
         changeClassQuery.put("forceSignEndDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
 
-        List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForChange(changeClassQuery);
+        Date now = new Date();
+        boolean crossChange = false; // 是否在跨报期间转班
+        if (1 == currClass.getCrossable() && null != currClass.getCrossStartDate() && null != currClass.getCrossStartDate()){
+            if (now.compareTo(currClass.getCrossStartDate()) >= 0 && now.compareTo(currClass.getCrossEndDate()) < 0){
+                crossChange = true;
+            }
+        }
+
+        List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForChange(changeClassQuery, crossChange);
 
         Set<Class> classSet = new HashSet<>();
         for (com.stylefeng.guns.modular.system.model.Class classInfo : classList){
@@ -501,7 +509,6 @@ public class EducationController extends ApiController {
                 continue;
             }
 
-            Date now = new Date();
             if (1 == classInfo.getCrossable() && now.before(classInfo.getCrossStartDate())){
                 // 跨报班级，未开始跨报
                 continue;
