@@ -52,7 +52,7 @@ public class ClassCrossListResponse extends SimpleResponser {
         return data;
     }
 
-    public void setData(Collection<ClassResponser> data) {
+    public void setData(Collection<Class> data) {
         for(Class classInfo : data){
             //
             this.data.add(ClassResponser.me(classInfo));
@@ -84,6 +84,7 @@ public class ClassCrossListResponse extends SimpleResponser {
         response.setMessage("查询成功");
 
         response.setSignList(classSignSet);
+        response.setData(classSignSet);
         response.setCurrentList(studentMap, classChangeSet);
         response.setChangeMapping(changeMapping);
         return response;
