@@ -246,7 +246,7 @@ public class OrderController extends ApiController {
                 Student currStudent = studentService.get(courseCart.getStudentCode());
 
                 String orgClassCode = classItem.getItemObjectCode();
-                //adjustStudentService.
+
                 Wrapper<StudentClass> studentClassWrapper = new EntityWrapper<StudentClass>();
                 studentClassWrapper.eq("student_code", currStudent.getCode());
                 List<StudentClass> studentClassList = studentClassService.selectList(studentClassWrapper);

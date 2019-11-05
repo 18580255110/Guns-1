@@ -686,7 +686,7 @@ public class EducationController extends ApiController {
             //跨报已结束
             Content content = contentService.get("CT00000000000003");
             String contentMsg = content.getContent().replaceAll("\\{endDate\\}", DateUtil.format(crossStartDate, "yyyy年MM月dd日"));
-            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{content.getContent()});
+            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{contentMsg});
         }
 
         Set<Class> classSignSet = new HashSet<>();

@@ -182,7 +182,7 @@
             <if test="null != crossChangeDate">
                 <![CDATA[
                 and (
-                  tc.crossable = 1 and tc.cross_start_date <= #{changeDate} and tc.cross_end_date >= #{changeDate} and tc.end_date > #{changeDate}
+                  tc.crossable = 1 and tc.cross_start_date <= #{crossChangeDate} and tc.cross_end_date >= #{crossChangeDate} and tc.end_date > #{crossChangeDate}
                 )
                 ]]>
             </if>
@@ -243,10 +243,6 @@
                 <![CDATA[
                 and tc.begin_date > #{beginDate}
                 ]]>
-            </if>
-            <!-- 学年 -->
-            <if test="null != academicYear">
-                and tc.academic_year = #{academicYear}
             </if>
             <!-- noSigned -->
             <if test="null != noSigned">
