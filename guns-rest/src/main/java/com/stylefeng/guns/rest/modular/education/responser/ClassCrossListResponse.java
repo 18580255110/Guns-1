@@ -21,6 +21,8 @@ public class ClassCrossListResponse extends SimpleResponser {
     private Collection<ClassResponser> currentList = new ArrayList<ClassResponser>();
     @ApiModelProperty(name = "signList", value = "报名班级集合")
     private Collection<ClassResponser> signList = new ArrayList<ClassResponser>();
+    @ApiModelProperty(name = "data", value = "班级集合")
+    private Collection<ClassResponser> data = new ArrayList<ClassResponser>();
     @ApiModelProperty(name = "changeMapping", value = "可转班级集合")
     private Map<String, Collection<ClassResponser>> changeMapping = new HashMap<String, Collection<ClassResponser>>();
 
@@ -43,6 +45,17 @@ public class ClassCrossListResponse extends SimpleResponser {
     public void setSignList(Collection<Class> signList) {
         for(Class signClassInfo : signList){
             this.signList.add(ClassResponser.me(signClassInfo));
+        }
+    }
+
+    public Collection<ClassResponser> getData() {
+        return data;
+    }
+
+    public void setData(Collection<ClassResponser> data) {
+        for(Class classInfo : data){
+            //
+            this.data.add(ClassResponser.me(classInfo));
         }
     }
 
