@@ -514,6 +514,14 @@ public class EducationController extends ApiController {
                 continue;
             }
 
+            if (crossChange){
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(now);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                if (hour < 10)
+                    continue; // 跨报班级，必须在10点后转班
+            }
+
             // 查询班级剩余报名额度
             int existCount = classService.queryOrderedCount(classInfo.getCode());
 
@@ -628,8 +636,15 @@ public class EducationController extends ApiController {
 
         Student student = studentService.get(requester.getStudent());
 
+        if (null == student) {
+            List<Student> studentList = studentService.listStudents(member.getUserName());
+            if (null != studentList && studentList.size() > 0){
+                student = studentList.get(0);
+            }
+        }
+
         if (null == student || GenericState.Valid.code != student.getStatus())
-            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND);
+            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"学员"});
 
         Date now = new Date();
 

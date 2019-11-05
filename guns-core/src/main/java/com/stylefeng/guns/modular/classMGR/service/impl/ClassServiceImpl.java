@@ -158,7 +158,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
         }catch(Exception e){}
 
         Integer crossSignBeginTime = 10;
-        Integer crossSignEndTime = 22;
+        Integer crossSignEndTime = 23;
         try {
             crossSignBeginTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
                 {
@@ -394,7 +394,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
         if (crossChange){
             arguments.put("crossChangeDate", new Date());
         }else {
-            // 转班只能发生在跨报之后，结课之前
+            // 普通转班只能发生在跨报之后，结课之前
             arguments.put("changeDate", new Date());
         }
         List<Class> resultList = classMapper.queryForList(arguments);
