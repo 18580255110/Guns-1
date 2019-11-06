@@ -405,6 +405,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     @Override
     public List<Class> queryListForCross(Map<String, Object> queryParams) {
         Map<String, Object> arguments = buildQueryArguments(queryParams);
+        arguments.put("status", GenericState.Valid.code);
 
         List<Class> resultList = classMapper.queryForList(arguments);
 
