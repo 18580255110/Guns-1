@@ -648,7 +648,7 @@ public class EducationController extends ApiController {
         Map<String, Collection<Class>> mapping = new HashMap<String, Collection<Class>>();
         Map<String, String> studentMapping = new HashMap<String, String>();
 
-        if (null == requester.getStudent()){
+        if (null == requester.getStudent() || requester.getStudent().length() == 0){
             List<Student> studentList = studentService.listStudents(member.getUserName());
             for(Student student : studentList){
                 try {
