@@ -903,6 +903,7 @@ public class EducationController extends ApiController {
         crossClassQuery.put("noSigned", true);
         crossClassQuery.put("signable", ClassSignableEnum.YES.code);
         crossClassQuery.put("crossable", ClassSignableEnum.YES.code);
+        crossClassQuery.put("grades", student.getGrade().toString());
         crossClassQuery.put("crossDate", DateUtil.format(new Date(), "yyyy-MM-dd"));
 
         StringBuilder subjectBuilder = new StringBuilder();
