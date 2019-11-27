@@ -145,6 +145,7 @@ $(function() {
             $('#crossEndDate').parents('.form-group').hide();
         }
     });
+    debugger;
     // 初始化
     var crossable = parseInt($('#crossableValue').val(), 10);
 
