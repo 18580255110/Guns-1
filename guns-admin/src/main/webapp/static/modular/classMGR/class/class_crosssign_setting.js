@@ -145,7 +145,6 @@ $(function() {
             $('#crossEndDate').parents('.form-group').hide();
         }
     });
-    debugger;
     // 初始化
     var crossable = parseInt($('#crossableValue').val(), 10);
 
@@ -155,7 +154,8 @@ $(function() {
     if (crossable > 0){
         $('#crossStartDate').parents('.form-group').show();
         $('#crossEndDate').parents('.form-group').show();
-        $(':radio[name="crossable"][value="1"]').attr('checked', true);
+
+        $(':radio[value="1"]').prop('checked', true);
     }
     //日期控件初始化
     laydate.render({elem: '#crossStartDate', min: today});
