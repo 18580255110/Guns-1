@@ -494,7 +494,7 @@ public class EducationController extends ApiController {
 
         Date now = new Date();
         boolean crossChange = false; // 是否在跨报期间转班
-        if (1 == currClass.getCrossable() && null != currClass.getCrossStartDate() && null != currClass.getCrossStartDate()){
+        if (1 == currClass.getCrossable() && null != currClass.getCrossStartDate() && null != currClass.getCrossEndDate()){
             if (now.compareTo(currClass.getCrossStartDate()) >= 0 && now.compareTo(currClass.getCrossEndDate()) < 0){
                 crossChange = true;
             }
@@ -518,9 +518,18 @@ public class EducationController extends ApiController {
                 continue;
             }
 
-            if (1 == classInfo.getCrossable() && now.before(classInfo.getCrossStartDate())){
-                // 跨报班级，未开始跨报
-                continue;
+            if (1 == classInfo.getCrossable()){
+
+                if (now.before(classInfo.getCrossStartDate()))
+                    // 跨报班级，未开始跨报
+                    continue;
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(now);
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                if (hour < 10)
+                    continue; // 跨报班级，必须在10点后转班
+
             }
 
             if (crossChange){
@@ -814,32 +823,74 @@ public class EducationController extends ApiController {
         List<Class> classInfoList = classService.queryListForCross(crossQueryParams);
         Date crossStartDate = null;
         Date crossEndDate = null;
+
+        Set<CrossWindow> crossWindowSet = new HashSet<>();
         for(Class classInfo : classInfoList){
-            if (null == crossStartDate){
-                crossStartDate = classInfo.getCrossStartDate();
+
+            crossWindowSet.add(new CrossWindow(classInfo.getCrossStartDate(), classInfo.getCrossEndDate()));
+//
+//            if (null == crossStartDate){
+//                crossStartDate = classInfo.getCrossStartDate();
+//            }
+//
+//            if (null == crossEndDate) {
+//                crossEndDate = classInfo.getCrossEndDate();
+//            }
+//
+//            if (null!= crossStartDate && crossStartDate.compareTo(classInfo.getCrossStartDate()) == 0){
+//                continue;
+//            }
+//
+//            if (null!= crossStartDate && crossStartDate.after(classInfo.getCrossStartDate())){
+//                crossStartDate = classInfo.getCrossStartDate();
+//            }
+//
+//            if (null != crossEndDate && crossEndDate.before(classInfo.getCrossEndDate())){
+//                crossEndDate = classInfo.getCrossEndDate();
+//            }
+        }
+
+        boolean notBegin = true;
+        boolean isFinish = true;
+
+        for(CrossWindow crossWindow : crossWindowSet){
+            log.info("Cross sign begin date = {}, end date = {}", crossStartDate, crossEndDate);
+
+            if (now.before(crossWindow.getBeginDate())) {
+                if (!notBegin) {
+                    notBegin = true;
+                    crossStartDate = crossWindow.getBeginDate();
+                }
+                continue; // 属于没有开始的
+            }else if (null != crossStartDate && now.before(crossStartDate)){
+                if (crossStartDate.after(crossWindow.getBeginDate()))
+                    crossStartDate = crossWindow.getBeginDate();
+
+                continue;
             }
-            if (null == crossEndDate) {
-                crossEndDate = classInfo.getCrossEndDate();
+            crossStartDate = crossWindow.getBeginDate();
+            notBegin = false;
+
+            crossEndDate = crossWindow.getEndDate();
+            if (now.after(crossWindow.getEndDate())){
+                continue;
             }
 
-            if (null!= crossStartDate && crossStartDate.after(classInfo.getCrossStartDate())){
-                crossStartDate = classInfo.getCrossStartDate();
-            }
-
-            if (null != crossEndDate && crossEndDate.before(classInfo.getCrossEndDate())){
-                crossEndDate = classInfo.getCrossEndDate();
-            }
+            isFinish = false;
+            break;
         }
 
         log.info("Cross sign begin date = {}, end date = {}", crossStartDate, crossEndDate);
-        if (now.before(crossStartDate)){
+//        if (now.before(crossStartDate)){
+        if (notBegin){
             // 跨报未开始
             Content content = contentService.get("CT00000000000002");
             String contentMsg = content.getContent().replaceAll("\\{beginDate\\}", DateUtil.format(crossStartDate, "yyyy年MM月dd日"));
             throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{contentMsg});
         }
 
-        if (now.after(crossEndDate)){
+//        if (now.after(crossEndDate)){
+        if (isFinish){
             //跨报已结束
             Content content = contentService.get("CT00000000000003");
             String contentMsg = content.getContent().replaceAll("\\{endDate\\}", DateUtil.format(crossStartDate, "yyyy年MM月dd日"));
@@ -942,7 +993,7 @@ public class EducationController extends ApiController {
         return classSet;
     }
 
-    private Collection<Class> listClass4CrossWithChange(String classCode) {
+    private Collection<Class> listClass4CrossWithChange (String classCode){
 
         Class currClass = classService.get(classCode);
         Course course = courseService.get(currClass.getCourseCode());
@@ -1001,7 +1052,7 @@ public class EducationController extends ApiController {
         fromData.put("outlineCode", requester.getOutlineCode());
 
         Map<String, Object> destData = new HashMap<>();
-        destData.put("targetClass", targetClass);
+            destData.put("targetClass", targetClass);
 
         adjustStudentService.adjustCourse(member, student, fromData, destData);
 
@@ -1031,13 +1082,13 @@ public class EducationController extends ApiController {
         fromData.put("sourceClass", sourceClass);
 
         Map<String, Object> destData = new HashMap<>();
-        destData.put("targetClass", targetClass);
+            destData.put("targetClass", targetClass);
 
         AdjustStudent adjustApply = adjustStudentService.adjustClass(member, student, fromData, destData);
 
-        Administrator administrator = new Administrator();
+            Administrator administrator = new Administrator();
         administrator.setAccount("1");
-        administrator.setId(1);
+            administrator.setId(1);
         administrator.setName("科萃教育");
         adjustStudentService.setAdministrator(administrator);
 
