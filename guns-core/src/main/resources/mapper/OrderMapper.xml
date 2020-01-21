@@ -29,6 +29,10 @@
 
     <sql id="Where_Statement">
         <where>
+            <if test="null != classCode">
+                and oi.item_object_code = #{classCode}
+            </if>
+
             <if test="null != orderNo">
                 and o.accept_no = #{orderNo}
             </if>

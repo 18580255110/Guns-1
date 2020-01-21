@@ -157,8 +157,8 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
             }).getCode());
         }catch(Exception e){}
 
-        Integer crossSignBeginTime = 9;
-        Integer crossSignEndTime = 22;
+        Integer crossSignBeginTime = 10;
+        Integer crossSignEndTime = 23;
         try {
             crossSignBeginTime = Integer.parseInt(dictService.selectOne(new EntityWrapper<Dict>() {
                 {
@@ -389,11 +389,14 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     }
 
     @Override
-    public List<Class> queryListForChange(Map<String, Object> queryParams) {
+    public List<Class> queryListForChange(Map<String, Object> queryParams, boolean crossChange) {
         Map<String, Object> arguments = buildQueryArguments(queryParams);
-        // 转班只能发生在跨报之后，结课之前
-        arguments.put("changeDate", new Date());
-
+        if (crossChange){
+            arguments.put("crossChangeDate", new Date());
+        }else {
+            // 普通转班只能发生在跨报之后，结课之前
+            arguments.put("changeDate", new Date());
+        }
         List<Class> resultList = classMapper.queryForList(arguments);
 
         return resultList;
@@ -402,6 +405,7 @@ public class ClassServiceImpl extends ServiceImpl<ClassMapper, Class> implements
     @Override
     public List<Class> queryListForCross(Map<String, Object> queryParams) {
         Map<String, Object> arguments = buildQueryArguments(queryParams);
+        arguments.put("status", GenericState.Valid.code);
 
         List<Class> resultList = classMapper.queryForList(arguments);
 

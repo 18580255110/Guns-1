@@ -154,7 +154,8 @@ $(function() {
     if (crossable > 0){
         $('#crossStartDate').parents('.form-group').show();
         $('#crossEndDate').parents('.form-group').show();
-        $(':radio[name="crossable"][value="1"]').attr('checked', true);
+
+        $(':radio[value="1"]').prop('checked', true);
     }
     //日期控件初始化
     laydate.render({elem: '#crossStartDate', min: today});

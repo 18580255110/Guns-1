@@ -178,6 +178,15 @@
                 ]]>
             </if>
 
+            <!-- 跨报转班时间 -->
+            <if test="null != crossChangeDate">
+                <![CDATA[
+                and (
+                  tc.crossable = 1 and tc.cross_start_date <= #{crossChangeDate} and tc.cross_end_date >= #{crossChangeDate} and tc.end_date > #{crossChangeDate}
+                )
+                ]]>
+            </if>
+
             <!-- 转班时间 -->
             <if test="null != changeDate">
                 <![CDATA[
@@ -234,10 +243,6 @@
                 <![CDATA[
                 and tc.begin_date > #{beginDate}
                 ]]>
-            </if>
-            <!-- 学年 -->
-            <if test="null != academicYear">
-                and tc.academic_year = #{academicYear}
             </if>
             <!-- noSigned -->
             <if test="null != noSigned">

@@ -137,9 +137,10 @@ public interface IClassService extends IService<Class> {
      * 查询可转入班级列表
      *
      * @param changeClassQuery
+     * @param crossChange
      * @return
      */
-    List<Class> queryListForChange( Map<String, Object> changeClassQuery );
+    List<Class> queryListForChange(Map<String, Object> changeClassQuery, boolean crossChange);
 
     /**
      *

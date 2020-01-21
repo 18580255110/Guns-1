@@ -155,7 +155,9 @@ public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> impl
         if (null == userName)
             return new ArrayList<Student>();
 
-        return selectList(new EntityWrapper<Student>().eq("user_name", userName).eq("status", GenericState.Valid.code));
+        List<String> columns = new ArrayList<>();
+        columns.add("sort");
+        return selectList(new EntityWrapper<Student>().eq("user_name", userName).eq("status", GenericState.Valid.code).orderDesc(columns));
     }
 
     @Override

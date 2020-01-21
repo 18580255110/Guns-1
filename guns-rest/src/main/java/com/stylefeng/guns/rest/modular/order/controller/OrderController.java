@@ -2,6 +2,7 @@ package com.stylefeng.guns.rest.modular.order.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.stylefeng.guns.common.constant.Const;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
@@ -29,6 +30,7 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +48,8 @@ import java.util.*;
 @Validated
 public class OrderController extends ApiController {
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
+    @Value("${application.app.version:2.0.0}")
+    private String appVersion;
 
     @Autowired
     private ICourseCartService courseCartService;
@@ -107,6 +111,21 @@ public class OrderController extends ApiController {
         if (null == classInfo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"班级 <" + classCode + ">"});
 
+        /**
+         * 适应老版本APP跨报
+         */
+        if (!(Const.APP_VERSION.equals(appVersion))) {
+            log.info("### old app version");
+            Date now = new Date();
+            if (1 == classInfo.getCrossable() && null != classInfo.getCrossStartDate() && null != classInfo.getCrossStartDate()) {
+                if (now.compareTo(classInfo.getCrossStartDate()) >= 0 && now.compareTo(classInfo.getCrossEndDate()) < 0) {
+                    from = 13; // 处于跨报期间
+                    log.info(" ### class {} is cross duration! ", classInfo.getCode());
+                }
+            }
+        }
+        log.info("### from = {}", from);
+
         courseCartService.doJoin(member, existStudent, classInfo, 13 == from ? true : false, SignChannel.App, 13 == from ? SignType.Cross : SignType.Normal);
 
         return SimpleResponser.success();
@@ -125,7 +144,7 @@ public class OrderController extends ApiController {
             String classCode,
             @RequestParam(name = "student", required = false)
             String student,
-            @RequestParam(name = "courseCartCode", required = true)
+            @RequestParam(name = "courseCartCode", required = false)
             String courseCartCode
             ){
 
@@ -144,9 +163,12 @@ public class OrderController extends ApiController {
         if (null == classInfo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"选课信息"});
 
-        //courseCartService.remove(member, existStudent, classInfo);
-        courseCartService.remove(courseCartCode);
-
+        if (!(Const.APP_VERSION.equals(appVersion))) {
+            log.info("### old app version");
+            courseCartService.remove(member, existStudent, classInfo);
+        }else {
+            courseCartService.remove(courseCartCode);
+        }
         return SimpleResponser.success();
     }
 
@@ -246,7 +268,7 @@ public class OrderController extends ApiController {
                 Student currStudent = studentService.get(courseCart.getStudentCode());
 
                 String orgClassCode = classItem.getItemObjectCode();
-                //adjustStudentService.
+
                 Wrapper<StudentClass> studentClassWrapper = new EntityWrapper<StudentClass>();
                 studentClassWrapper.eq("student_code", currStudent.getCode());
                 List<StudentClass> studentClassList = studentClassService.selectList(studentClassWrapper);

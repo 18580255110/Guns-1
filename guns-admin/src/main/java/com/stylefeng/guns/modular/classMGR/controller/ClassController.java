@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.google.common.reflect.ClassPath;
-import com.stylefeng.guns.common.constant.factory.PageFactory;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.base.controller.BaseController;
@@ -21,8 +19,6 @@ import com.stylefeng.guns.modular.courseMGR.warpper.CourseWrapper;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.ClassSignableEnum;
-import com.stylefeng.guns.modular.system.model.Classroom;
-import com.stylefeng.guns.modular.system.model.CourseOutline;
 import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -72,7 +68,7 @@ public class ClassController extends BaseController {
      */
     @RequestMapping("/class_add")
     public String classAdd(Model model) {
-        Date now = new Date();
+        Date now = DateUtils.addYears(new Date(), -1);
         List<String> academicYearList = new ArrayList<>();
         for(int i = 0 ; i < 3; i++){
             academicYearList.add(DateUtil.getYear(DateUtils.truncate(now, Calendar.YEAR)));

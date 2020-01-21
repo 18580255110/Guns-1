@@ -146,7 +146,20 @@ SettingWizard.close = function() {
  * 查询课程管理列表
  */
 SettingWizard.classSearch = function () {
-    $('#sourceClassCode').val(''); // 需要重新选择
+    //$('#sourceClassCode').val(''); // 需要重新选择
+
+    var queryData = {};
+    queryData['grades'] = $("#grade").val();
+    queryData['subjects'] = $("#subject").val();
+    queryData['abilities'] = $("#ability").val();
+    queryData['classCycles'] = $("#cycle").val();
+    queryData['teacherQueryString'] = $("#teacherQueryString").val();
+
+    queryData['offset'] = 0;
+    queryData['status'] = 1;
+    // queryData['pageNumber'] = 1;
+    //SettingWizard.Wizard.queryParams = queryData;
+    SettingWizard.Wizard.presignClassTable.table.refresh({query: queryData});
 };
 
 $(function () {

@@ -236,6 +236,7 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
             classService.checkJoinState(classInfo, type);
         }
 
+        extraParams.put("signType", type);
         // 加入选课单
         return select(member, student, classInfo, extraParams);
     }
@@ -320,11 +321,39 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
         for(StudentClass studentClass : signedList){
             Student student = studentService.get(studentClass.getStudentCode());
+
+            if (null == student) {
+                log.warn("Illegal student {}", studentClass.getStudentCode());
+                continue;
+            }
+
             Member member = memberService.get(student.getUserName());
+            if (null == member) {
+                log.warn("Illegal member {}", student.getUserName());
+                continue;
+            }
+
+            Map<String, Object> orderQueryMap = new HashMap<>();
+            orderQueryMap.put("student", student.getCode());
+            orderQueryMap.put("classCode", classInfo.getCode());
+            List<Integer> stateList = new ArrayList<>();
+            stateList.add(OrderStateEnum.PreCreate.code);
+            stateList.add(OrderStateEnum.Valid.code);
+            stateList.add(OrderStateEnum.Reverse.code);
+            stateList.add(OrderStateEnum.InValid.code);
+            orderQueryMap.put("stateList", stateList);
+            List<Map<String, Object>> orderList = orderService.queryForList(orderQueryMap);
+
+            if (orderList.size() > 0){
+                log.warn("Student <{}> is ordered!", student.getCode());
+                continue;
+            }
 
             try {
                 // 使用新的报名接口 20190930
                 String courseCartCode = doJoin(member, student, classInfo, true, SignChannel.Admin, SignType.Inherit);
+
+                log.info("order generate start ...");
 
                 OrderItem orderItem = new OrderItem();
                 orderItem.setCourseCartCode(courseCartCode);
@@ -364,9 +393,19 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
 
     private String select(Member member, Student student, Class classInfo, Map<String, Object> extraParams) {
 
+        log.info("select class start...");
         // 查询班级剩余报名额度
         int spareCount = classService.queryOrderedCount(classInfo.getCode());
-        if (classInfo.getQuato() <= spareCount){
+        log.info("class <{}> signed count = {}", classInfo.getCode(), spareCount);
+
+
+        SignType signType = SignType.Normal;
+
+        if (extraParams.containsKey("signType")){
+            signType = (SignType) extraParams.get("signType");
+        }
+        if (!(SignType.Inherit.equals(signType)) && classInfo.getQuato() <= spareCount){
+            // 非续报，且班级已经满员
             throw new ServiceException(MessageConstant.MessageCode.ORDER_NO_CAPACITY);
         }
 

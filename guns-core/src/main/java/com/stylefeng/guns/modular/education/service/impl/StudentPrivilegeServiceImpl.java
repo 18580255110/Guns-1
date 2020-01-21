@@ -30,24 +30,43 @@ import java.util.Map;
 public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMapper, StudentPrivilege> implements IStudentPrivilegeService {
     private static final Logger log = LoggerFactory.getLogger(ScheduleStudentServiceImpl.class);
 
-    private static final Integer[] SIX  = new Integer[]{9, 8, 6, 5, 3, 4, 11, 10, 12, 99};
-    private static final Integer[] FIVE  = new Integer[]{2, 1, 12, 99};
-    private static final Integer[] Four  = new Integer[]{2, 1, 12, 99};
-    private static final Integer[] Seven  = new Integer[]{9, 8, 7, 12, 99};
+//    private static final Integer[] SIX  = new Integer[]{9, 8, 7, 6, 5, 3, 4, 11, 10, 12, 99};
+//    private static final Integer[] FIVE  = new Integer[]{2, 1, 12, 99};
+//    private static final Integer[] Four  = new Integer[]{2, 1, 12, 99};
+//    private static final Integer[] Seven  = new Integer[]{9, 8, 7, 12, 99};
+
+    private static final Integer[] SIX  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 99};
+    private static final Integer[] FIVE  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 99};
+    private static final Integer[] Four  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 99};
+    private static final Integer[] Seven  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 99};
 
     private static final Map<Integer, Integer> AbilityWeight = new HashMap<Integer, Integer>(){
         {
-            put(2, 90); // 尖子
+//            put(2, 90); // 尖子
+//            put(9, 90); // 尖端
+//            put(8, 80); // 实验
+//            put(6, 80); // 真题C
+//            put(1, 80); // 提高
+//            put(7, 70); // 同步
+//            put(5, 60); // 真题B
+//            put(3, 60); // 真题
+//            put(4, 50); // 真题A
+//            put(11, 40); // 复习B
+//            put(10, 30); // 复习A
+//            put(12, 0); // 活动
+//            put(99, 0); // 其他
+
             put(9, 90); // 尖端
             put(8, 80); // 实验
             put(6, 80); // 真题C
-            put(1, 80); // 提高
-            put(7, 70); // 同步
-            put(5, 60); // 真题B
-            put(3, 60); // 真题
-            put(4, 50); // 真题A
-            put(11, 40); // 复习B
-            put(10, 30); // 复习A
+            put(5, 70); // 真题B
+            put(3, 70); // 真题
+            put(2, 70); // 尖子
+            put(4, 60); // 真题A
+            put(7, 60); // 同步
+            put(11, 50); // 复习B
+            put(1, 50); // 提高
+            put(10, 40); // 复习A
             put(12, 0); // 活动
             put(99, 0); // 其他
         }

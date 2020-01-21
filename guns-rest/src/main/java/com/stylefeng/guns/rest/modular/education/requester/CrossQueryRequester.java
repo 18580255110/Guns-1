@@ -4,8 +4,6 @@ import com.stylefeng.guns.rest.core.SimpleRequester;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.NotBlank;
-
 /**
  * @Description //TODO
  * @Author 罗华
@@ -16,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 public class CrossQueryRequester extends SimpleRequester {
 
     @ApiModelProperty(name = "student", value = "学员编码", required = true, position = 0, example = "XY181220000001")
-    @NotBlank(message = "学员编码不能为空")
     private String student;
 
     public String getStudent() {

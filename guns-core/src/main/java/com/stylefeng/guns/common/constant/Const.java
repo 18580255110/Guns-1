@@ -33,4 +33,9 @@ public interface Const {
      */
     String API_MENU_NAME = "接口文档";
 
+    /**
+     * 适应APP版本
+     */
+    String APP_VERSION = "2.0.0";
+
 }
