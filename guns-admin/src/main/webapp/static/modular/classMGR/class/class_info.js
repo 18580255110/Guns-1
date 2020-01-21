@@ -175,6 +175,7 @@ ClassInfoDlg.collectData = function() {
         .set('studyTimeDesp');
 
     this.classInfoData['price'] = submitPrice;
+    this.classInfoData['teacher'] = $('#teacherCode option:selected').text().trim();
 }
 
 /**

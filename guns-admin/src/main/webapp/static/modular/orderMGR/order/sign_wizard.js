@@ -228,6 +228,10 @@ SignWizard.collectData = function() {
 SignWizard.close = function() {
     parent.layer.close(window.parent.Sign.layerIndex);
 };
+/**
+ * 防重复提交
+ */
+var isChecked = false;
 
 $(function () {
     console.log('<<< init result');
@@ -284,8 +288,18 @@ $(function () {
 
             SignWizard.clearData();
             SignWizard.collectData();
-
-            var operation = function(){
+            if(!isChecked){
+                var ajax = new $ax(SignWizard.Wizard.postUrl['order'], function(data){
+                    Feng.success("保存成功!");
+                    SignWizard.close();
+                },function(data){
+                    Feng.error("保存失败!" + data.responseJSON.message + "!");
+                });
+                ajax.setContentType("application/json");
+                ajax.setData(JSON.stringify(SignWizard.Wizard.postData));
+                ajax.start();
+            }
+    /*        var operation = function(){
                 console.log(SignWizard.Wizard.postData);
                 //提交信息
                 var ajax = new $ax(SignWizard.Wizard.postUrl['order'], function(data){
@@ -298,8 +312,13 @@ $(function () {
                 ajax.setData(JSON.stringify(SignWizard.Wizard.postData));
                 ajax.start();
             };
+            if(!isChecked){
+                Feng.confirm("请核对报名信息" ,operation);
+                parent.layer.close(index);
+            }*/
 
-            Feng.confirm("请核对报名信息" ,operation);
+            isChecked = true;
+            setTimeout(function () {isChecked = false;},2000)  // 2秒后自动释放
         }
     });
 

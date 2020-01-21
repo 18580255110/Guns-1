@@ -62,6 +62,29 @@ StudentSign.export = function () {
     ajax.start();
 };
 /**
+ * 退费导出订单
+ */
+StudentSign.cancelExport = function () {
+    var ajax = new $ax(Feng.ctxPath + "/statistic/student/sign/export", function (data) {
+        //Feng.success("导出成功!");
+        window.location.href = encodeURI(data.message);
+    }, function (data) {
+        Feng.error("导出失败!" + data.responseJSON.message + "!");
+    });
+
+    var queryData = {};
+    queryData['teacher'] = $("#teacher").val();
+    queryData['student'] = $("#student").val();
+    queryData['subject'] = $("#subject").val();
+    queryData['ability'] = $("#ability").val();
+    queryData['cycle'] = $("#cycle").val();
+    queryData['grade'] = $("#grade").val();
+    queryData['classInfo'] = $("#classInfo").val();
+    queryData['orderStatus'] = 2;
+    ajax.setData(queryData);
+    ajax.start();
+};
+/**
  * 退费
  */
 StudentSign.cancel = function () {

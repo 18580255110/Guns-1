@@ -91,7 +91,7 @@ Sign.openSignDlg = function () {
         this.signable( function(){
             var index = layer.open({
                 type: 2,
-                title: '导入学员',
+                title: '学员报名',
                 area: ['480px', '200px'], //宽高
                 fix: false, //不固定
                 maxmin: true,
