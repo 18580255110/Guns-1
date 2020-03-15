@@ -198,6 +198,7 @@ Class.search = function () {
     queryData['signDate'] = $("#signDate").val();
     queryData['offset'] = 0;
     queryData['status'] = 1;
+    queryData['academicYear'] = $("#academicYear").val();
     // queryData['pageNumber'] = 1;
     Class.queryParams = queryData;
     Class.table.refresh({query: queryData});

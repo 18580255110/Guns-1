@@ -33,10 +33,11 @@
                                 <#dictSelectorCondition id="cycle" name="学期" code="cycle" placeholder="-- 选择学期 --" />
                             </div>
                             <div class="col-sm-3">
-                                <#button name="搜索" icon="fa-search" clickFun="StudentSign.search()"/>
+                                <#NameCon id="academicYear" name="年份" code="academicYear" placeholder="-- 例:2019 --" />
                             </div>
                         </div>
                         <div class="hidden-xs" id="StudentSignTableToolbar" role="group">
+                            <#button name="搜索" icon="fa-search" clickFun="StudentSign.search()"/>
                             @if(shiro.hasPermission("/statistic/student/sign/export")){
                             <#button name="按条件导出" icon="fa-download" clickFun="StudentSign.export()" space="true"/>
                             @}

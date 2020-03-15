@@ -47,11 +47,14 @@
                             <div class="col-sm-6">
                                 <#MoneyCon id="maxPrice" placeholder="最大金额" />
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <#TimeCon id="studyDate" name="上课日期" />
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-4">
                                 <#TimeCon id="signDate" name="报名日期" />
+                            </div>
+                            <div class="col-sm-4">
+                                <#NameCon id="academicYear" name="年份" code="academicYear" placeholder="-- 例:2019 --" />
                             </div>
                             <div class="col-sm-2" style="float: right;">
                                 <#button name="搜 索" icon="fa-search" clickFun="Class.search()"/>
