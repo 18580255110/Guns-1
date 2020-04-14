@@ -120,4 +120,11 @@ public interface IOrderService extends IService<Order> {
      * @return
      */
     List<Map<String, Object>> queryExpiredOrderList();
+
+    /**
+     * 订单过期
+     *
+     * @param acceptNo
+     */
+    void doExpired(String acceptNo);
 }

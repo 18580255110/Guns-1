@@ -501,6 +501,7 @@ public class EducationController extends ApiController {
             }
         }
 
+        log.info("Cross change = {}", crossChange);
         List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForChange(changeClassQuery, crossChange);
 
         Set<Class> classSet = new HashSet<>();
@@ -659,6 +660,8 @@ public class EducationController extends ApiController {
         Map<String, String> studentMapping = new HashMap<String, String>();
 
         if (null == requester.getStudent() || requester.getStudent().length() == 0){
+            // app小于2.0版本，跨报没有学员选择
+            log.warn("Old app version! no student selected!");
             List<Student> studentList = studentService.listStudents(member.getUserName());
             for(Student student : studentList){
                 try {
@@ -828,6 +831,7 @@ public class EducationController extends ApiController {
         Set<CrossWindow> crossWindowSet = new HashSet<>();
         for(Class classInfo : classInfoList){
 
+            log.info("Add cross window class = {}", classInfo.getCode());
             crossWindowSet.add(new CrossWindow(classInfo.getCrossStartDate(), classInfo.getCrossEndDate()));
 //
 //            if (null == crossStartDate){
@@ -855,7 +859,7 @@ public class EducationController extends ApiController {
         boolean isFinish = true;
 
         for(CrossWindow crossWindow : crossWindowSet){
-            log.info("Cross sign begin date = {}, end date = {}", crossStartDate, crossEndDate);
+            log.info("Cross sign compare begin date = {}, end date = {}", crossStartDate, crossEndDate);
 
             if (now.before(crossWindow.getBeginDate())) {
                 if (!notBegin) {
@@ -886,7 +890,7 @@ public class EducationController extends ApiController {
         if (notBegin){
             // 跨报未开始
             Content content = contentService.get("CT00000000000002");
-            String contentMsg = content.getContent().replaceAll("\\{beginDate\\}", DateUtil.format(crossStartDate, "yyyy年MM月dd日"));
+            String contentMsg = content.getContent().replaceAll("\\{beginDate\\}", DateUtil.format(null == crossStartDate ? DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1) : crossStartDate, "yyyy年MM月dd日"));
             throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{contentMsg});
         }
 
@@ -894,7 +898,7 @@ public class EducationController extends ApiController {
         if (isFinish){
             //跨报已结束
             Content content = contentService.get("CT00000000000003");
-            String contentMsg = content.getContent().replaceAll("\\{endDate\\}", DateUtil.format(crossStartDate, "yyyy年MM月dd日"));
+            String contentMsg = content.getContent().replaceAll("\\{endDate\\}", DateUtil.format(null == crossEndDate ? DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, -1) : crossEndDate, "yyyy年MM月dd日"));
             throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{contentMsg});
         }
 

@@ -1,15 +1,12 @@
 package com.stylefeng.guns.task.order;
 
+import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
-import com.stylefeng.guns.modular.system.model.Order;
-import com.stylefeng.guns.modular.system.model.OrderStateEnum;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +27,9 @@ public class OrderRecycleTask {
     @Autowired
     private IOrderService orderService;
 
+    @Autowired
+    private IClassService classService;
+
     /**
      * 每小时清理一次
      */
@@ -40,19 +40,29 @@ public class OrderRecycleTask {
         log.info("Has {} order need clean", orderList.size());
 
         for(Map<String, Object> order : orderList){
-            Order currOrder = orderService.get((String)order.get("acceptNo"));
 
-            if (null == currOrder)
+            if (!(order.containsKey("acceptNo")))
                 continue;
 
-            currOrder.setStatus(OrderStateEnum.Expire.code);
-            currOrder.setDesc("[" + DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm") + "]订单支付超时");
+            String orderNo = (String) order.get("acceptNo");
+
+            if (null == orderNo)
+                continue;
+
+//            Order currOrder = orderService.get((String)order.get("acceptNo"));
+//
+//            if (null == currOrder)
+//                continue;
+//
+//            currOrder.setStatus(OrderStateEnum.Expire.code);
+//            currOrder.setDesc("[" + DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm") + "]订单支付超时");
 
             try {
-                orderService.updateById(currOrder);
-                log.info("Order {} clear with expired!", currOrder.getAcceptNo());
+                orderService.doExpired((String) order.get("acceptNo"));
+//                orderService.updateById(currOrder);
+                log.info("Order {} clear with expired!", orderNo);
             }catch(Exception e){
-                log.warn("Order {} clean failed!", currOrder.getAcceptNo(), e);
+                log.warn("Order {} clean failed!", orderNo, e);
             }
         }
     }

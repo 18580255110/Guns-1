@@ -27,6 +27,7 @@ import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.util.CodeKit;
 import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -357,10 +358,48 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         stateList.add(OrderStateEnum.Valid.code);
         queryParams.put("stateList", stateList);
 
-        Date expireDate = DateUtils.truncate(DateUtil.add(new Date(), Calendar.HOUR_OF_DAY, -24), Calendar.HOUR_OF_DAY );
+        Date expireDate = DateUtils.truncate(DateUtil.add(new Date(), Calendar.HOUR_OF_DAY, -24), Calendar.HOUR_OF_DAY);
         queryParams.put("expireDate", expireDate);
 
         return queryForList(queryParams);
+    }
+
+    @Override
+    public void doExpired(String acceptNo) {
+        Order currOrder = get(acceptNo);
+
+        if (null == currOrder)
+            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"订单 " + acceptNo});
+
+        currOrder.setStatus(OrderStateEnum.Expire.code);
+        currOrder.setDesc("[" + DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm") + "]订单支付超时");
+        updateById(currOrder);
+
+        // 如果订单对应的班级处于续报期间，订单失效需要重置该班级续报状态为“未完成”状态
+        Date now = new Date();
+        Wrapper<Class> queryWrapper = new EntityWrapper<Class>();
+        queryWrapper.eq("status", GenericState.Valid.code);
+        queryWrapper.eq("crossable", GenericState.Valid.code);
+        queryWrapper.eq("presign_status", GenericState.Valid.code);
+        queryWrapper.le("presign_start_date", DateUtil.format(now, "yyyy-MM-dd"));
+        queryWrapper.gt("presign_end_date", DateUtil.format(now, "yyyy-MM-dd"));
+
+        List<OrderItem> orderItemList = listItems(acceptNo, OrderItemTypeEnum.Course);
+
+        for(OrderItem orderItem : orderItemList){
+            Class classInfo = classService.get(orderItem.getItemObjectCode());
+            if (null == classInfo)
+                continue;
+
+            queryWrapper.eq("code", classInfo.getCode());
+            int existPresignClass = classService.selectCount(queryWrapper);
+
+            if (existPresignClass > 0) {
+                // 班级处于续报期间
+                classInfo.setPresignStatus(GenericState.Invalid.code);
+                classService.updateById(classInfo);
+            }
+        }
     }
 
     private Map<String, Object> buildQueryArguments(Map<String, Object> queryParams) {
