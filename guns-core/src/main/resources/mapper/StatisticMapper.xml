@@ -82,6 +82,10 @@
             <if test="null != grade">
                 and c.grade = #{grade}
             </if>
+            <!-- 学年 -->
+            <if test="null != academicYear">
+                and c.academic_year = #{academicYear}
+            </if>
         </where>
         order by o.accept_date desc
     </select>

@@ -58,6 +58,7 @@ StudentSign.export = function () {
     queryData['cycle'] = $("#cycle").val();
     queryData['grade'] = $("#grade").val();
     queryData['classInfo'] = $("#classInfo").val();
+    queryData['academicYear'] = $("#academicYear").val();
     ajax.setData(queryData);
     ajax.start();
 };
@@ -80,6 +81,7 @@ StudentSign.cancelExport = function () {
     queryData['cycle'] = $("#cycle").val();
     queryData['grade'] = $("#grade").val();
     queryData['classInfo'] = $("#classInfo").val();
+    queryData['academicYear'] = $("#academicYear").val();
     queryData['orderStatus'] = 2;
     ajax.setData(queryData);
     ajax.start();
@@ -126,6 +128,7 @@ StudentSign.search = function () {
     queryData['cycle'] = $("#cycle").val();
     queryData['grade'] = $("#grade").val();
     queryData['classInfo'] = $("#classInfo").val();
+    queryData['academicYear'] = $("#academicYear").val();
 
     StudentSign.table.refresh({query: queryData});
     StudentSign.table.setQueryParams(queryData);
@@ -143,6 +146,7 @@ StudentSign.cancelSearch = function () {
     queryData['grade'] = $("#grade").val();
     queryData['classInfo'] = $("#classInfo").val();
     queryData['orderStatus'] = 2;
+    queryData['academicYear'] = $("#academicYear").val();
 
     StudentSign.table.refresh({query: queryData});
     StudentSign.table.setQueryParams(queryData);
@@ -161,6 +165,7 @@ StudentSign.formParams = function() {
     queryData['cycle'] = $("#cycle").val();
     queryData['grade'] = $("#grade").val();
     queryData['classInfo'] = $("#classInfo").val();
+    queryData['academicYear'] = $("#academicYear").val();
 
     return queryData;
 }
