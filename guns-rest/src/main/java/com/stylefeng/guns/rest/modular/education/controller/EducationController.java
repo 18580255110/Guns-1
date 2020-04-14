@@ -529,7 +529,7 @@ public class EducationController extends ApiController {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(now);
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                if (hour < 10)
+                if (hour < 9)
                     continue; // 跨报班级，必须在10点后转班
 
             }
@@ -538,7 +538,7 @@ public class EducationController extends ApiController {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(now);
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                if (hour < 10)
+                if (hour < 9)
                     continue; // 跨报班级，必须在10点后转班
             }
 
