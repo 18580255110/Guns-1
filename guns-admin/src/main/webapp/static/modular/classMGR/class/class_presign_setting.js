@@ -54,6 +54,7 @@ var SettingWizard = {
     ]
 };
 
+
 /**
  * 初始化表格的列
  */
@@ -125,7 +126,8 @@ SettingWizard.collectData = function() {
         .set('code')
     ;
 
-    var sourceClassCode = $('#sourceClassCode').val();
+    var sourceClassCode = $('#_sourceClassCode').val();
+    console.log('sourceClassCode = ', sourceClassCode);
     if (sourceClassCode.length > 0){
         this.set('presignStartDate')
             .set('presignEndDate')
@@ -214,6 +216,7 @@ $(function () {
                 return true;
             }
 
+            console.log('Before validate, sourceClassCode = ', $('#_sourceClassCode').val());
             Feng.initValidator(SettingWizard.forms[step].id, SettingWizard.forms[step].validateFields, {excludes: [":disabled"]});
             $('#' + SettingWizard.forms[step].id).data("bootstrapValidator").resetForm();
             $('#' + SettingWizard.forms[step].id).bootstrapValidator('validate');
@@ -230,8 +233,10 @@ $(function () {
                 var table = new BSTable(SettingWizard.Wizard.presignClassTable.id, "/class/list", defaultColunms);
                 table.setPaginationType("server");
                 table.setItemSelectCallback(function(row) {
-                    console.log(row);
-                    $('#sourceClassCode').val(row.code);
+                    console.log('selected row = ', row);
+                    $('#_sourceClassCode').val(row.code);
+
+                    console.log($('#_sourceClassCode').val());
 
                     $('#confirm-source-className').val(row.name);
                     $('#confirm-source-gradeName').val(row.gradeName);
