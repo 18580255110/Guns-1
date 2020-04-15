@@ -59,8 +59,8 @@ ProcessWizard.close = function() {
 
 ProcessWizard.downloadTemplate = function(template){
     var ajax = new $ax(Feng.ctxPath + "/batch/template/" + ProcessWizard.Service.toLowerCase(), function(result){
-        // var url = 'http://www.kecui.com.cn/download?masterName=' + result.data.name + '&masterCode=' + result.data.code;
-        var url = 'http://localhost:8080/admin/attachment/download?masterName=' + result.data.name + '&masterCode=' + result.data.code;
+         var url = 'http://www.kecui.com.cn/download?masterName=' + result.data.name + '&masterCode=' + result.data.code;
+        //var url = 'http://localhost:8080/admin/attachment/download?masterName=' + result.data.name + '&masterCode=' + result.data.code;
 
         window.location.href = url;
     },function(data){
