@@ -42,20 +42,6 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
 
     private static final Map<Integer, Integer> AbilityWeight = new HashMap<Integer, Integer>(){
         {
-//            put(2, 90); // 尖子
-//            put(9, 90); // 尖端
-//            put(8, 80); // 实验
-//            put(6, 80); // 真题C
-//            put(1, 80); // 提高
-//            put(7, 70); // 同步
-//            put(5, 60); // 真题B
-//            put(3, 60); // 真题
-//            put(4, 50); // 真题A
-//            put(11, 40); // 复习B
-//            put(10, 30); // 复习A
-//            put(12, 0); // 活动
-//            put(99, 0); // 其他
-
             put(9, 90); // 尖端
             put(8, 80); // 实验
             put(6, 80); // 真题C
@@ -68,6 +54,7 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
             put(1, 50); // 提高
             put(10, 40); // 复习A
             put(12, 0); // 活动
+            put(13, 50); // 鸿志
             put(99, 0); // 其他
         }
     };
@@ -250,7 +237,13 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
         if (null == courseInfo)
             return false;
 
-        int currWeight = AbilityWeight.get(classInfo.getAbility());
+        int currWeight =  0 ;
+        
+        try{
+            AbilityWeight.get(classInfo.getAbility());
+        }catch(Exception e){
+            log.warn("Student <{}> couldn't found privileges, class <{}>, ability <{}>", student.getCode(), classInfo.getCode(), classInfo.getAbility());
+        }
         boolean hasAdvPrivilege = false;
 
         switch(classInfo.getGrade()){
