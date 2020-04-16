@@ -35,10 +35,10 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
 //    private static final Integer[] Four  = new Integer[]{2, 1, 12, 99};
 //    private static final Integer[] Seven  = new Integer[]{9, 8, 7, 12, 99};
 
-    private static final Integer[] SIX  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 99};
-    private static final Integer[] FIVE  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 99};
-    private static final Integer[] Four  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 99};
-    private static final Integer[] Seven  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 99};
+    private static final Integer[] SIX  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 13, 99};
+    private static final Integer[] FIVE  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 13, 99};
+    private static final Integer[] Four  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 13, 99};
+    private static final Integer[] Seven  = new Integer[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10, 12, 13, 99};
 
     private static final Map<Integer, Integer> AbilityWeight = new HashMap<Integer, Integer>(){
         {
