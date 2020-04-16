@@ -4,11 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
-import com.stylefeng.guns.modular.payMGR.sdk.AcpService;
 import com.stylefeng.guns.modular.payMGR.service.IPayService;
 import com.stylefeng.guns.modular.payMGR.transfer.UnionNotifier;
 import com.stylefeng.guns.modular.payMGR.transfer.WeixinNotifier;
 import com.stylefeng.guns.modular.system.model.Order;
+import com.stylefeng.guns.modular.system.model.OrderStateEnum;
+import com.stylefeng.guns.modular.system.model.PayStateEnum;
 import com.stylefeng.guns.rest.core.ApiController;
 import com.stylefeng.guns.rest.core.Responser;
 import com.stylefeng.guns.rest.modular.order.responser.PayOrderResponser;
@@ -76,6 +77,18 @@ public class PayController extends ApiController {
         Order order = orderService.get(requester.getOrder());
         if (null == order)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"订单"});
+
+        if ( OrderStateEnum.Valid.code != order.getStatus())
+            throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{"订单已失效， 请重新下单"});
+
+        if (PayStateEnum.Paying.code == order.getPayStatus() )
+            throw new ServiceException(MessageConstant.MessageCode.PAY_ORDER_ONAIR, new String[0]);
+
+        if ( PayStateEnum.PayOk.code == order.getPayStatus() )
+            throw new ServiceException(MessageConstant.MessageCode.PAY_ORDER_FINISH, new String[0]);
+
+        if ( PayStateEnum.Expire.code == order.getPayStatus() )
+            throw new ServiceException(MessageConstant.MessageCode.PAY_ORDER_EXPIRED, new String[0]);
 
         if (null != requester.getChannel())
             order.setPayMethod(requester.getChannel());

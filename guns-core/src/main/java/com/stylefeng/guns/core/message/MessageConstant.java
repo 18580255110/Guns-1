@@ -131,6 +131,18 @@ public final class MessageConstant {
          */
         public static final String PAY_ORDER_EXCEPTION = "030002";
         /**
+         * 订单正在支付中
+         */
+        public static final String PAY_ORDER_ONAIR = "030003";
+        /**
+         * 订单已过期
+         */
+        public static final String PAY_ORDER_EXPIRED = "030004";
+        /**
+         * 订单已成功
+         */
+        public static final String PAY_ORDER_FINISH = "030005";
+        /**
          * 已生成订单
          */
         public static final String ORDER_REQUEST_ORDERED = "040001";
