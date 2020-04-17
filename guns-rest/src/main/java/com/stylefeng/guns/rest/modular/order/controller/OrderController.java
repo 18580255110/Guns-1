@@ -22,10 +22,7 @@ import com.stylefeng.guns.rest.core.Responser;
 import com.stylefeng.guns.rest.core.SimpleResponser;
 import com.stylefeng.guns.rest.modular.education.responser.ClassResponser;
 import com.stylefeng.guns.rest.modular.order.requester.OrderPostRequester;
-import com.stylefeng.guns.rest.modular.order.responser.CartListResponser;
-import com.stylefeng.guns.rest.modular.order.responser.ClassOrderResponser;
-import com.stylefeng.guns.rest.modular.order.responser.OrderListResponser;
-import com.stylefeng.guns.rest.modular.order.responser.OrderPostResponser;
+import com.stylefeng.guns.rest.modular.order.responser.*;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,7 +256,7 @@ public class OrderController extends ApiController {
 
         List<Order> orderList = orderService.selectList(queryWrapper);
 
-        Set<ClassOrderResponser> classOrderSet = new TreeSet<ClassOrderResponser>();
+        Set<StudentClassOrderResponser> classOrderSet = new TreeSet<StudentClassOrderResponser>();
         for(Order order : orderList){
             List<OrderItem> orderItemList = orderService.listItems(order.getAcceptNo(), OrderItemTypeEnum.Course);
 
@@ -285,14 +282,15 @@ public class OrderController extends ApiController {
 
                         orgClassCode = currentValidClass.getClassCode();
                     }
+
                 }
 
                 Class classInfo = classService.get(orgClassCode);
-                classOrderSet.add(ClassOrderResponser.me(order, ClassResponser.me(classInfo)));
+                classOrderSet.add(StudentClassOrderResponser.me(currStudent, ClassOrderResponser.me(order, ClassResponser.me(classInfo))));
             }
         }
 
-        return OrderListResponser.me(classOrderSet);
+        return StudentOrderListResponser.me(classOrderSet);
     }
 
     @ApiOperation(value="订单取消", httpMethod = "POST", response = SimpleResponser.class)

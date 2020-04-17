@@ -173,7 +173,7 @@ public class WxPayRequestBuilder extends PayRequestBuilder {
         postData.put("total_fee", merchantOrder.getAmount());
         postData.put("spbill_create_ip", createHost);
         postData.put("time_start", DateUtil.format(now, "yyyyMMddHHmmss"));
-        postData.put("time_expire", DateUtil.format(DateUtil.add(now, Calendar.MINUTE, 5), "yyyyMMddHHmmss"));
+        postData.put("time_expire", DateUtil.format(DateUtil.add(now, Calendar.MINUTE, 110), "yyyyMMddHHmmss"));
         postData.put("notify_url", notifyUrl);
         postData.put("sign_type", "MD5");
         postData.put("trade_type", "APP");
