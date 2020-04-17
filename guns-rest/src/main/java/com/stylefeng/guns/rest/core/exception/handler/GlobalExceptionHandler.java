@@ -1,5 +1,6 @@
 package com.stylefeng.guns.rest.core.exception.handler;
 
+import com.stylefeng.guns.common.exception.IndependenceException;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.aop.BaseControllerExceptionHandler;
 import com.stylefeng.guns.core.message.MessageConstant;
@@ -10,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -72,6 +72,26 @@ public class GlobalExceptionHandler extends BaseControllerExceptionHandler {
         log.error(message, e);
 
         return responser;
+    }
+
+
+    /**
+     * 拦截ServiceException相关异常
+     */
+    @ExceptionHandler(IndependenceException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public String independenceException(ServiceException e) {
+
+        ServiceExceptionResponser responser = new ServiceExceptionResponser();
+
+        responser.setCode(e.getMessageCode());
+        String message = messageSource.getMessage("exception." + e.getMessageCode(), e.getMessageArgs(), Locale.CHINA);
+        responser.setMessage(message);
+
+        log.error(message, e);
+
+        return message;
     }
 
     /**

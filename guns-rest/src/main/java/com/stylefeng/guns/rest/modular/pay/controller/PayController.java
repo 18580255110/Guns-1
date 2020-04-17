@@ -1,6 +1,7 @@
 package com.stylefeng.guns.rest.modular.pay.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.stylefeng.guns.common.exception.IndependenceException;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.orderMGR.service.IOrderService;
@@ -77,6 +78,9 @@ public class PayController extends ApiController {
         Order order = orderService.get(requester.getOrder());
         if (null == order)
             throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"订单"});
+
+        if (99 == order.getStatus())
+            throw new IndependenceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{"异常测试"});
 
         if ( OrderStateEnum.Valid.code != order.getStatus())
             throw new ServiceException(MessageConstant.MessageCode.SYS_TEMPLATE_MESSAGE, new String[]{"订单已失效， 请重新下单"});
