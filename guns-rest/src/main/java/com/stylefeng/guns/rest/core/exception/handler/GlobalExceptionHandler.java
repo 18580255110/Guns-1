@@ -81,7 +81,7 @@ public class GlobalExceptionHandler extends BaseControllerExceptionHandler {
     @ExceptionHandler(IndependenceException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public String independenceException(ServiceException e) {
+    public String independenceException(IndependenceException e) {
 
         ServiceExceptionResponser responser = new ServiceExceptionResponser();
 
