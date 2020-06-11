@@ -278,4 +278,11 @@ public interface IConstantFactory {
      * @return
      */
     Map<String,Object> getdictsMap(String dictCode);
+
+
+    /**
+     * 获取老师名称
+     * class表中的teacher字段 不在使用
+     * */
+    String getTeacheName(String code);
 }

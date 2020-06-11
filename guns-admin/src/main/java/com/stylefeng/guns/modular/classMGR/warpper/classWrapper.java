@@ -3,6 +3,8 @@ package com.stylefeng.guns.modular.classMGR.warpper;
 import com.stylefeng.guns.common.constant.factory.ConstantFactory;
 import com.stylefeng.guns.core.base.warpper.BaseControllerWarpper;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
+import com.stylefeng.guns.modular.teacherMGR.service.TeacherService;
+import com.stylefeng.guns.modular.teacherMGR.service.impl.TeacherServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,15 +20,29 @@ import java.util.Optional;
 public class ClassWrapper extends BaseControllerWarpper{
     private static final BigDecimal YUAN_FEN = new BigDecimal("100");
 
+
+
     public ClassWrapper(Object obj) {
         super(obj);
     }
 
     @Override
     protected void warpTheMap(Map<String, Object> map) {
+        TeacherService teacherService = new TeacherServiceImpl();
         map.put("statusName", ConstantFactory.me().getStatusName(Integer.parseInt(map.get("status").toString())));
         map.put("gradeName", ConstantFactory.me().getDictsByCode("school_grade", map.get("grade").toString()));
         map.put("cycleName", ConstantFactory.me().getDictsByCode("cycle", map.get("cycle").toString()));
+        try {
+            map.put("teacher",  ConstantFactory.me().getTeacheName((String) map.get("teacherCode")));
+        } catch (Exception e) {
+
+        }
+        try {
+            map.put("teacherSecond", ConstantFactory.me().getTeacheName((String) map.get("teacherSecondCode")));
+        } catch (Exception e) {
+
+        }
+
         if (map.containsKey("subject")) {
             try {
                 map.put("subjectName", ConstantFactory.me().getDictsByCode("subject_type", map.get("subject").toString()));
