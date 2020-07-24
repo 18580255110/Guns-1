@@ -1344,6 +1344,11 @@ public class EducationController extends ApiController {
             BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
             BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
             BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
+
+            if (0 == signPrice.intValue()){
+                continue;
+            }
+
             classInfo.setSignPrice(signPrice.longValue());
             classSet.add(classInfo);
         }
