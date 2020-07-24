@@ -292,4 +292,8 @@ public class DateUtil {
     public static int compareDate(Date date1, Date date2, int truncateField) {
         return DateUtils.truncate(date1, truncateField).compareTo(DateUtils.truncate(date2, truncateField));
     }
+
+    public static String getHHmm() {
+        return formatDate(new Date(), "HHmm");
+    }
 }

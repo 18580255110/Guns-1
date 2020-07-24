@@ -276,10 +276,14 @@ public class EducationController extends ApiController {
         int maxSchedule = classInfo.getPeriod();
         Map<String, Object> planQueryMap = new HashMap<String, Object>();
 //        planQueryMap.put("beginDate", DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1));
-        planQueryMap.put("beginDate", DateUtils.truncate(DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1), Calendar.DAY_OF_MONTH));
+//        planQueryMap.put("beginDate", DateUtils.truncate(DateUtil.add(new Date(), Calendar.DAY_OF_MONTH, 1), Calendar.DAY_OF_MONTH));
+        // 按当天算，并且beginTime  =  当前时间
+        planQueryMap.put("beginDate", DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH));
+        planQueryMap.put("beginTime", Integer.parseInt(DateUtil.getHHmm()));
         planQueryMap.put("status", GenericState.Valid.code);
         planQueryMap.put("classCode", classInfo.getCode());
         List<ClassPlan> remainClassPlanList = scheduleClassService.selectPlanList(planQueryMap);
+
         BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
         BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
         BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
@@ -520,7 +524,7 @@ public class EducationController extends ApiController {
                 continue;
             }
 
-            if (1 == classInfo.getCrossable()){
+            if (1 == classInfo.getCrossable() && crossChange){
 
                 if (now.before(classInfo.getCrossStartDate()))
                     // 跨报班级，未开始跨报

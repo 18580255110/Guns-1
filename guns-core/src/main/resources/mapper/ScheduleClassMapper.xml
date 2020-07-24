@@ -59,6 +59,10 @@
             <if test="null != endDate">
                 and a.study_date &lt; #{endDate}
             </if>
+
+            <if test="null != beginTime">
+                and a.class_time &gt;= #{beginTime}
+            </if>
         </where>
 
     </select>
