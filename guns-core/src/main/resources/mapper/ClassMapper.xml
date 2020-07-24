@@ -178,6 +178,12 @@
                 ]]>
             </if>
 
+            <if test="null != forceSignEndTime">
+                <![CDATA[
+                and exists (select 1 from tb_schedule_class where class_code = tc.code and (study_date < tc.end_date or (study_date = tc.end_date and class_time >= #{forceSignEndTime})))
+                ]]>
+            </if>
+
             <!-- 跨报转班时间 -->
             <if test="null != crossChangeDate">
                 <![CDATA[

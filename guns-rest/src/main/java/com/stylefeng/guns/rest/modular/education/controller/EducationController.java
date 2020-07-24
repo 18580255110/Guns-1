@@ -128,6 +128,7 @@ public class EducationController extends ApiController {
             queryMap.put("signDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
         }
         queryMap.put("forceSignEndDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
+        queryMap.put("forceSignEndTime", Integer.parseInt(DateUtil.getHHmm()));
         queryMap.put("signable", ClassSignableEnum.YES.code);
 
         List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForSign(queryMap);
@@ -1344,10 +1345,6 @@ public class EducationController extends ApiController {
             BigDecimal perPrice = new BigDecimal(String.valueOf(classInfo.getPrice())).divide(new BigDecimal(maxSchedule), 10, RoundingMode.HALF_UP);
             BigDecimal remainPrice = new BigDecimal(remainClassPlanList.size()).multiply(perPrice);
             BigDecimal signPrice = remainPrice.setScale(0, RoundingMode.HALF_UP);
-
-            if (0 == signPrice.intValue()){
-                continue;
-            }
 
             classInfo.setSignPrice(signPrice.longValue());
             classSet.add(classInfo);
