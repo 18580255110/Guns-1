@@ -128,7 +128,7 @@ public class EducationController extends ApiController {
             queryMap.put("signDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
         }
         queryMap.put("forceSignEndDate", DateUtil.format(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH), "yyyy-MM-dd"));
-        queryMap.put("forceSignEndTime", Integer.parseInt(DateUtil.getHHmm()));
+//        queryMap.put("forceSignEndTime", Integer.parseInt(DateUtil.getHHmm()));
         queryMap.put("signable", ClassSignableEnum.YES.code);
 
         List<com.stylefeng.guns.modular.system.model.Class> classList = classService.queryListForSign(queryMap);

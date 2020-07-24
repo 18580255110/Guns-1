@@ -174,13 +174,13 @@
             <!-- 强制报名时间限制 -->
             <if test="null != forceSignEndDate">
                 <![CDATA[
-                and tc.end_date >= #{forceSignEndDate}
+                and tc.end_date > #{forceSignEndDate}
                 ]]>
             </if>
 
             <if test="null != forceSignEndTime">
                 <![CDATA[
-                and exists (select 1 from tb_schedule_class where class_code = tc.code and (study_date < tc.end_date or (study_date = tc.end_date and class_time >= #{forceSignEndTime})))
+                and not exists (select 1 from (select a.study_date, b.class_time from (select max(study_date) as study_date from tb_schedule_class where class_code = tc.code ) a left join tb_schedule_class b on a.study_date = b.study_date and b.class_code = tc.code ) aa where aa.study_date = tc.end_date and aa.class_time < #{forceSignEndTime})
                 ]]>
             </if>
 
