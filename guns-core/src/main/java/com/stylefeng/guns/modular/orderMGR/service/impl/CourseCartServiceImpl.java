@@ -322,10 +322,13 @@ public class CourseCartServiceImpl extends ServiceImpl<CourseCartMapper, CourseC
         for(StudentClass studentClass : signedList){
             Student student = studentService.get(studentClass.getStudentCode());
 
+
             if (null == student) {
                 log.warn("Illegal student {}", studentClass.getStudentCode());
                 continue;
             }
+//            if (!"XY20030700011192".equals(student.getCode()))
+//                continue;
 
             Member member = memberService.get(student.getUserName());
             if (null == member) {

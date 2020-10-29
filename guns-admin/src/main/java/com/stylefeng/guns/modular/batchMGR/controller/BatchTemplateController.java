@@ -233,13 +233,13 @@ public class BatchTemplateController {
         // YesOrNo
         String[] yesOrNo = {"(1)是", "(0)否"};
 
-        sheet = setHSSFValidation(sheet, courseDictList, 1, 100, 0, 0);//  .
+        sheet = setHSSFValidation(workbook, "course_hidden", 1, sheet, courseDictList, 1, 100, 0, 0);//  .
         sheet = setHSSFValidation(sheet, academicYearList, 1, 100, 2, 2);// 前101行都设置为选择列表形式.
         sheet = setHSSFValidation(sheet, cycleList, 1, 100, 3, 3);// 前101行都设置为选择列表形式.
         sheet = setHSSFValidation(sheet, abilityList, 1, 100, 4, 4);// 前101行都设置为选择列表形式.
         sheet = setHSSFValidation(sheet, teacherDictList, 1, 100, 5, 5);// 前101行都设置为选择列表形式.
         sheet = setHSSFValidation(sheet, teacherDictList, 1, 100, 6, 6);// 前101行都设置为选择列表形式.
-        sheet = setHSSFValidation(sheet, roomList, 1, 100, 8, 8);// 前101行都设置为选择列表形式.
+        sheet = setHSSFValidation(workbook, "room_hidden", 2, sheet, roomList, 1, 100, 8, 8);// 前101行都设置为选择列表形式.
         sheet = setHSSFValidation(sheet, yesOrNo, 1, 100, 12, 12);// 前101行都设置为选择列表形式.
         sheet = setHSSFValidation(sheet, yesOrNo, 1, 100, 17, 17);// 前101行都设置为选择列表形式.
 
@@ -504,6 +504,54 @@ public class BatchTemplateController {
         validation.setSuppressDropDownArrow(true);
         validation.setShowErrorBox(true);
         sheet.addValidationData(validation);
+        return sheet;
+    }
+
+
+    /**
+     * 设置某些列的值只能输入预制的数据,显示下拉框.
+     *
+     * @param wb
+     *            要设置的sheet.*
+     * @param sheet
+     *            要设置的sheet.
+     * @param textlist
+     *            下拉框显示的内容
+     * @param firstRow
+     *            开始行
+     * @param endRow
+     *            结束行
+     * @param firstCol
+     *            开始列
+     * @param endCol
+     *            结束列
+     * @return 设置好的sheet.
+     */
+    public static XSSFSheet setHSSFValidation(Workbook wb, String hiddenName, int hiddeIndex, XSSFSheet sheet,
+                                              String[] textlist, int firstRow, int endRow, int firstCol,
+                                              int endCol) {
+        Sheet hiddenSheet = wb.createSheet(hiddenName);
+        for (int i = 0; i < textlist.length; i++) {
+            hiddenSheet.createRow(i).createCell(0).setCellValue(textlist[i]);
+        }
+
+        Name category1Name = wb.createName();
+        category1Name.setNameName(hiddenName+"_hidden");
+
+        category1Name.setRefersToFormula(hiddenName + "!" + "$A$1:$A$" + textlist.length);
+
+        XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(sheet);
+//        XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper
+//                .createExplicitListConstraint(textlist);
+        XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper
+                .createFormulaListConstraint(hiddenName+"_hidden");
+        CellRangeAddressList addressList = new CellRangeAddressList(firstRow, endRow, firstCol, endCol);
+        XSSFDataValidation validation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, addressList);
+        validation.setSuppressDropDownArrow(true);
+        validation.setShowErrorBox(true);
+        sheet.addValidationData(validation);
+
+        wb.setSheetHidden(hiddeIndex, true);
         return sheet;
     }
 }
