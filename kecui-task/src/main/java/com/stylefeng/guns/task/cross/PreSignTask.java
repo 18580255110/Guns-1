@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 预报
@@ -37,7 +36,8 @@ public class PreSignTask {
     /**
      * 每天没1点执行
      */
-    @Scheduled(cron = "0 0 10-18 * * ?")
+//    @Scheduled(cron = "0 0 10-18 * * ?")
+    @Scheduled(cron = "0/30 * 10-18 * * ?")
     public void presign(){
         Wrapper<Class> queryWrapper = new EntityWrapper<Class>();
         Date now = new Date();
@@ -48,11 +48,13 @@ public class PreSignTask {
         queryWrapper.le("presign_start_date", DateUtil.format(now, "yyyy-MM-dd"));
         queryWrapper.gt("presign_end_date", DateUtil.format(now, "yyyy-MM-dd"));
 
-        List<Class> presignClassQueue = classService.selectList(queryWrapper);
+//        List<Class> presignClassQueue = classService.selectList(queryWrapper);
+        Class classInfo = classService.selectOne(queryWrapper);
 
-        log.info("Got {} class need presign", presignClassQueue.size());
+//        log.info("Got {} class need presign", presignClassQueue.size());
 
-        for(Class classInfo : presignClassQueue){
+//        for(Class classInfo : presignClassQueue){
+
             log.info("班级{} 开始预报, 原班级 {}", classInfo.getCode(), classInfo.getPresignSourceClassCode());
             try {
                 courseCartService.doAutoPreSign(classInfo);
@@ -62,7 +64,9 @@ public class PreSignTask {
                 log.info("班级{}预报完毕", classInfo.getCode());
             }catch(Exception e){
                 log.error("班级{}预报失败", classInfo.getCode(), e);
+                classInfo.setPresignStatus(99);
+                classService.updateById(classInfo);
             }
-        }
+//        }
     }
 }
