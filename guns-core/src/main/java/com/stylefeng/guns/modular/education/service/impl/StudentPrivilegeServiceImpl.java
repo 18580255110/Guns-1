@@ -240,7 +240,8 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
         int currWeight =  0 ;
         
         try{
-            AbilityWeight.get(classInfo.getAbility());
+            currWeight = AbilityWeight.get(classInfo.getAbility());
+            log.info("Advantage privilege weight = {}", currWeight);
         }catch(Exception e){
             log.warn("Student <{}> couldn't found privileges, class <{}>, ability <{}>", student.getCode(), classInfo.getCode(), classInfo.getAbility());
         }
@@ -279,6 +280,7 @@ public class StudentPrivilegeServiceImpl extends ServiceImpl<StudentPrivilegeMap
 
             classInfo.setAbility(ability);
             if (hasPrivilege(student, classInfo)) {
+                log.info(" Student {} has {} privilege for class {}", student.getCode(), ability, classInfo.getCode());
                 hasAdvPrivilege = true;
             }
 
