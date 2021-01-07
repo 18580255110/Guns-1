@@ -14,7 +14,6 @@ import com.stylefeng.guns.modular.system.dao.ExamineAnswerMapper;
 import com.stylefeng.guns.modular.system.dao.ExamineApplyMapper;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.util.CodeKit;
-import com.stylefeng.guns.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,7 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
 
         Wrapper<ExamineAnswer> queryWrapper = new EntityWrapper<ExamineAnswer>();
         queryWrapper.eq("student_code", student.getCode());
-        queryWrapper.lt("paper_code", examinePaper.getCode());
+        queryWrapper.eq("paper_code", examinePaper.getCode());
         queryWrapper.notIn("status", new Integer[]{3, 4, -1});
         queryWrapper.orderBy("id", false);
         ExamineAnswer answerPaper = selectOne(queryWrapper);
@@ -55,6 +54,8 @@ public class ExamineAnswerServiceImpl extends ServiceImpl<ExamineAnswerMapper, E
 
             if (null == apply) {
                 List<ExamineApply> examineApplieList = examineApplyMapper.selectList(new EntityWrapper<ExamineApply>() {
+                    private static final long serialVersionUID = -5051821577221215491L;
+
                     {
                         eq("paper_code", examinePaper.getCode());
                         eq("status", GenericState.Valid.code);

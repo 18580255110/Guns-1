@@ -14,7 +14,6 @@ import com.stylefeng.guns.modular.system.dao.ScheduleStudentMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.ScheduleClass;
 import com.stylefeng.guns.modular.system.model.ScheduleStudent;
-import com.stylefeng.guns.modular.system.model.StudentClass;
 import com.stylefeng.guns.util.CodeKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

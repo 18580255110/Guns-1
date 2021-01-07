@@ -18,6 +18,7 @@ StudentSign.initColumn = function () {
         {title: '订单编号', field: 'orderNo', visible: false, align: 'center', valign: 'middle'},
         {title: '学员名称', field: 'studentName', visible: true, align: 'center', valign: 'middle'},
         {title: '家长电话', field: 'memberMobile', visible: true, align: 'center', valign: 'middle'},
+        {title: '班级编码', field: 'classCode', visible: false, align: 'center', valign: 'middle'},
         {title: '所报班级', field: 'className', visible: true, align: 'center', valign: 'middle'},
         {title: '实缴金额（元）', field: 'amount', visible: true, align: 'center', valign: 'middle'},
         {title: '支付方式', field: 'payMethodName', visible: true, align: 'center', valign: 'middle'},
@@ -102,13 +103,13 @@ StudentSign.cancel = function () {
                 Feng.alert("请填写实际退费金额")
                 return;
             }else {
-                var ajax = new $ax(Feng.ctxPath + "/order/class/doReverse/" + StudentSign.seItem.orderNo, function (data) {
+                var ajax = new $ax(Feng.ctxPath + "/order/class/doReverse/" + StudentSign.seItem.orderNo , function (data) {
                     Feng.success("操作成功!");
                     StudentSign.table.refresh();
                 }, function (data) {
                     Feng.error("操作失败!" + data.responseJSON.message + "!");
                 });
-                ajax.setData({desc:value})
+                ajax.setData({desc:value, classCode: StudentSign.seItem.classCode});
                 ajax.start();
             }
             parent.layer.close(index);

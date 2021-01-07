@@ -315,29 +315,44 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    public void doReverse(String orderNo,String desc) {
-
+    public void doReverse(String orderNo, String classCode, String desc) {
+        log.info("订单退费 orderNo = {}, classCode = {}, desc = {}", orderNo, classCode, desc);
         Order order = get(orderNo);
 
-        if (null == order)
-            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"订单"});
+        if (null == order) {
 
-        order.setStatus(OrderStateEnum.Reverse.code);
-        order.setDesc(DateUtil.getyyMMddHHmmss() + " -撤销订单:"+desc);
-        updateById(order);
+            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_NOT_FOUND, new String[]{"订单"});
+        }
 
         List<OrderItem> courseOrderItemList = listItems(orderNo, OrderItemTypeEnum.Course);
+
+        if (courseOrderItemList.size() == 1){
+            log.info("撤销订单 orderNo = {}", orderNo);
+            // 一订单，一班级
+            order.setStatus(OrderStateEnum.Reverse.code);
+            order.setDesc(DateUtil.getyyMMddHHmmss() + " -撤销订单:"+desc);
+            updateById(order);
+        }
+
         for(OrderItem orderItem : courseOrderItemList){
             CourseCart courseCart = courseCartService.get(orderItem.getCourseCartCode());
             if (null == courseCart)
                 continue;
 
+            String reverseClassCode = courseCart.getClassCode();
+            if ( !(classCode.equals(reverseClassCode)) ){
+                continue; // 该订单下，不是退费目标班级的班级不退费
+            }
+
             courseCart.setStatus(CourseCartStateEnum.Invalid.code);
-            courseCartService.updateById(courseCart);
+            //courseCartService.updateById(courseCart);
             // 目前有因为转班造成服务通过学员编码、班级编码、状态来取消报名。
             //studentClassService.doReverse(courseCart.getStudentCode(), courseCart.getClassCode());
             // 修改为按照订单号来取消报名
-            studentClassService.doReverse(orderItem.getOrderNo());
+            //studentClassService.doReverse(orderItem.getOrderNo(), classCode);
+            // 针对一订单多班级情况，根据班级来取消报名
+            studentClassService.doReverse( orderItem );
+            //studentClassService.doReverse(courseCart.getStudentCode(), classCode);
         }
 
     }

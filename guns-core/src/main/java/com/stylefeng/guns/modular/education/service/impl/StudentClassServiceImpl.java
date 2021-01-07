@@ -7,14 +7,14 @@ import com.stylefeng.guns.common.constant.factory.ConstantFactory;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
 import com.stylefeng.guns.core.message.MessageConstant;
+import com.stylefeng.guns.modular.adjustMGR.service.IAdjustStudentService;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.service.IStudentClassService;
 import com.stylefeng.guns.modular.education.transfer.StudentClassInfo;
 import com.stylefeng.guns.modular.system.dao.StudentClassMapper;
+import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
-import com.stylefeng.guns.modular.system.model.Student;
-import com.stylefeng.guns.modular.system.model.StudentClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
@@ -40,6 +40,9 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
 
     @Autowired
     private StudentClassMapper studentClassMapper;
+
+    @Autowired
+    private IAdjustStudentService adjustStudentService;
 
     @Override
     public void doChange(String studentCode, String sourceClass, String targetClass) {
@@ -133,6 +136,73 @@ public class StudentClassServiceImpl extends ServiceImpl<StudentClassMapper, Stu
 
             scheduleStudentService.doReverse(studentClass.getStudentCode(), studentClass.getClassCode());
         }
+    }
+
+    @Override
+    public void doReverse(OrderItem orderItem) {
+        Wrapper<StudentClass> queryWrapper = new EntityWrapper<StudentClass>();
+        queryWrapper.eq("order_no", orderItem.getOrderNo());
+        queryWrapper.eq("class_code", orderItem.getItemObjectCode());
+        queryWrapper.eq("status", GenericState.Valid.code);
+        List<StudentClass> currStudentClassList = selectList(queryWrapper);
+
+        StudentClass studentClass = null;
+
+        if (currStudentClassList.isEmpty()){
+            // 没有有效的班级，查询是否有转班记录
+            Wrapper<StudentClass> queryWrapper2 = new EntityWrapper<StudentClass>();
+            queryWrapper2.eq("order_no", orderItem.getOrderNo());
+            queryWrapper2.eq("class_code", orderItem.getItemObjectCode());
+            queryWrapper2.eq("status", GenericState.Invalid.code);
+            StudentClass hisStudentClass = selectOne(queryWrapper);
+            if (null == hisStudentClass){
+                throw new ServiceException("");
+            }
+
+            studentClass = findCurrentStudentClass(orderItem.getOrderNo(), hisStudentClass.getStudentCode(), orderItem.getItemObjectCode());
+        }else{
+            studentClass = currStudentClassList.get(0);
+        }
+
+        if (null == studentClass){
+            throw new ServiceException("订单异常, 不能退费");
+        }
+
+        String now = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss");
+
+        studentClass.setStatus(GenericState.Invalid.code);
+
+        studentClass.setRemark(now + " 已退费");
+        updateById(studentClass);
+
+        scheduleStudentService.doReverse(studentClass.getStudentCode(), studentClass.getClassCode());
+    }
+
+    private StudentClass findCurrentStudentClass(String orderNo, String studentCode, String classCode) {
+        Wrapper<AdjustStudent> queryWrapper = new EntityWrapper<AdjustStudent>();
+        queryWrapper.eq("student_code", studentCode);
+        queryWrapper.eq("source_class", classCode);
+        queryWrapper.eq("status", "11");
+
+        AdjustStudent studentAdjustRecord = adjustStudentService.selectOne(queryWrapper);
+
+        StudentClass currentStudentClass = null;
+        if (null == studentAdjustRecord){
+            return currentStudentClass;
+        }
+
+        Wrapper<StudentClass> studentClassQueryWrapper = new EntityWrapper<StudentClass>();
+        studentClassQueryWrapper.eq("order_no", orderNo);
+        studentClassQueryWrapper.eq("class_code", studentAdjustRecord.getTargetClass());
+        studentClassQueryWrapper.eq("status", GenericState.Valid.code);
+        currentStudentClass = selectOne(studentClassQueryWrapper);
+
+        if (null == currentStudentClass){
+            // 转班记录里面的目标班级也不是当前班级, 需要继续往后找
+            currentStudentClass = findCurrentStudentClass(orderNo, studentCode, studentAdjustRecord.getTargetClass());
+        }
+
+        return currentStudentClass;
     }
 
 

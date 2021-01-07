@@ -72,4 +72,11 @@ public interface IStudentClassService extends IService<StudentClass> {
      * @param orderNo
      */
     void doReverse(String orderNo);
+
+    /**
+     * 撤销报名
+     *
+     * @param orderItem
+     */
+    void doReverse(OrderItem orderItem);
 }
