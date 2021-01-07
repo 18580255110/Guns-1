@@ -109,9 +109,10 @@ public interface IOrderService extends IService<Order> {
 
     /**
      * 订单撤销
+     * @param no
      * @param orderNo
      */
-    void doReverse(String orderNo,String desc);
+    void doReverse(String no, String orderNo, String desc);
 
     /**
      * 查询已过期订单

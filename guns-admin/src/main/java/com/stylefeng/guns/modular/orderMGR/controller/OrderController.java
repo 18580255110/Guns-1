@@ -1,7 +1,5 @@
 package com.stylefeng.guns.modular.orderMGR.controller;
 
-import static com.stylefeng.guns.util.ExcelUtil.*;
-
 import com.baomidou.mybatisplus.plugins.Page;
 import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.common.exception.ServiceException;
@@ -22,7 +20,10 @@ import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.PathUtil;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -42,6 +43,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+
+import static com.stylefeng.guns.util.ExcelUtil.addCell;
+import static com.stylefeng.guns.util.ExcelUtil.addCells;
 
 /**
  * 订单管理控制器
@@ -145,12 +149,11 @@ public class OrderController extends BaseController {
      */
     @RequestMapping(value = "/class/doReverse/{orderNo}")
     @ResponseBody
-    public Object reverse(@PathVariable("orderNo") String orderNo,@RequestParam("desc") String desc) {
-
+    public Object reverse(@PathVariable("orderNo") String orderNo, @RequestParam("classCode") String classCode, @RequestParam("desc") String desc) {
         if (null == orderNo)
             throw new ServiceException(MessageConstant.MessageCode.SYS_MISSING_ARGUMENTS, new String[]{"订单号"});
 
-        orderService.doReverse(orderNo,desc);
+        orderService.doReverse(orderNo, classCode, desc);
 
         return SUCCESS_TIP;
     }

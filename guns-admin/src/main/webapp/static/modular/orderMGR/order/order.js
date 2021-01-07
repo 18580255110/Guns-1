@@ -124,7 +124,7 @@ Order.export = function () {
  */
 Order.search = function () {
     var queryData = {};
-    queryData['orderNo'] = $("#condition").val();
+    queryData['orderNo'] = $("#orderNo").val();
     queryData['teacher'] = $("#teacher").val();
     queryData['student'] = $("#student").val();
     queryData['subject'] = $("#subject").val();
