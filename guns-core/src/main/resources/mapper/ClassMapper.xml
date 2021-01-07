@@ -199,7 +199,7 @@
                 and (
                   (tc.crossable = 1 and tc.cross_end_date < #{changeDate} and tc.end_date > #{changeDate})
                   or
-                  (tc.crossable = 0 and tc.signable = 1 and tc.sign_start_date <= #{changeDate} and tc.sign_end_date > #{changeDate} and tc.end_date > #{changeDate}
+                  (tc.crossable = 0 and tc.signable = 1 and tc.sign_start_date <= #{changeDate} and tc.sign_end_date > #{changeDate} and tc.end_date > #{changeDate} )
                 )
                 ]]>
             </if>
