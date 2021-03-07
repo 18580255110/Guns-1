@@ -21,10 +21,10 @@
             <groupId>com.stylefeng</groupId>
             <artifactId>guns-core</artifactId>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.stylefeng</groupId>
             <artifactId>guns-generator</artifactId>
-        </dependency>
+        </dependency> -->
 
         <!--spring boot依赖-->
         <dependency>
@@ -123,6 +123,18 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>3.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.10</version>
         </dependency>
     </dependencies>
 

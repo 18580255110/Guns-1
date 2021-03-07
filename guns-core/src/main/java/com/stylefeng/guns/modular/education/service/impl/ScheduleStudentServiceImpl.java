@@ -11,9 +11,9 @@ import com.stylefeng.guns.modular.education.service.IScheduleClassService;
 import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.education.transfer.StudentPlan;
 import com.stylefeng.guns.modular.system.dao.ScheduleStudentMapper;
+import com.stylefeng.guns.modular.system.dao.StudentClassMapper;
+import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.modular.system.model.Class;
-import com.stylefeng.guns.modular.system.model.ScheduleClass;
-import com.stylefeng.guns.modular.system.model.ScheduleStudent;
 import com.stylefeng.guns.util.CodeKit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,9 @@ public class ScheduleStudentServiceImpl extends ServiceImpl<ScheduleStudentMappe
 
     @Autowired
     private IScheduleClassService scheduleClassService;
+
+    @Autowired
+    private StudentClassMapper studentClassMapper;
 
     @Autowired
     private IClassService classService;
@@ -174,5 +178,45 @@ public class ScheduleStudentServiceImpl extends ServiceImpl<ScheduleStudentMappe
             plan.setRemark("已退费");
             updateById(plan);
         }
+    }
+
+    @Override
+    public void doRefresh(Class classInstance, CourseOutline outline, Date autoStudyDate) {
+
+        Wrapper<StudentClass> studentClassWrapper = new EntityWrapper<>();
+        studentClassWrapper.eq("class_code", classInstance.getCode());
+        studentClassWrapper.eq("status", 1);
+        List<StudentClass> existStudentClass = studentClassMapper.selectList(studentClassWrapper);
+        List<ScheduleStudent> scheduleStudentList = new ArrayList<>();
+
+        for(StudentClass studentClass : existStudentClass) {
+
+            Wrapper<ScheduleStudent> studentScheduleWrapper = new EntityWrapper<>();
+            studentScheduleWrapper.eq("class_code", classInstance.getCode());
+            studentScheduleWrapper.eq("student_code", studentClass.getStudentCode());
+            studentScheduleWrapper.eq("status", 1);
+            studentScheduleWrapper.orderBy("id", false);
+            List<ScheduleStudent> existStudentScheduleList = scheduleStudentMapper.selectList(studentScheduleWrapper);
+
+            if (null == existStudentScheduleList || existStudentScheduleList.isEmpty()){
+                continue;
+            }
+            ScheduleStudent lastPlan = existStudentScheduleList.get(0);
+
+            ScheduleStudent newPlan = new ScheduleStudent();
+            newPlan.setCode(CodeKit.generateStudentSchedule());
+            newPlan.setStudentCode(studentClass.getStudentCode());
+            newPlan.setStudentName(lastPlan.getStudentName());
+            newPlan.setClassCode(classInstance.getCode());
+            newPlan.setClassName(lastPlan.getClassName());
+            newPlan.setOutlineCode(outline.getCode());
+            newPlan.setOutline(outline.getOutline());
+            newPlan.setStudyDate(autoStudyDate);
+            newPlan.setStatus(GenericState.Valid.code);
+
+            scheduleStudentList.add(newPlan);
+        }
+
+        insertBatch(scheduleStudentList);
     }
 }

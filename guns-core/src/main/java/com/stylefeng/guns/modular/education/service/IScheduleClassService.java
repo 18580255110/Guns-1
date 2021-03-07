@@ -3,6 +3,7 @@ package com.stylefeng.guns.modular.education.service;
 import com.baomidou.mybatisplus.service.IService;
 import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.system.model.Class;
+import com.stylefeng.guns.modular.system.model.Course;
 import com.stylefeng.guns.modular.system.model.ScheduleClass;
 
 import java.util.List;
@@ -37,4 +38,12 @@ public interface IScheduleClassService extends IService<ScheduleClass> {
      * @param classPlanList
      */
     void scheduleClass(Class classInstance, List<ClassPlan> classPlanList);
+
+    /**
+     * 刷新排班表
+     *  @param courseInstance
+     * @param newPeriod
+     * @param classes
+     */
+    void refreshClassPlan(Course courseInstance, int newPeriod, List<Class> classes);
 }

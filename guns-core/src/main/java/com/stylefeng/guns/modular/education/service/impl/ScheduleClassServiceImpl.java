@@ -4,15 +4,13 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.stylefeng.guns.common.constant.state.GenericState;
-import com.stylefeng.guns.common.exception.ServiceException;
-import com.stylefeng.guns.core.message.MessageConstant;
 import com.stylefeng.guns.modular.classMGR.service.ICourseOutlineService;
 import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.education.service.IScheduleClassService;
+import com.stylefeng.guns.modular.education.service.IScheduleStudentService;
 import com.stylefeng.guns.modular.system.dao.ScheduleClassMapper;
 import com.stylefeng.guns.modular.system.model.Class;
-import com.stylefeng.guns.modular.system.model.CourseOutline;
-import com.stylefeng.guns.modular.system.model.ScheduleClass;
+import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +30,9 @@ public class ScheduleClassServiceImpl extends ServiceImpl<ScheduleClassMapper, S
 
     @Autowired
     private ScheduleClassMapper scheduleClassMapper;
+
+    @Autowired
+    private IScheduleStudentService scheduleStudentService;
 
     @Override
     public void deleteClassSchedule(String code) {
@@ -82,5 +83,69 @@ public class ScheduleClassServiceImpl extends ServiceImpl<ScheduleClassMapper, S
         }
 
         insertBatch(scheduleClassList);
+    }
+
+    @Override
+    public void refreshClassPlan(Course courseInstance, int newPeriod, List<Class> classes) {
+        Wrapper<CourseOutline> outlineQueryWrapper = new EntityWrapper<>();
+        outlineQueryWrapper.eq("course_code", courseInstance.getCode());
+        outlineQueryWrapper.eq("status", GenericState.Valid.code);
+        outlineQueryWrapper.orderBy("sort, id");
+
+        List<CourseOutline> outlineList = courseOutlineService.selectList(outlineQueryWrapper);
+        Collections.sort(outlineList, new Comparator<CourseOutline>() {
+            @Override
+            public int compare(CourseOutline co1, CourseOutline co2) {
+                return co1.getSort().compareTo(co2.getSort());
+            }
+        });
+
+        for(Class classInstance : classes) {
+
+            Wrapper<ScheduleClass> classScheduleWrapper = new EntityWrapper<>();
+            classScheduleWrapper.eq("class_code", classInstance.getCode());
+            classScheduleWrapper.eq("sort", 3);
+
+            List<ScheduleClass> existScheduleClassList = scheduleClassMapper.selectList(classScheduleWrapper);
+            if (null == existScheduleClassList || existScheduleClassList.isEmpty()){
+                continue;
+            }
+            ScheduleClass existScheduleClass = existScheduleClassList.get(0);
+
+            List<ScheduleClass> scheduleClassList = new ArrayList<>();
+
+            int planIndex = 0;
+            for(CourseOutline outline : outlineList){
+
+                if (planIndex < existScheduleClass.getSort()){
+                    planIndex++;
+                    continue;
+                }
+
+                Date autoStudyDate = DateUtil.add(existScheduleClass.getStudyDate(), Calendar.DAY_OF_MONTH, 7);
+
+                ScheduleClass scheduleClass = new ScheduleClass();
+
+                scheduleClass.setClassCode(classInstance.getCode());
+                scheduleClass.setClassTime(existScheduleClass.getClassTime());
+                scheduleClass.setEndTime(existScheduleClass.getEndTime());
+                scheduleClass.setOutline(outline.getOutline());
+                scheduleClass.setOutlineCode(outline.getCode());
+                scheduleClass.setStatus(GenericState.Valid.code);
+                scheduleClass.setSort(outline.getSort());
+                scheduleClass.setStudyDate(autoStudyDate);
+                scheduleClass.setWeek(existScheduleClass.getWeek());
+
+                scheduleClassList.add(scheduleClass);
+
+                scheduleStudentService.doRefresh(classInstance, outline, autoStudyDate);
+            }
+
+//            System.out.println(scheduleClassList);
+            insertBatch(scheduleClassList);
+
+
+        }
+
     }
 }

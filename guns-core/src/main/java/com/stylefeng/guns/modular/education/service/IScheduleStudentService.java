@@ -1,10 +1,12 @@
 package com.stylefeng.guns.modular.education.service;
 
 import com.baomidou.mybatisplus.service.IService;
-import com.stylefeng.guns.modular.classMGR.transfer.ClassPlan;
 import com.stylefeng.guns.modular.education.transfer.StudentPlan;
+import com.stylefeng.guns.modular.system.model.Class;
+import com.stylefeng.guns.modular.system.model.CourseOutline;
 import com.stylefeng.guns.modular.system.model.ScheduleStudent;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -57,4 +59,12 @@ public interface IScheduleStudentService extends IService<ScheduleStudent>{
      * @param classCode
      */
     void doReverse(String studentCode, String classCode);
+
+    /**
+     * 更新报班计划
+     *  @param classInstance
+     * @param outline
+     * @param autoStudyDate
+     */
+    void doRefresh(Class classInstance, CourseOutline outline, Date autoStudyDate);
 }

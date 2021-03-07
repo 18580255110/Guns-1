@@ -18,8 +18,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Period;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +35,9 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
 
     @Autowired
     private ICourseOutlineService courseOutlineService;
+
+    @Autowired
+    private IScheduleClassService scheduleClassService;
 
     @Override
     public Course get(String code) {
@@ -128,20 +129,20 @@ public class CourseServiceImpl extends ServiceImpl<CourseMapper, Course> impleme
         if (!existCourse.getId().equals(course.getId()))
             throw new ServiceException(MessageConstant.MessageCode.SYS_DATA_ILLEGAL);
 
-        Wrapper<Class> queryWrapper = new EntityWrapper<Class>();
-        queryWrapper.eq("course_code", existCourse.getCode());
-        queryWrapper.eq("status", GenericState.Valid.code);
-        int classRelationCount = classService.selectCount(queryWrapper);
-
-//        if (classRelationCount > 0){
-//            throw new ServiceException(MessageConstant.MessageCode.SYS_SUBJECT_ONAIR, new String[]{"课程已排班"});
-//        }
-
         int newPeriod = course.getPeriod();
         int oldPeriod = existCourse.getPeriod();
 
         if (newPeriod != oldPeriod) {
             courseOutlineService.refreshCourseOutline(course, newPeriod);
+
+            Wrapper<Class> queryWrapper = new EntityWrapper<Class>();
+            queryWrapper.eq("course_code", existCourse.getCode());
+            queryWrapper.eq("status", GenericState.Valid.code);
+            int classRelationCount = classService.selectCount(queryWrapper);
+
+            if (classRelationCount > 0){
+                scheduleClassService.refreshClassPlan(course, newPeriod, classService.selectList(queryWrapper));
+            }
         }
 
         String[] ignoreProperties = new String[]{"id", "code"};
