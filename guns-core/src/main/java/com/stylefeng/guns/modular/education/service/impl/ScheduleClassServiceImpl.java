@@ -12,6 +12,7 @@ import com.stylefeng.guns.modular.system.dao.ScheduleClassMapper;
 import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.model.*;
 import com.stylefeng.guns.util.DateUtil;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,6 +101,9 @@ public class ScheduleClassServiceImpl extends ServiceImpl<ScheduleClassMapper, S
             }
         });
 
+        Date FiveOne = DateUtil.parse("2021-05-01", "yyyy-MM-dd");
+        Date FiveTwo = DateUtil.parse("2021-05-02", "yyyy-MM-dd");
+
         for(Class classInstance : classes) {
 
             Wrapper<ScheduleClass> classScheduleWrapper = new EntityWrapper<>();
@@ -115,6 +119,8 @@ public class ScheduleClassServiceImpl extends ServiceImpl<ScheduleClassMapper, S
             List<ScheduleClass> scheduleClassList = new ArrayList<>();
 
             int planIndex = 0;
+            Date autoStudyDate = DateUtils.truncate(DateUtil.add(existScheduleClass.getStudyDate(), Calendar.DAY_OF_MONTH, 7), Calendar.DAY_OF_MONTH);
+
             for(CourseOutline outline : outlineList){
 
                 if (planIndex < existScheduleClass.getSort()){
@@ -122,7 +128,11 @@ public class ScheduleClassServiceImpl extends ServiceImpl<ScheduleClassMapper, S
                     continue;
                 }
 
-                Date autoStudyDate = DateUtil.add(existScheduleClass.getStudyDate(), Calendar.DAY_OF_MONTH, 7);
+                autoStudyDate = DateUtil.add(autoStudyDate, Calendar.DAY_OF_MONTH, 7);
+                if (FiveOne.compareTo(autoStudyDate) == 1
+                        || FiveTwo.compareTo(autoStudyDate) == 1){
+                    autoStudyDate = DateUtil.add(autoStudyDate, Calendar.DAY_OF_MONTH, 7);
+                }
 
                 ScheduleClass scheduleClass = new ScheduleClass();
 
