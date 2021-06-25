@@ -7,6 +7,7 @@ import com.stylefeng.guns.core.base.controller.BaseController;
 import com.stylefeng.guns.core.base.tips.ErrorTip;
 import com.stylefeng.guns.core.base.tips.Tip;
 import com.stylefeng.guns.core.message.MessageConstant;
+import com.stylefeng.guns.core.shiro.ShiroKit;
 import com.stylefeng.guns.log.LogObjectHolder;
 import com.stylefeng.guns.modular.classMGR.service.IClassService;
 import com.stylefeng.guns.modular.orderMGR.service.ICourseCartService;
@@ -121,6 +122,11 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/class/list")
     @ResponseBody
     public Object list(@RequestParam  Map<String, Object> queryParmas) {
+        List<String> roleList = ShiroKit.getUser().getRoleNames();
+
+        if (!roleList.contains("超级管理员") && !roleList.contains("系统管理员")){
+            queryParmas.put("modQuery", true);
+        }
         //分页查詢
         Page<Map<String, Object>> pageMap = orderService.selectMapsPage(queryParmas);
         //包装数据
@@ -165,6 +171,12 @@ public class OrderController extends BaseController {
     @RequestMapping(value = "/class/export")
     @ResponseBody
     public Object export(@RequestParam Map<String, Object> queryParams) {
+        List<String> roleList = ShiroKit.getUser().getRoleNames();
+
+        if (!roleList.contains("超级管理员") && !roleList.contains("系统管理员")){
+            queryParams.put("modQuery", true);
+        }
+
         Map<String, Object> resultMap = new HashMap<String, Object>();
 
         List<Map<String, Object>> orderList = orderService.queryForList(queryParams);

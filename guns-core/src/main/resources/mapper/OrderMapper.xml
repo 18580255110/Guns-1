@@ -86,6 +86,9 @@
             <if test="orderStatus == 2">
                 and o.status = 2
             </if>
+            <if test="modQuery">
+                <![CDATA[ and accept_date > '2019-11-01' and MOD(CAST(substring(o.accept_no, 5, 6) as UNSIGNED), 3) = 1 ]]>
+            </if>
 
         </where>
     </sql>
