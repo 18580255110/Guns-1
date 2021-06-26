@@ -86,6 +86,10 @@
             <if test="null != academicYear">
                 and c.academic_year = #{academicYear}
             </if>
+
+            <if test="modQuery">
+                <![CDATA[ and accept_date > '2019-11-01' and MOD(CAST(substring(o.accept_no, 5, 12) as UNSIGNED), 3) = 1 ]]>
+            </if>
         </where>
         order by o.accept_date desc
     </select>

@@ -6,13 +6,13 @@ import com.stylefeng.guns.common.constant.state.GenericState;
 import com.stylefeng.guns.core.base.controller.BaseController;
 import com.stylefeng.guns.core.base.tips.ErrorTip;
 import com.stylefeng.guns.core.base.tips.Tip;
+import com.stylefeng.guns.core.shiro.ShiroKit;
 import com.stylefeng.guns.modular.statisticMGR.student.warpper.StudentSignWrapper;
 import com.stylefeng.guns.modular.system.dao.StatisticMapper;
 import com.stylefeng.guns.modular.system.model.Attachment;
 import com.stylefeng.guns.modular.system.service.IAttachmentService;
 import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.PathUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -85,6 +85,11 @@ public class StudentSignStatisticController extends BaseController {
     @RequestMapping(value = "/list")
     @ResponseBody
     public Object list(@RequestParam Map<String, Object> queryParams) {
+        List<String> roleList = ShiroKit.getUser().getRoleNames();
+
+        if (!roleList.contains("超级管理员") && !roleList.contains("系统管理员")){
+            queryParams.put("modQuery", true);
+        }
         //分页查詢
         Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
 
@@ -104,6 +109,12 @@ public class StudentSignStatisticController extends BaseController {
     @RequestMapping(value = "/export")
     @ResponseBody
     public Object export(@RequestParam Map<String, Object> queryParams) {
+        List<String> roleList = ShiroKit.getUser().getRoleNames();
+
+        if (!roleList.contains("超级管理员") && !roleList.contains("系统管理员")){
+            queryParams.put("modQuery", true);
+        }
+
         Map<String, Object> resultMap = new HashMap<String, Object>();
 
         Page<Map<String, Object>> page = new PageFactory<Map<String, Object>>().defaultPage();
