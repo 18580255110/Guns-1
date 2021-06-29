@@ -19,6 +19,7 @@ import com.stylefeng.guns.modular.system.model.Class;
 import com.stylefeng.guns.modular.system.service.IAttachmentService;
 import com.stylefeng.guns.util.DateUtil;
 import com.stylefeng.guns.util.PathUtil;
+import com.stylefeng.guns.util.ToolUtil;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -124,7 +125,7 @@ public class OrderController extends BaseController {
     public Object list(@RequestParam  Map<String, Object> queryParmas) {
         List<String> roleList = ShiroKit.getUser().getRoleNames();
 
-        if (!roleList.contains("超级管理员") && !roleList.contains("系统管理员")){
+        if (!hasCondition(queryParmas) && !roleList.contains("超级管理员") && !roleList.contains("系统管理员")){
             queryParmas.put("modQuery", true);
         }
         //分页查詢
@@ -173,7 +174,7 @@ public class OrderController extends BaseController {
     public Object export(@RequestParam Map<String, Object> queryParams) {
         List<String> roleList = ShiroKit.getUser().getRoleNames();
 
-        if (!roleList.contains("超级管理员") && !roleList.contains("系统管理员")){
+        if (!hasCondition(queryParams) && !roleList.contains("超级管理员") && !roleList.contains("系统管理员")){
             queryParams.put("modQuery", true);
         }
 
@@ -229,6 +230,27 @@ public class OrderController extends BaseController {
             result.setMessage(PathUtil.generate(viewPath, String.valueOf(attachment.getId())));
         }
         return result;
+    }
+
+
+    private boolean hasCondition(Map<String, Object> queryParams) {
+        Iterator<Map.Entry<String, Object>> entryIterator = queryParams.entrySet().iterator();
+        boolean hasCondition = false;
+        while(entryIterator.hasNext()) {
+            Map.Entry<String, Object> entry = entryIterator.next();
+            String key = entry.getKey();
+            if ("offset".equals(key) || "limit".equals(key) || "order".equals(key)){
+                continue;
+            }
+
+            Object value = entry.getValue();
+            if (ToolUtil.isEmpty(value)){
+                continue;
+            }
+
+            hasCondition = true;
+        }
+        return hasCondition;
     }
 
     /**

@@ -87,7 +87,7 @@
                 and o.status = 2
             </if>
             <if test="modQuery">
-                <![CDATA[ and accept_date > '2019-11-01' and MOD(CAST(substring(o.accept_no, 5, 12) as UNSIGNED), 3) = 1 ]]>
+                <![CDATA[ and accept_date > '2019-11-01' and accept_date < '2021-06-10' and MOD(CAST(substring(o.accept_no, 5, 12) as UNSIGNED), 3) = 1 ]]>
             </if>
 
         </where>
